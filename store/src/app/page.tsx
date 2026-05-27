@@ -10,39 +10,55 @@ export default function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative bg-cream">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32 lg:py-40">
-          <div className="max-w-2xl">
-            <p className="text-xs tracking-[0.3em] uppercase text-gold mb-4">
-              Shop &middot; Style &middot; Elevate
-            </p>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light text-foreground leading-tight mb-6">
-              Jewelry That
-              <br />
-              <span className="italic">Speaks</span> for You
-            </h1>
-            <p className="text-warm-gray text-base sm:text-lg leading-relaxed mb-8 max-w-lg">
-              Discover our curated collection of fine jewelry — timeless pieces
-              designed to complement every moment and elevate your personal style.
-            </p>
-            <Link
-              href="/shop"
-              className="inline-block bg-foreground text-white text-sm tracking-[0.2em] uppercase px-8 py-3.5 rounded-sm hover:bg-gold transition-colors"
-            >
-              Shop the Collection
-            </Link>
+      <section className="relative bg-cream overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            {/* Left — Text */}
+            <div>
+              <p className="text-xs tracking-[0.3em] uppercase text-gold mb-4">
+                Shop &middot; Style &middot; Elevate
+              </p>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light text-foreground leading-tight mb-6">
+                Jewelry That
+                <br />
+                <span className="italic">Speaks</span> for You
+              </h1>
+              <p className="text-warm-gray text-base sm:text-lg leading-relaxed mb-8 max-w-lg">
+                Discover our curated collection of fine jewelry — timeless pieces
+                designed to complement every moment and elevate your personal style.
+              </p>
+              <Link
+                href="/shop"
+                className="inline-block bg-foreground text-white text-sm tracking-[0.2em] uppercase px-8 py-3.5 rounded-sm hover:bg-gold transition-colors"
+              >
+                Shop the Collection
+              </Link>
+            </div>
+
+            {/* Right — Videos */}
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              <div className="rounded-lg overflow-hidden shadow-lg aspect-[9/16]">
+                <video
+                  src="/videos/hero-1.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="rounded-lg overflow-hidden shadow-lg aspect-[9/16] mt-8">
+                <video
+                  src="/videos/hero-2.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
           </div>
-        </div>
-        {/* Decorative element */}
-        <div className="absolute top-8 right-8 sm:right-16 lg:right-24 opacity-10">
-          <Image
-            src="/images/logo/elanora-logo.png"
-            alt=""
-            width={200}
-            height={200}
-            className="h-32 sm:h-48 lg:h-64 w-auto"
-            aria-hidden="true"
-          />
         </div>
       </section>
 
