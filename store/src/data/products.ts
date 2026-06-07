@@ -9,6 +9,7 @@ export interface Product {
   imageFolder: string;
   images: string[];
   featured: boolean;
+  soldOut?: boolean;
   stripePriceId: string; // UPDATE: Replace with your Stripe Price ID
 }
 
@@ -22,7 +23,7 @@ const products: Product[] = [
     id: "1",
     slug: "layered-cross-pendant-necklace",
     name: "Layered Cross Pendant Necklace",
-    price: 8999, // UPDATE: Set your price in cents ($89.99)
+    price: 2499,
     description:
       "A stunning multi-layered gold necklace featuring turquoise accents, a diamond-encrusted cross pendant, and a delicate lotus medallion. Each layer catches the light differently, creating a mesmerizing cascade of texture and brilliance.",
     details: [
@@ -47,7 +48,7 @@ const products: Product[] = [
     id: "2",
     slug: "heart-diamond-ring",
     name: "Heart Diamond Ring",
-    price: 12999, // UPDATE: Set your price in cents ($129.99)
+    price: 2399,
     description:
       "An exquisite heart-shaped aquamarine ring set in 18K gold, surrounded by a halo of sparkling pavé diamonds. The open-band design adds a modern twist to this timeless romantic piece.",
     details: [
@@ -67,13 +68,14 @@ const products: Product[] = [
       "/images/products/diamond-ring/5.jpg",
     ],
     featured: true,
+    soldOut: true,
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_2", // UPDATE
   },
   {
     id: "3",
     slug: "gold-coin-pendant-necklace",
     name: "Gold Coin Pendant Necklace",
-    price: 7499, // UPDATE: Set your price in cents ($74.99)
+    price: 2299,
     description:
       "A refined double-layer necklace featuring classic coin pendants with portrait engravings. Crafted from titanium steel with an 18K gold finish, this piece brings timeless elegance to any outfit.",
     details: [
@@ -94,13 +96,14 @@ const products: Product[] = [
       "/images/products/gold-coin-necklace/5.jpg",
     ],
     featured: true,
+    soldOut: true,
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_3", // UPDATE
   },
   {
     id: "4",
     slug: "palm-tree-pendant-necklace",
     name: "Palm Tree Pendant Necklace",
-    price: 4999, // UPDATE: Set your price in cents ($49.99)
+    price: 1999,
     description:
       "A playful yet elegant palm tree pendant necklace available in silver, gold, and rose gold finishes. The minimalist tropical design makes it the perfect everyday piece or vacation accessory.",
     details: [
@@ -121,13 +124,14 @@ const products: Product[] = [
       "/images/products/palm-tree-necklace/5.jpg",
     ],
     featured: true,
+    soldOut: true,
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_4", // UPDATE
   },
   {
     id: "5",
     slug: "acrylic-water-drop-pendant-earrings",
     name: "Acrylic Water Drop Pendant Earrings",
-    price: 3999,
+    price: 2199,
     description:
       "Statement drop earrings with glossy blue acrylic tops, polished silver-tone links, and deep red water-drop pendants for a bold color-blocked finish.",
     details: [
@@ -147,7 +151,7 @@ const products: Product[] = [
     id: "6",
     slug: "gold-heart-pendant-necklace",
     name: "Gold Heart Pendant Necklace",
-    price: 5999,
+    price: 2399,
     description:
       "A layered gold necklace pairing a polished box chain with a beaded strand and a textured heart pendant finished with a sparkling center accent.",
     details: [
@@ -167,13 +171,14 @@ const products: Product[] = [
       "/images/products/heart-necklace/5.jpg",
     ],
     featured: false,
+    soldOut: true,
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_6", // UPDATE
   },
   {
     id: "7",
     slug: "moonstone-drop-necklace",
     name: "Moonstone Drop Necklace",
-    price: 5499,
+    price: 2199,
     description:
       "A delicate gold station chain finished with an iridescent oval moonstone-style pendant, designed for subtle shimmer and effortless layering.",
     details: [
@@ -200,7 +205,7 @@ const products: Product[] = [
     id: "8",
     slug: "heart-shaped-zircon-necklace",
     name: "Heart Shaped Zircon Necklace",
-    price: 6499,
+    price: 2599,
     description:
       "A romantic gold heart pendant necklace with pink zircon-style accents and a bright chain that catches the light from every angle.",
     details: [
@@ -225,7 +230,7 @@ const products: Product[] = [
     id: "9",
     slug: "star-diamond-necklace",
     name: "Star Diamond Necklace",
-    price: 6999,
+    price: 2499,
     description:
       "A gold link necklace with star-inspired charms and a sparkling center accent, blending celestial detail with modern chain styling.",
     details: [
@@ -251,7 +256,7 @@ const products: Product[] = [
     id: "10",
     slug: "aquaman-pearl-necklace",
     name: "Aquaman Pearl Necklace",
-    price: 5799,
+    price: 2299,
     description:
       "A delicate multi-layer gold necklace with tiny station beads and small white pearls arranged across airy, feminine chain layers.",
     details: [
@@ -278,7 +283,7 @@ const products: Product[] = [
     id: "11",
     slug: "pear-pearl-necklace",
     name: "Pear Pearl Necklace",
-    price: 5299,
+    price: 2099,
     description:
       "A refined pendant necklace featuring a soft pear-shaped pearl-style charm on a fine gold chain for a clean, understated finish.",
     details: [
@@ -295,6 +300,7 @@ const products: Product[] = [
       "/images/products/pear-pearl-necklace/2.jpg",
     ],
     featured: false,
+    soldOut: true,
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_11", // UPDATE
   },
 ];

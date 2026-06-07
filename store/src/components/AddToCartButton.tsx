@@ -9,6 +9,17 @@ export default function AddToCartButton({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
 
+  if (product.soldOut) {
+    return (
+      <button
+        disabled
+        className="w-full py-3.5 text-sm tracking-[0.2em] uppercase rounded-sm bg-warm-gray/20 text-warm-gray cursor-not-allowed"
+      >
+        Sold Out
+      </button>
+    );
+  }
+
   const handleAdd = () => {
     addItem(product, quantity);
     setAdded(true);

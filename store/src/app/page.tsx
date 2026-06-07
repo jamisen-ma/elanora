@@ -11,10 +11,10 @@ export default function HomePage() {
     <>
       {/* Hero */}
       <section className="relative bg-cream overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center lg:min-h-[85vh]">
             {/* Left — Text */}
-            <div>
+            <div className="pt-16 pb-8 sm:py-20 lg:py-0">
               <p className="text-xs tracking-[0.3em] uppercase text-gold mb-4">
                 Shop &middot; Style &middot; Elevate
               </p>
@@ -36,8 +36,8 @@ export default function HomePage() {
             </div>
 
             {/* Right — Videos */}
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              <div className="rounded-lg overflow-hidden shadow-lg aspect-[9/16]">
+            <div className="flex gap-4 sm:gap-5 justify-center items-stretch pb-8 lg:pb-0">
+              <div className="flex-1 rounded-2xl overflow-hidden shadow-xl h-[350px] sm:h-[450px] lg:h-[78vh]">
                 <video
                   src="/videos/hero-1.mp4"
                   autoPlay
@@ -47,7 +47,7 @@ export default function HomePage() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="rounded-lg overflow-hidden shadow-lg aspect-[9/16] mt-8">
+              <div className="flex-1 rounded-2xl overflow-hidden shadow-xl h-[350px] sm:h-[450px] lg:h-[78vh]">
                 <video
                   src="/videos/hero-2.mp4"
                   autoPlay

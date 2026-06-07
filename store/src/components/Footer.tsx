@@ -35,7 +35,7 @@ export default function Footer() {
           <div>
             <h3 className="text-xs tracking-[0.2em] uppercase text-white/40 mb-4">Customer Care</h3>
             <ul className="space-y-2.5">
-              <li><span className="text-sm">Shipping & Returns</span></li>
+              <li><Link href="/shipping-returns" className="text-sm hover:text-gold-light transition-colors">Shipping & Returns</Link></li>
               <li><span className="text-sm">Size Guide</span></li>
               <li><span className="text-sm">Care Instructions</span></li>
               <li><span className="text-sm">FAQ</span></li>

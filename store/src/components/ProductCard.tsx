@@ -24,8 +24,13 @@ export default function ProductCard({ product }: { product: Product }) {
           alt={product.name}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+          className={`object-cover transition-transform duration-700 ease-out group-hover:scale-105 ${product.soldOut ? "opacity-70" : ""}`}
         />
+        {product.soldOut && (
+          <span className="absolute top-3 left-3 bg-foreground text-white text-[10px] tracking-[0.15em] uppercase px-3 py-1 rounded-sm">
+            Sold Out
+          </span>
+        )}
       </div>
       <div className="space-y-1">
         <p className="text-xs tracking-widest uppercase text-warm-gray-light">{product.category}</p>
