@@ -67,7 +67,7 @@ const products: Product[] = [
       "/images/products/diamond-ring/4.jpg",
       "/images/products/diamond-ring/5.jpg",
     ],
-    featured: true,
+    featured: false,
     soldOut: true,
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_2", // UPDATE
   },
@@ -95,7 +95,7 @@ const products: Product[] = [
       "/images/products/gold-coin-necklace/4.jpg",
       "/images/products/gold-coin-necklace/5.jpg",
     ],
-    featured: true,
+    featured: false,
     soldOut: true,
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_3", // UPDATE
   },
@@ -123,7 +123,7 @@ const products: Product[] = [
       "/images/products/palm-tree-necklace/4.jpg",
       "/images/products/palm-tree-necklace/5.jpg",
     ],
-    featured: true,
+    featured: false,
     soldOut: true,
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_4", // UPDATE
   },
@@ -144,7 +144,7 @@ const products: Product[] = [
     category: "Earrings",
     imageFolder: "acrylic-water-drop-earrings",
     images: ["/images/products/acrylic-water-drop-earrings/1.jpg"],
-    featured: false,
+    featured: true,
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_5", // UPDATE
   },
   {
@@ -198,7 +198,7 @@ const products: Product[] = [
       "/images/products/moonstone-necklace/5.jpg",
       "/images/products/moonstone-necklace/6.jpg",
     ],
-    featured: false,
+    featured: true,
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_7", // UPDATE
   },
   {
@@ -223,7 +223,7 @@ const products: Product[] = [
       "/images/products/heart-shaped-zircon-necklace/3.jpg",
       "/images/products/heart-shaped-zircon-necklace/4.jpg",
     ],
-    featured: false,
+    featured: true,
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_8", // UPDATE
   },
   {

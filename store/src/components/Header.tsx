@@ -37,8 +37,8 @@ export default function Header() {
               <Link href="/shop" className="text-sm tracking-widest uppercase text-warm-gray hover:text-gold transition-colors">
                 Shop
               </Link>
-              <Link href="/shop" className="text-sm tracking-widest uppercase text-warm-gray hover:text-gold transition-colors">
-                Collections
+              <Link href="/new-arrivals" className="text-sm tracking-widest uppercase text-warm-gray hover:text-gold transition-colors">
+                New Arrivals
               </Link>
             </nav>
 
@@ -89,11 +89,11 @@ export default function Header() {
                 Shop
               </Link>
               <Link
-                href="/shop"
+                href="/new-arrivals"
                 className="text-sm tracking-widest uppercase text-warm-gray hover:text-gold py-2"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Collections
+                New Arrivals
               </Link>
               <Link
                 href="/about"

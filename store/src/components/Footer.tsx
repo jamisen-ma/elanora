@@ -25,9 +25,8 @@ export default function Footer() {
             <h3 className="text-xs tracking-[0.2em] uppercase text-white/40 mb-4">Shop</h3>
             <ul className="space-y-2.5">
               <li><Link href="/shop" className="text-sm hover:text-gold-light transition-colors">All Jewelry</Link></li>
-              <li><Link href="/shop" className="text-sm hover:text-gold-light transition-colors">Necklaces</Link></li>
-              <li><Link href="/shop" className="text-sm hover:text-gold-light transition-colors">Rings</Link></li>
-              <li><Link href="/shop" className="text-sm hover:text-gold-light transition-colors">New Arrivals</Link></li>
+              <li><Link href="/new-arrivals" className="text-sm hover:text-gold-light transition-colors">New Arrivals</Link></li>
+              <li><Link href="/about" className="text-sm hover:text-gold-light transition-colors">Our Story</Link></li>
             </ul>
           </div>
 
@@ -36,9 +35,9 @@ export default function Footer() {
             <h3 className="text-xs tracking-[0.2em] uppercase text-white/40 mb-4">Customer Care</h3>
             <ul className="space-y-2.5">
               <li><Link href="/shipping-returns" className="text-sm hover:text-gold-light transition-colors">Shipping & Returns</Link></li>
-              <li><span className="text-sm">Size Guide</span></li>
-              <li><span className="text-sm">Care Instructions</span></li>
-              <li><span className="text-sm">FAQ</span></li>
+              <li><Link href="/size-guide" className="text-sm hover:text-gold-light transition-colors">Size Guide</Link></li>
+              <li><Link href="/care-instructions" className="text-sm hover:text-gold-light transition-colors">Care Instructions</Link></li>
+              <li><Link href="/faq" className="text-sm hover:text-gold-light transition-colors">FAQ</Link></li>
             </ul>
           </div>
 
