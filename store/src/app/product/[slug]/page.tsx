@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getAllProducts, getProductBySlug, formatPrice } from "@/data/products";
+import { getAllProducts, getProductBySlug, getCollectionBySlug, formatPrice } from "@/data/products";
 import ImageGallery from "@/components/ImageGallery";
 import AddToCartButton from "@/components/AddToCartButton";
 import ProductCard from "@/components/ProductCard";
@@ -54,9 +54,22 @@ export default async function ProductPage({
 
         {/* Product info */}
         <div className="lg:py-4">
-          <p className="text-xs tracking-[0.2em] uppercase text-gold mb-2">
-            {product.category}
-          </p>
+          <div className="flex items-center gap-2 mb-2">
+            <p className="text-xs tracking-[0.2em] uppercase text-gold">
+              {product.category}
+            </p>
+            {product.collection && (() => {
+              const col = getCollectionBySlug(product.collection);
+              return col ? (
+                <>
+                  <span className="text-cream-dark">|</span>
+                  <Link href={`/collections/${col.slug}`} className="text-xs tracking-[0.15em] uppercase text-warm-gray hover:text-gold transition-colors">
+                    {col.name} Collection
+                  </Link>
+                </>
+              ) : null;
+            })()}
+          </div>
           <h1 className="text-2xl sm:text-3xl font-light mb-3">
             {product.name}
           </h1>

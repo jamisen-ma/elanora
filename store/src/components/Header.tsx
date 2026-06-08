@@ -56,6 +56,9 @@ export default function Header() {
 
             {/* Right side */}
             <div className="flex items-center gap-4">
+              <Link href="/collections" className="hidden sm:block text-sm tracking-widest uppercase text-warm-gray hover:text-gold transition-colors">
+                Collections
+              </Link>
               <Link href="/about" className="hidden sm:block text-sm tracking-widest uppercase text-warm-gray hover:text-gold transition-colors">
                 About
               </Link>
@@ -94,6 +97,13 @@ export default function Header() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 New Arrivals
+              </Link>
+              <Link
+                href="/collections"
+                className="text-sm tracking-widest uppercase text-warm-gray hover:text-gold py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Collections
               </Link>
               <Link
                 href="/about"
