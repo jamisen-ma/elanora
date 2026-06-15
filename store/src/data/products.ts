@@ -24,22 +24,6 @@ export interface Collection {
 
 export const collections: Collection[] = [
   {
-    slug: "golden-hour",
-    name: "Golden Hour",
-    tagline: "Warm tones for golden moments",
-    description:
-      "Inspired by the warm glow of sunset, the Golden Hour collection featured rich gold tones, coin pendants, and nature-inspired silhouettes. These pieces captured the magic of that perfect late-afternoon light.",
-    season: "Spring 2025",
-  },
-  {
-    slug: "midnight-rose",
-    name: "Midnight Rose",
-    tagline: "Romance after dark",
-    description:
-      "The Midnight Rose collection explored the elegance of deep romantic tones — heart-shaped gems, luminous pearls, and delicate gold settings designed for unforgettable evenings.",
-    season: "Winter 2025",
-  },
-  {
     slug: "summer-solstice",
     name: "Summer Solstice",
     tagline: "Shine your brightest",
@@ -114,7 +98,6 @@ const products: Product[] = [
     ],
     featured: false,
     soldOut: true,
-    collection: "midnight-rose",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_2", // UPDATE
   },
   {
@@ -143,7 +126,6 @@ const products: Product[] = [
     ],
     featured: false,
     soldOut: true,
-    collection: "golden-hour",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_3", // UPDATE
   },
   {
@@ -172,7 +154,6 @@ const products: Product[] = [
     ],
     featured: false,
     soldOut: true,
-    collection: "golden-hour",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_4", // UPDATE
   },
   {
@@ -221,7 +202,6 @@ const products: Product[] = [
     ],
     featured: false,
     soldOut: true,
-    collection: "golden-hour",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_6", // UPDATE
   },
   {
@@ -355,7 +335,6 @@ const products: Product[] = [
     ],
     featured: false,
     soldOut: true,
-    collection: "midnight-rose",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_11", // UPDATE
   },
 ];

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default function ShopPage() {
-  const products = getAllProducts();
+  const products = getAllProducts().filter((p) => !p.soldOut);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">

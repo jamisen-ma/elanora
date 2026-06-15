@@ -81,81 +81,14 @@ export default function CollectionsPage() {
         );
       })()}
 
-      {/* Previous Drops */}
-      <div className="mb-8">
-        <p className="text-xs tracking-[0.3em] uppercase text-warm-gray mb-6 text-center">
-          Previous Drops
-        </p>
-      </div>
-      <div className="space-y-8">
-        {collections
-          .filter((c) => c.slug !== "summer-solstice")
-          .reverse()
-          .map((collection) => {
-            const collectionProducts = getProductsByCollection(collection.slug);
-            const previewImage = collectionProducts[0]?.images[0];
-            const availableCount = collectionProducts.filter(
-              (p) => !p.soldOut
-            ).length;
-            const isSoldOut = availableCount === 0;
-
-            return (
-              <Link
-                key={collection.slug}
-                href={`/collections/${collection.slug}`}
-                className="group block"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border border-cream-dark rounded-sm overflow-hidden hover:border-gold/30 transition-colors">
-                  {/* Image */}
-                  <div className="relative aspect-[4/3] md:aspect-auto bg-cream overflow-hidden">
-                    {previewImage && (
-                      <Image
-                        src={previewImage}
-                        alt={collection.name}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    )}
-                    {isSoldOut && (
-                      <div className="absolute inset-0 bg-foreground/40 flex items-center justify-center">
-                        <span className="bg-foreground text-white text-xs tracking-[0.2em] uppercase px-5 py-2 rounded-sm">
-                          Sold Out
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Info */}
-                  <div className="p-6 sm:p-8 md:p-10 flex flex-col justify-center">
-                    <p className="text-xs tracking-[0.2em] uppercase text-warm-gray-light mb-2">
-                      {collection.season}
-                    </p>
-                    <h2 className="text-2xl sm:text-3xl font-light mb-2 group-hover:text-gold transition-colors">
-                      {collection.name}
-                    </h2>
-                    <p className="text-sm italic text-warm-gray mb-4">
-                      {collection.tagline}
-                    </p>
-                    <p className="text-sm text-warm-gray leading-relaxed mb-6">
-                      {collection.description}
-                    </p>
-                    <div className="flex items-center gap-4">
-                      <span className="text-xs text-warm-gray-light tracking-wide">
-                        {collectionProducts.length}{" "}
-                        {collectionProducts.length === 1 ? "piece" : "pieces"}
-                      </span>
-                      {!isSoldOut && (
-                        <span className="text-xs text-gold tracking-wide">
-                          {availableCount} available
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
+      {/* Browse all */}
+      <div className="text-center mt-12">
+        <Link
+          href="/shop"
+          className="inline-block border border-foreground text-foreground text-sm tracking-[0.2em] uppercase px-8 py-3 rounded-sm hover:bg-foreground hover:text-white transition-colors"
+        >
+          Shop All Jewelry
+        </Link>
       </div>
     </div>
   );
