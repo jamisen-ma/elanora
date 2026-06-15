@@ -11,20 +11,12 @@ export default function NotFound() {
         The page you&apos;re looking for doesn&apos;t exist or has been moved.
         Let&apos;s get you back on track.
       </p>
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <Link
-          href="/"
-          className="inline-block bg-foreground text-white text-sm tracking-[0.2em] uppercase px-8 py-3.5 rounded-sm hover:bg-gold transition-colors"
-        >
-          Go Home
-        </Link>
-        <Link
-          href="/shop"
-          className="inline-block border border-foreground text-foreground text-sm tracking-[0.2em] uppercase px-8 py-3.5 rounded-sm hover:bg-foreground hover:text-white transition-colors"
-        >
-          Shop Now
-        </Link>
-      </div>
+      <Link
+        href="/"
+        className="inline-block bg-foreground text-white text-sm tracking-[0.2em] uppercase px-8 py-3.5 rounded-sm hover:bg-gold transition-colors"
+      >
+        Back to Home
+      </Link>
     </div>
   );
 }

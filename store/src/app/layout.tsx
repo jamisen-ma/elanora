@@ -12,12 +12,28 @@ const geistSans = Geist({
 
 export const metadata: Metadata = {
   title: {
-    default: "Elanora — Shop, Style, Elevate",
+    default: "Elanora — Launching July 2026",
     template: "%s | Elanora",
   },
   description:
-    "Curated fine jewelry for the modern woman. Discover elegant necklaces, rings, and accessories crafted with timeless beauty.",
-  keywords: ["jewelry", "necklaces", "rings", "gold jewelry", "fine jewelry", "luxury accessories"],
+    "Jewelry designed to be worn every day and remembered forever. Join the Founding Members list for early access to our first collection.",
+  keywords: [
+    "jewelry",
+    "gold jewelry",
+    "necklaces",
+    "earrings",
+    "launch",
+    "pre-order",
+    "waitlist",
+    "fine jewelry",
+  ],
+  openGraph: {
+    title: "Elanora — Launching July 2026",
+    description:
+      "Jewelry designed to be worn every day and remembered forever. Join the waitlist for early access.",
+    type: "website",
+    url: "https://elanora-beta.vercel.app",
+  },
 };
 
 export default function RootLayout({
