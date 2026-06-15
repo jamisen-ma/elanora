@@ -435,7 +435,7 @@ export default function HomePage() {
               </div>
               <div className="relative aspect-[3/4] rounded-sm overflow-hidden mt-8">
                 <Image
-                  src="/images/products/cross-border-jewelry/2.jpg"
+                  src="/images/products/moonstone-necklace/5.jpg"
                   alt="Close-up detail"
                   fill
                   sizes="(max-width: 1024px) 50vw, 25vw"
@@ -453,7 +453,7 @@ export default function HomePage() {
               </div>
               <div className="relative aspect-[3/4] rounded-sm overflow-hidden">
                 <Image
-                  src="/images/products/heart-shaped-zircon-necklace/2.jpg"
+                  src="/images/products/heart-shaped-zircon-necklace/3.jpg"
                   alt="Close-up detail"
                   fill
                   sizes="(max-width: 1024px) 50vw, 25vw"
