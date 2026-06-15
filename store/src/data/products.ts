@@ -348,7 +348,7 @@ export function getProductBySlug(slug: string): Product | undefined {
 }
 
 export function getFeaturedProducts(): Product[] {
-  return products.filter((p) => p.featured);
+  return products.filter((p) => p.featured && !p.soldOut);
 }
 
 export function formatPrice(cents: number): string {

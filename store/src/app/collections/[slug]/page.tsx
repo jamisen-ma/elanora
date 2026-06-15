@@ -34,8 +34,7 @@ export default async function CollectionPage({
   const collection = getCollectionBySlug(slug);
   if (!collection) notFound();
 
-  const products = getProductsByCollection(slug);
-  const availableCount = products.filter((p) => !p.soldOut).length;
+  const products = getProductsByCollection(slug).filter((p) => !p.soldOut);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
@@ -74,9 +73,7 @@ export default async function CollectionPage({
           {products.length} {products.length === 1 ? "piece" : "pieces"}
         </span>
         <span>
-          {availableCount > 0
-            ? `${availableCount} available`
-            : "Sold out"}
+          {products.length > 0 ? `${products.length} available` : "Coming soon"}
         </span>
       </div>
 

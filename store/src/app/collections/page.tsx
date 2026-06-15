@@ -28,7 +28,7 @@ export default function CollectionsPage() {
       {(() => {
         const current = collections.find((c) => c.slug === "summer-solstice");
         if (!current) return null;
-        const currentProducts = getProductsByCollection(current.slug);
+        const currentProducts = getProductsByCollection(current.slug).filter((p) => !p.soldOut);
         const previewImage = currentProducts[0]?.images[0];
         return (
           <div className="mb-16">
