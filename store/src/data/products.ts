@@ -28,24 +28,24 @@ export const collections: Collection[] = [
     name: "Golden Hour",
     tagline: "Warm tones for golden moments",
     description:
-      "Inspired by the warm glow of sunset, the Golden Hour collection features rich gold tones, coin pendants, and nature-inspired silhouettes. These pieces capture the magic of that perfect late-afternoon light.",
+      "Inspired by the warm glow of sunset, the Golden Hour collection featured rich gold tones, coin pendants, and nature-inspired silhouettes. These pieces captured the magic of that perfect late-afternoon light.",
     season: "Spring 2025",
   },
   {
-    slug: "celestial",
-    name: "Celestial",
-    tagline: "Written in the stars",
+    slug: "midnight-rose",
+    name: "Midnight Rose",
+    tagline: "Romance after dark",
     description:
-      "Look to the sky for inspiration. The Celestial collection pairs star motifs and moonstone shimmer with delicate layering chains — pieces that feel as ethereal as they look.",
-    season: "Summer 2025",
+      "The Midnight Rose collection explored the elegance of deep romantic tones — heart-shaped gems, luminous pearls, and delicate gold settings designed for unforgettable evenings.",
+    season: "Winter 2025",
   },
   {
-    slug: "eternal",
-    name: "Eternal",
-    tagline: "Timeless pieces, modern spirit",
+    slug: "summer-solstice",
+    name: "Summer Solstice",
+    tagline: "Shine your brightest",
     description:
-      "The Eternal collection is our latest drop — bold hearts, romantic zircon accents, and statement earrings designed to be worn every day and treasured forever.",
-    season: "Fall 2025",
+      "Our latest drop celebrates the longest days and the warmest light. The Summer Solstice collection brings together celestial motifs, bold color-blocked earrings, moonstone shimmer, and romantic heart pendants — pieces made to be worn from sunrise to sunset.",
+    season: "Summer 2026",
   },
 ];
 
@@ -86,7 +86,7 @@ const products: Product[] = [
       "/images/products/cross-border-jewelry/3.jpg",
     ],
     featured: true,
-    collection: "celestial",
+    collection: "summer-solstice",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_1", // UPDATE
   },
   {
@@ -114,7 +114,7 @@ const products: Product[] = [
     ],
     featured: false,
     soldOut: true,
-    collection: "eternal",
+    collection: "midnight-rose",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_2", // UPDATE
   },
   {
@@ -193,7 +193,7 @@ const products: Product[] = [
     imageFolder: "acrylic-water-drop-earrings",
     images: ["/images/products/acrylic-water-drop-earrings/1.jpg"],
     featured: true,
-    collection: "eternal",
+    collection: "summer-solstice",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_5", // UPDATE
   },
   {
@@ -249,7 +249,7 @@ const products: Product[] = [
       "/images/products/moonstone-necklace/6.jpg",
     ],
     featured: true,
-    collection: "celestial",
+    collection: "summer-solstice",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_7", // UPDATE
   },
   {
@@ -275,7 +275,7 @@ const products: Product[] = [
       "/images/products/heart-shaped-zircon-necklace/4.jpg",
     ],
     featured: true,
-    collection: "eternal",
+    collection: "summer-solstice",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_8", // UPDATE
   },
   {
@@ -302,7 +302,7 @@ const products: Product[] = [
       "/images/products/star-diamond-necklace/5.jpg",
     ],
     featured: false,
-    collection: "celestial",
+    collection: "summer-solstice",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_9", // UPDATE
   },
   {
@@ -330,7 +330,7 @@ const products: Product[] = [
       "/images/products/aquaman-pearl-necklace/6.png",
     ],
     featured: false,
-    collection: "celestial",
+    collection: "summer-solstice",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_10", // UPDATE
   },
   {
@@ -355,7 +355,7 @@ const products: Product[] = [
     ],
     featured: false,
     soldOut: true,
-    collection: "golden-hour",
+    collection: "midnight-rose",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_11", // UPDATE
   },
 ];
