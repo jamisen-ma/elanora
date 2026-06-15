@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { trackEvent } from "@/components/Analytics";
 
 interface WaitlistFormProps {
   variant?: "hero" | "bottom";
@@ -55,6 +56,15 @@ export default function WaitlistForm({ variant = "hero" }: WaitlistFormProps) {
       }
 
       setStatus("success");
+
+      // Track signup event with source info
+      const utm = JSON.parse(sessionStorage.getItem("elanora_utm") || "{}");
+      const referrer = sessionStorage.getItem("elanora_referrer") || "direct";
+      trackEvent("waitlist_signup", {
+        variant,
+        referrer,
+        ...utm,
+      });
     } catch {
       setErrorMsg("Unable to connect. Please try again.");
       setStatus("error");
