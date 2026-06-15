@@ -60,8 +60,9 @@ export default function HomePage() {
                 forever.
               </h1>
               <p className="text-warm-gray text-base sm:text-lg leading-relaxed mb-8 max-w-lg">
-                Our first collection drops this summer. Join the Founding Members
-                list for early access and launch-day pricing.
+                Our first collection drops this summer. Sign up now and get
+                <span className="text-gold font-medium"> 30% off </span>
+                your first order as a Founding Member.
               </p>
               <WaitlistForm variant="hero" />
               <p className="text-[11px] text-warm-gray-light mt-3">
@@ -280,8 +281,8 @@ export default function HomePage() {
             Join the Founding Members List
           </h2>
           <p className="text-sm text-warm-gray max-w-lg mx-auto mb-12">
-            Be part of the inner circle. Founding Members get benefits that
-            won&apos;t be available after launch.
+            Sign up and instantly get your 30% off promo code. Founding Members
+            also get perks that won&apos;t be available after launch.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-left max-w-2xl mx-auto">
@@ -310,9 +311,9 @@ export default function HomePage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium mb-1">Launch Pricing</h3>
+                  <h3 className="text-sm font-medium mb-1">30% Off Launch Day</h3>
                   <p className="text-xs text-warm-gray leading-relaxed">
-                    Exclusive introductory prices for founding members only.
+                    Get an exclusive 30% discount code the moment you sign up.
                   </p>
                 </div>
               </div>
@@ -501,11 +502,11 @@ export default function HomePage() {
             Don&apos;t Miss Out
           </p>
           <h2 className="text-2xl sm:text-3xl font-light mb-4">
-            Be first to know when we launch.
+            Get 30% off when we launch.
           </h2>
           <p className="text-sm text-white/60 mb-8 max-w-md mx-auto">
-            Join the Founding Members list and get early access, exclusive
-            pricing, and updates straight to your inbox.
+            Sign up now and we&apos;ll send you an exclusive promo code for
+            30% off your first order. Founding Members only.
           </p>
           <WaitlistForm variant="bottom" />
         </div>

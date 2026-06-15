@@ -133,11 +133,11 @@ export default function AboutPage() {
             Launching July 2026
           </p>
           <h2 className="text-2xl sm:text-3xl font-light mb-4">
-            Be the first to shop the collection.
+            Get 30% off your first order.
           </h2>
           <p className="text-sm text-white/60 mb-8 max-w-md mx-auto">
-            Join the Founding Members list for early access and exclusive
-            launch-day pricing.
+            Sign up now and get an exclusive promo code for 30% off when
+            the collection drops. Founding Members only.
           </p>
           <WaitlistForm variant="bottom" />
         </div>
