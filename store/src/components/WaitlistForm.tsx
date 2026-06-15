@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface WaitlistFormProps {
   variant?: "hero" | "bottom";
@@ -12,13 +12,7 @@ export default function WaitlistForm({ variant = "hero" }: WaitlistFormProps) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
-  const [alreadyJoined, setAlreadyJoined] = useState(false);
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    const joined = localStorage.getItem("elanora-waitlist-joined");
-    if (joined) setAlreadyJoined(true);
-  }, []);
 
   const copyCode = async () => {
     try {
@@ -60,10 +54,7 @@ export default function WaitlistForm({ variant = "hero" }: WaitlistFormProps) {
         return;
       }
 
-      localStorage.setItem("elanora-waitlist-joined", "true");
-      localStorage.setItem("elanora-waitlist-email", email);
       setStatus("success");
-      setAlreadyJoined(true);
     } catch {
       setErrorMsg("Unable to connect. Please try again.");
       setStatus("error");
@@ -71,7 +62,7 @@ export default function WaitlistForm({ variant = "hero" }: WaitlistFormProps) {
   };
 
   // Success state — show promo code
-  if (alreadyJoined || status === "success") {
+  if (status === "success") {
     const isDark = variant === "bottom";
 
     return (
