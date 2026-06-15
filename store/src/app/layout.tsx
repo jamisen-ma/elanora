@@ -5,6 +5,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { CartProvider } from "@/context/CartContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import PromoBanner from "@/components/PromoBanner";
 import CustomAnalytics from "@/components/Analytics";
 import "./globals.css";
 
@@ -48,6 +49,7 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <CartProvider>
+          <PromoBanner />
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
