@@ -24,20 +24,20 @@ export default function ShopContent({ products }: { products: Product[] }) {
 
   return (
     <>
-      {/* Tabs */}
-      <div className="flex justify-center gap-2 sm:gap-3 mb-10 flex-wrap">
+      {/* Filter tabs */}
+      <div className="flex justify-center gap-1 sm:gap-2 mb-10 flex-wrap">
         {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setActive(cat)}
-            className={`text-sm tracking-[0.15em] uppercase px-5 py-2.5 rounded-sm border transition-all duration-200 ${
+            className={`text-xs tracking-[0.2em] uppercase px-5 py-2.5 transition-all duration-200 ${
               active === cat
-                ? "bg-foreground text-white border-foreground"
-                : "bg-transparent text-warm-gray border-cream-dark hover:border-foreground hover:text-foreground"
+                ? "bg-foreground text-white"
+                : "bg-transparent text-warm-gray hover:text-foreground"
             }`}
           >
             {cat}
-            <span className="ml-1.5 text-[10px] opacity-60">
+            <span className="ml-1.5 text-[10px] opacity-50">
               ({counts[cat]})
             </span>
           </button>
@@ -56,7 +56,7 @@ export default function ShopContent({ products }: { products: Product[] }) {
           <p className="text-warm-gray">No products in this category yet.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {filtered.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

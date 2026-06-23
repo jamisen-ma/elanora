@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   collections,
   getCollectionBySlug,
@@ -25,6 +26,7 @@ export async function generateMetadata({
   };
 }
 
+
 export default async function CollectionPage({
   params,
 }: {
@@ -37,70 +39,65 @@ export default async function CollectionPage({
   const products = getProductsByCollection(slug).filter((p) => !p.soldOut);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-xs text-warm-gray-light mb-10">
-        <Link href="/" className="hover:text-gold transition-colors">
-          Home
-        </Link>
-        <span>/</span>
-        <Link href="/collections" className="hover:text-gold transition-colors">
-          Collections
-        </Link>
-        <span>/</span>
-        <span className="text-foreground">{collection.name}</span>
-      </nav>
+    <>
+      {/* Hero */}
+      <section className="relative h-[40vh] sm:h-[50vh] flex items-center overflow-hidden mt-16 sm:mt-20">
+        <Image src="/images/collection-flat-lay.jpg" alt={`${collection.name} collection`} fill className="object-cover object-center" sizes="100vw" unoptimized />
+        <div className="absolute inset-0 bg-foreground/50" />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-center">
+          <p className="text-[10px] sm:text-xs tracking-[0.4em] uppercase text-gold-light mb-3">
+            {collection.season}
+          </p>
+          <h1 className="text-3xl sm:text-5xl font-light text-white mb-2">
+            {collection.name}
+          </h1>
+          <p className="text-sm italic text-white/60 mb-4">
+            {collection.tagline}
+          </p>
+          <p className="text-sm text-white/50 max-w-xl mx-auto leading-relaxed">
+            {collection.description}
+          </p>
+        </div>
+      </section>
 
-      {/* Header */}
-      <div className="text-center mb-14">
-        <p className="text-xs tracking-[0.3em] uppercase text-gold mb-3">
-          {collection.season}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-2 text-xs text-warm-gray-light mb-10">
+          <Link href="/" className="hover:text-gold transition-colors">Home</Link>
+          <span>/</span>
+          <Link href="/collections" className="hover:text-gold transition-colors">Collections</Link>
+          <span>/</span>
+          <span className="text-foreground">{collection.name}</span>
+        </nav>
+
+        {/* Product count */}
+        <p className="text-xs text-warm-gray-light tracking-wide mb-6">
+          {products.length} {products.length === 1 ? "piece" : "pieces"} available
         </p>
-        <h1 className="text-3xl sm:text-4xl font-light mb-2">
-          {collection.name}
-        </h1>
-        <p className="text-sm italic text-warm-gray mb-4">
-          {collection.tagline}
-        </p>
-        <p className="text-sm text-warm-gray max-w-xl mx-auto leading-relaxed">
-          {collection.description}
-        </p>
-      </div>
 
-      {/* Stats */}
-      <div className="flex justify-center gap-8 mb-10 text-xs text-warm-gray-light tracking-wide">
-        <span>
-          {products.length} {products.length === 1 ? "piece" : "pieces"}
-        </span>
-        <span>
-          {products.length > 0 ? `${products.length} available` : "Coming soon"}
-        </span>
-      </div>
+        {/* Product grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
 
-      {/* Product grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
-
-      {/* Browse other collections */}
-      <div className="text-center mt-16 space-y-4">
-        <Link
-          href="/collections"
-          className="inline-block border border-foreground text-foreground text-sm tracking-[0.2em] uppercase px-8 py-3 rounded-sm hover:bg-foreground hover:text-white transition-colors"
-        >
-          All Collections
-        </Link>
-        <div>
+        {/* Navigation */}
+        <div className="text-center mt-16 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link
+            href="/collections"
+            className="inline-flex items-center gap-3 border border-foreground text-foreground text-xs tracking-[0.2em] uppercase px-8 py-3.5 hover:bg-foreground hover:text-white transition-colors"
+          >
+            All Collections
+          </Link>
           <Link
             href="/shop"
-            className="text-sm tracking-[0.2em] uppercase text-gold hover:text-gold-dark transition-colors border-b border-gold pb-0.5"
+            className="inline-flex items-center gap-2 text-xs tracking-[0.2em] uppercase text-gold hover:text-gold-dark transition-colors border-b border-gold pb-0.5"
           >
             Shop All Jewelry
           </Link>
         </div>
       </div>
-    </div>
+    </>
   );
 }

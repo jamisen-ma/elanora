@@ -170,7 +170,7 @@ export default function WaitlistForm({ variant = "hero" }: WaitlistFormProps) {
     );
   }
 
-  // Hero variant (light background)
+  // Hero variant (over dark background/image)
   return (
     <div>
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-lg">
@@ -180,12 +180,12 @@ export default function WaitlistForm({ variant = "hero" }: WaitlistFormProps) {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter your email"
           required
-          className="flex-1 bg-white border border-cream-dark text-foreground placeholder:text-warm-gray-light text-sm px-5 py-3.5 rounded-sm focus:outline-none focus:border-gold transition-colors shadow-sm"
+          className="flex-1 bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm px-5 py-3.5 focus:outline-none focus:border-gold-light transition-colors backdrop-blur-sm"
         />
         <button
           type="submit"
           disabled={status === "loading"}
-          className="bg-foreground text-white text-sm tracking-[0.15em] uppercase px-7 py-3.5 rounded-sm hover:bg-gold transition-colors disabled:opacity-60 whitespace-nowrap shadow-sm"
+          className="bg-gold text-white text-sm tracking-[0.15em] uppercase px-7 py-3.5 hover:bg-gold-light transition-colors disabled:opacity-60 whitespace-nowrap"
         >
           {status === "loading" ? (
             <span className="flex items-center gap-2">
@@ -201,7 +201,7 @@ export default function WaitlistForm({ variant = "hero" }: WaitlistFormProps) {
         </button>
       </form>
       {status === "error" && (
-        <p className="text-sm text-red-500 mt-2">{errorMsg}</p>
+        <p className="text-sm text-red-400 mt-2">{errorMsg}</p>
       )}
     </div>
   );

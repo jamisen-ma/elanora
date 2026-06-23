@@ -1,267 +1,369 @@
 import Image from "next/image";
+import Link from "next/link";
 import CountdownTimer from "@/components/CountdownTimer";
 import WaitlistForm from "@/components/WaitlistForm";
+import { getFeaturedProducts, formatPrice } from "@/data/products";
+
 
 export default function HomePage() {
-  // 5 teaser images from the available collection
-  const teaserImages = [
-    {
-      src: "/images/products/moonstone-necklace/1.jpg",
-      alt: "Piece from the upcoming collection",
-      className: "col-span-2 row-span-2",
-      aspect: "aspect-[3/4]",
-    },
-    {
-      src: "/images/products/cross-border-jewelry/1.jpg",
-      alt: "Piece from the upcoming collection",
-      className: "col-span-1",
-      aspect: "aspect-square",
-    },
-    {
-      src: "/images/products/heart-shaped-zircon-necklace/1.jpg",
-      alt: "Piece from the upcoming collection",
-      className: "col-span-1",
-      aspect: "aspect-square",
-    },
-    {
-      src: "/images/products/star-diamond-necklace/1.jpg",
-      alt: "Piece from the upcoming collection",
-      className: "col-span-1",
-      aspect: "aspect-[4/5]",
-    },
-    {
-      src: "/images/products/aquaman-pearl-necklace/1.jpg",
-      alt: "Piece from the upcoming collection",
-      className: "col-span-1",
-      aspect: "aspect-[4/5]",
-    },
-  ];
+  const featured = getFeaturedProducts().slice(0, 4);
 
   return (
     <>
       {/* ============================================ */}
-      {/* HERO — Above the fold                       */}
+      {/* HERO — Full-bleed lifestyle visual           */}
       {/* ============================================ */}
-      <section className="relative bg-cream overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center min-h-[90vh] lg:min-h-[92vh]">
-            {/* Left — Copy + Signup */}
-            <div className="pt-20 pb-8 sm:pt-24 lg:pt-0 lg:pb-0 order-2 lg:order-1">
-              <p className="text-[10px] sm:text-xs tracking-[0.35em] uppercase text-gold mb-5">
-                Launching July 15, 2026
-              </p>
-              <h1 className="text-[2.5rem] sm:text-5xl lg:text-[3.5rem] font-light text-foreground leading-[1.1] mb-6">
-                Jewelry designed
-                <br />
-                to be worn every day
-                <br />
-                <span className="italic text-gold">and remembered</span>
-                <br />
-                forever.
-              </h1>
-              <p className="text-warm-gray text-base sm:text-lg leading-relaxed mb-8 max-w-lg">
-                Our first collection drops this summer. Sign up now and get
-                <span className="text-gold font-medium"> 30% off </span>
-                your first order as a Founding Member.
-              </p>
-              <WaitlistForm variant="hero" />
-              <p className="text-[11px] text-warm-gray-light mt-3">
-                No spam. Unsubscribe anytime. We respect your inbox.
-              </p>
-            </div>
+      <section className="relative min-h-[100svh] flex items-center overflow-hidden">
+        {/* Background — lifestyle image */}
+        <div className="absolute inset-0">
+          <Image
+            src="/images/hero-background.png"
+            alt="Model wearing gold jewelry in golden hour light"
+            fill
+            priority
+            className="object-cover object-top"
+            sizes="100vw"
+            unoptimized
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-foreground/60 via-foreground/30 to-transparent" />
+        </div>
 
-            {/* Right — Hero visuals */}
-            <div className="flex gap-4 sm:gap-5 justify-center items-stretch order-1 lg:order-2 pt-8 lg:pt-0">
-              <div className="flex-1 rounded-2xl overflow-hidden shadow-xl max-h-[350px] sm:max-h-[450px] lg:max-h-none lg:h-[80vh]">
-                <video
-                  src="/videos/hero-1.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="w-full h-full object-cover"
-                />
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="max-w-xl pt-24 pb-16 lg:py-0">
+            <p className="text-[10px] sm:text-xs tracking-[0.4em] uppercase text-gold-light mb-5 font-sans">
+              Launching July 15, 2026
+            </p>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light text-white leading-[1.1] mb-6">
+              Jewelry designed
+              <br />
+              to be worn every day
+              <br />
+              <span className="italic text-gold-light">and remembered</span>
+              <br />
+              forever.
+            </h1>
+            <p className="text-white/60 text-base sm:text-lg leading-relaxed mb-8 max-w-md font-sans">
+              Our debut collection drops this summer. Sign up now and get
+              <span className="text-gold-light font-medium"> 30% off </span>
+              your first order as a Founding Member.
+            </p>
+            <WaitlistForm variant="hero" />
+            <p className="text-[11px] text-white/30 mt-3 font-sans">
+              No spam. Unsubscribe anytime. We respect your inbox.
+            </p>
+          </div>
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
+          <div className="w-[1px] h-12 bg-gradient-to-b from-transparent to-white/30" />
+        </div>
+      </section>
+
+      {/* ============================================ */}
+      {/* TRUST BAR — Key value props                  */}
+      {/* ============================================ */}
+      <section className="bg-white border-y border-cream-dark">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 divide-x divide-cream-dark">
+            {[
+              { icon: "M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z", label: "18K Gold Plated" },
+              { icon: "M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12", label: "Free Shipping Over $75" },
+              { icon: "M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M21.015 4.356v4.992", label: "30-Day Returns" },
+              { icon: "M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z", label: "Secure Checkout" },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center justify-center gap-2.5 py-4 px-3">
+                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" className="text-gold flex-shrink-0">
+                  <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
+                </svg>
+                <span className="text-[10px] sm:text-xs tracking-[0.15em] uppercase text-warm-gray font-sans">{item.label}</span>
               </div>
-              <div className="flex-1 rounded-2xl overflow-hidden shadow-xl max-h-[350px] sm:max-h-[450px] lg:max-h-none lg:h-[80vh]">
-                <video
-                  src="/videos/hero-2.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="w-full h-full object-cover"
-                />
-              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================ */}
+      {/* EDITORIAL SPLIT — Story + Visual             */}
+      {/* ============================================ */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 lg:gap-0 items-stretch min-h-[600px]">
+          {/* Left — Image placeholder */}
+          <div className="relative aspect-[4/5] lg:aspect-auto overflow-hidden">
+            <Image src="/images/editorial-portrait.jpg" alt="Woman wearing layered cross necklace" fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" unoptimized />
+          </div>
+
+          {/* Right — Copy */}
+          <div className="bg-white flex items-center p-8 sm:p-12 lg:p-16">
+            <div className="max-w-md">
+              <p className="text-[10px] sm:text-xs tracking-[0.4em] uppercase text-gold mb-4 font-sans">
+                The Summer Solstice Collection
+              </p>
+              <h2 className="text-3xl sm:text-4xl font-light mb-6 leading-snug">
+                Six pieces.
+                <br />
+                Made for the
+                <br />
+                <span className="italic">longest days.</span>
+              </h2>
+              <p className="text-warm-gray leading-relaxed mb-8 font-sans">
+                Celestial motifs, moonstone shimmer, and romantic gold details —
+                designed to catch the light from sunrise to sunset. Limited
+                quantities, crafted to last.
+              </p>
+              <Link
+                href="/shop"
+                className="inline-flex items-center gap-3 text-sm tracking-[0.2em] uppercase text-foreground border-b-2 border-foreground pb-1 hover:text-gold hover:border-gold transition-colors font-sans"
+              >
+                Shop the Collection
+                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
       {/* ============================================ */}
-      {/* TEASER GALLERY — Create curiosity            */}
+      {/* FEATURED PRODUCTS — Grid with hover          */}
+      {/* ============================================ */}
+      <section className="bg-white py-20 sm:py-28">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-end justify-between mb-12">
+            <div>
+              <p className="text-[10px] sm:text-xs tracking-[0.4em] uppercase text-gold mb-3 font-sans">
+                Curated for You
+              </p>
+              <h2 className="text-3xl sm:text-4xl font-light">
+                Bestsellers
+              </h2>
+            </div>
+            <Link
+              href="/shop"
+              className="hidden sm:inline-flex items-center gap-2 text-sm tracking-[0.15em] uppercase text-warm-gray hover:text-gold transition-colors font-sans"
+            >
+              View All
+              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {featured.map((product) => (
+              <Link
+                key={product.id}
+                href={`/product/${product.slug}`}
+                className="group block"
+              >
+                <div className="relative aspect-[3/4] overflow-hidden bg-cream mb-4">
+                  <Image
+                    src={product.images[0]}
+                    alt={product.name}
+                    fill
+                    sizes="(max-width: 640px) 50vw, 25vw"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  />
+                  {/* Hover overlay with quick-view */}
+                  <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                    <div className="bg-white/95 backdrop-blur-sm text-center py-3 text-xs tracking-[0.2em] uppercase text-foreground font-sans">
+                      Quick View
+                    </div>
+                  </div>
+                  {/* Material badge */}
+                  <div className="absolute top-3 left-3">
+                    <span className="bg-white/90 backdrop-blur-sm text-[9px] tracking-[0.15em] uppercase text-warm-gray px-2.5 py-1 font-sans">
+                      18K Gold
+                    </span>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] tracking-[0.2em] uppercase text-warm-gray-light font-sans">{product.category}</p>
+                  <h3 className="text-sm font-medium text-foreground group-hover:text-gold transition-colors font-sans">
+                    {product.name}
+                  </h3>
+                  <p className="text-sm text-foreground font-sans">{formatPrice(product.price)}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="text-center mt-10 sm:hidden">
+            <Link
+              href="/shop"
+              className="inline-flex items-center gap-2 text-sm tracking-[0.15em] uppercase text-warm-gray hover:text-gold transition-colors font-sans"
+            >
+              View All Pieces
+              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================ */}
+      {/* LOOKBOOK — Editorial lifestyle grid           */}
       {/* ============================================ */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
         <div className="text-center mb-14">
-          <p className="text-[10px] sm:text-xs tracking-[0.35em] uppercase text-gold mb-3">
-            A First Look
+          <p className="text-[10px] sm:text-xs tracking-[0.4em] uppercase text-gold mb-3 font-sans">
+            The Lookbook
           </p>
-          <h2 className="text-2xl sm:text-3xl font-light mb-3">
-            The Summer Solstice Collection
+          <h2 className="text-3xl sm:text-4xl font-light">
+            Styled for Real Life
           </h2>
-          <p className="text-sm text-warm-gray max-w-md mx-auto">
-            Six carefully curated pieces — celestial motifs, moonstone shimmer,
-            and romantic gold details. Just enough to spark your curiosity.
-          </p>
         </div>
 
-        {/* Asymmetric image grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-          {/* Large hero image */}
-          <div className="col-span-2 row-span-2 relative aspect-[3/4] rounded-sm overflow-hidden group">
-            <Image
-              src={teaserImages[0].src}
-              alt={teaserImages[0].alt}
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 to-transparent" />
+          <div className="col-span-2 row-span-2 relative aspect-[3/4] overflow-hidden group cursor-pointer">
+            <Image src="/images/lookbook-hero.jpg" alt="Model in ivory dress wearing layered necklaces" fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 50vw" unoptimized />
+            <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-colors duration-500" />
+            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+              <p className="text-white text-xs tracking-[0.2em] uppercase opacity-0 group-hover:opacity-100 transition-opacity font-sans">Shop This Look</p>
+            </div>
           </div>
-
-          {/* Top right pair */}
-          <div className="relative aspect-square rounded-sm overflow-hidden group">
-            <Image
-              src={teaserImages[1].src}
-              alt={teaserImages[1].alt}
-              fill
-              sizes="(max-width: 768px) 50vw, 25vw"
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
-            />
+          <div className="relative aspect-square overflow-hidden group cursor-pointer">
+            <Image src="/images/bracelet-detail.jpg" alt="Gold bracelet detail shot" fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 768px) 50vw, 25vw" />
+            <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-colors duration-500" />
           </div>
-          <div className="relative aspect-square rounded-sm overflow-hidden group">
-            <Image
-              src={teaserImages[2].src}
-              alt={teaserImages[2].alt}
-              fill
-              sizes="(max-width: 768px) 50vw, 25vw"
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
-            />
+          <div className="relative aspect-square overflow-hidden group cursor-pointer">
+            <Image src="/images/lookbook-flat-lay.jpg" alt="Elanora jewelry flat lay on cream marble" fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 768px) 50vw, 25vw" unoptimized />
+            <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-colors duration-500" />
           </div>
-
-          {/* Bottom right pair */}
-          <div className="relative aspect-[4/5] rounded-sm overflow-hidden group">
-            <Image
-              src={teaserImages[3].src}
-              alt={teaserImages[3].alt}
-              fill
-              sizes="(max-width: 768px) 50vw, 25vw"
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
-            />
+          <div className="relative aspect-[4/5] overflow-hidden group cursor-pointer">
+            <Image src="/images/hand-jewelry.jpg" alt="Hand with gold rings and bracelets" fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 768px) 50vw, 25vw" />
+            <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-colors duration-500" />
           </div>
-          <div className="relative aspect-[4/5] rounded-sm overflow-hidden group">
-            <Image
-              src={teaserImages[4].src}
-              alt={teaserImages[4].alt}
-              fill
-              sizes="(max-width: 768px) 50vw, 25vw"
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
-            />
+          <div className="relative aspect-[4/5] overflow-hidden group cursor-pointer">
+            <Image src="/images/neckline-moonstone.jpg" alt="Moonstone necklace on cream silk neckline" fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 768px) 50vw, 25vw" unoptimized />
+            <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-colors duration-500" />
           </div>
         </div>
-
-        <p className="text-center text-xs text-warm-gray-light mt-6 tracking-wide">
-          6 pieces. Limited quantities. Full collection revealed at launch.
-        </p>
       </section>
 
       {/* ============================================ */}
-      {/* COUNTDOWN                                    */}
+      {/* VIDEO MOMENT — Full-width ambient             */}
       {/* ============================================ */}
-      <section className="bg-cream py-16 sm:py-20">
+      <section className="relative h-[60vh] sm:h-[70vh] overflow-hidden">
+        <Image src="/images/ambient-banner.jpg" alt="Woman getting ready with jewelry at sunlit mirror" fill className="object-cover object-center" sizes="100vw" unoptimized />
+        <div className="absolute inset-0 bg-foreground/40" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center text-white">
+            <h2 className="text-3xl sm:text-5xl font-light mb-4 leading-tight">
+              Made to Be
+              <br />
+              <span className="italic">Worn Every Day</span>
+            </h2>
+            <p className="text-white/60 text-sm sm:text-base max-w-md mx-auto mb-8 font-sans">
+              18K gold plating. Titanium steel cores. Tarnish-resistant.
+              Hypoallergenic. Built for real life.
+            </p>
+            <Link
+              href="/about"
+              className="inline-flex items-center gap-2 border border-white/40 text-white text-xs tracking-[0.2em] uppercase px-8 py-3.5 hover:bg-white hover:text-foreground transition-colors font-sans"
+            >
+              Our Process
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================ */}
+      {/* COUNTDOWN — Urgency section                  */}
+      {/* ============================================ */}
+      <section className="bg-white py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-[10px] sm:text-xs tracking-[0.35em] uppercase text-gold mb-3">
+          <p className="text-[10px] sm:text-xs tracking-[0.4em] uppercase text-gold mb-3 font-sans">
             Mark Your Calendar
           </p>
-          <h2 className="text-2xl sm:text-3xl font-light mb-10">
+          <h2 className="text-3xl sm:text-4xl font-light mb-4">
             Launching July 15, 2026
           </h2>
+          <p className="text-sm text-warm-gray max-w-md mx-auto mb-10 font-sans">
+            The Summer Solstice collection drops in limited quantities.
+            Once it&apos;s gone, it&apos;s gone.
+          </p>
           <CountdownTimer />
         </div>
       </section>
 
       {/* ============================================ */}
-      {/* BRAND STORY — Short + personal               */}
+      {/* BRAND STORY — Split with image               */}
       {/* ============================================ */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <div className="relative aspect-[4/5] rounded-sm overflow-hidden">
-            <Image
-              src="/images/products/moonstone-necklace/3.jpg"
-              alt="Behind the scenes at Elanora"
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
-            />
-          </div>
-          <div className="max-w-lg">
-            <p className="text-[10px] sm:text-xs tracking-[0.35em] uppercase text-gold mb-4">
-              Our Story
-            </p>
-            <h2 className="text-2xl sm:text-3xl font-light mb-6 leading-snug">
-              We created Elanora for
-              <br />
-              women who want jewelry
-              <br />
-              that feels <span className="italic">effortless</span>.
-            </h2>
-            <div className="space-y-4 text-warm-gray leading-relaxed">
-              <p>
-                It started with a frustration: beautiful jewelry was either
-                overpriced or fell apart after a few wears. We set out to build
-                something in between — pieces that look and feel premium, crafted
-                from 18K gold plating and titanium steel, at prices that actually
-                make sense.
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-0 items-stretch">
+          <div className="flex items-center p-4 sm:p-8 lg:p-16 order-2 lg:order-1">
+            <div className="max-w-md">
+              <p className="text-[10px] sm:text-xs tracking-[0.4em] uppercase text-gold mb-4 font-sans">
+                Our Story
               </p>
-              <p>
-                Every piece in our first collection was hand-selected over eight
-                months of testing, wearing, and refining. If it didn&apos;t pass
-                our everyday wear test, it didn&apos;t make the cut.
-              </p>
-              <p className="text-foreground font-medium text-sm">
-                Modern. Meaningful. Made to last.
-              </p>
+              <h2 className="text-3xl sm:text-4xl font-light mb-6 leading-snug">
+                We created Elanora
+                <br />
+                for women who want
+                <br />
+                jewelry that feels
+                <br />
+                <span className="italic">effortless.</span>
+              </h2>
+              <div className="space-y-4 text-warm-gray leading-relaxed font-sans">
+                <p>
+                  Beautiful jewelry was either overpriced or fell apart after a few
+                  wears. We built something in between — pieces that look and feel
+                  premium, at prices that actually make sense.
+                </p>
+                <p>
+                  Every piece was hand-selected over eight months of testing,
+                  wearing, and refining. If it didn&apos;t pass our everyday wear
+                  test, it didn&apos;t make the cut.
+                </p>
+              </div>
+              <Link
+                href="/about"
+                className="inline-flex items-center gap-3 text-sm tracking-[0.2em] uppercase text-foreground border-b-2 border-foreground pb-1 hover:text-gold hover:border-gold transition-colors mt-8 font-sans"
+              >
+                Read Our Story
+                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+              </Link>
             </div>
+          </div>
+          <div className="relative aspect-[4/5] lg:aspect-auto overflow-hidden order-1 lg:order-2 min-h-[400px]">
+            <Image src="/images/craftsmanship.jpg" alt="Artisan hands inspecting gold necklaces on workbench" fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" unoptimized />
           </div>
         </div>
       </section>
 
       {/* ============================================ */}
-      {/* SOCIAL PROOF — Authentic, not fake           */}
+      {/* SOCIAL PROOF STATS                           */}
       {/* ============================================ */}
-      <section className="bg-cream">
+      <section className="bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-12 text-center">
             <div>
-              <p className="text-3xl sm:text-4xl font-light text-foreground">8</p>
-              <p className="text-[10px] sm:text-xs text-warm-gray mt-2 tracking-[0.15em] uppercase">
+              <p className="text-4xl sm:text-5xl font-light text-foreground">8</p>
+              <p className="text-[10px] sm:text-xs text-warm-gray mt-2 tracking-[0.15em] uppercase font-sans">
                 Months of Design
               </p>
             </div>
             <div>
-              <p className="text-3xl sm:text-4xl font-light text-foreground">6</p>
-              <p className="text-[10px] sm:text-xs text-warm-gray mt-2 tracking-[0.15em] uppercase">
+              <p className="text-4xl sm:text-5xl font-light text-foreground">6</p>
+              <p className="text-[10px] sm:text-xs text-warm-gray mt-2 tracking-[0.15em] uppercase font-sans">
                 Curated Pieces
               </p>
             </div>
             <div>
-              <p className="text-3xl sm:text-4xl font-light text-foreground">18K</p>
-              <p className="text-[10px] sm:text-xs text-warm-gray mt-2 tracking-[0.15em] uppercase">
+              <p className="text-4xl sm:text-5xl font-light text-foreground">18K</p>
+              <p className="text-[10px] sm:text-xs text-warm-gray mt-2 tracking-[0.15em] uppercase font-sans">
                 Gold Plated
               </p>
             </div>
             <div>
-              <p className="text-3xl sm:text-4xl font-light text-foreground">Ltd.</p>
-              <p className="text-[10px] sm:text-xs text-warm-gray mt-2 tracking-[0.15em] uppercase">
+              <p className="text-4xl sm:text-5xl font-light text-foreground">Ltd.</p>
+              <p className="text-[10px] sm:text-xs text-warm-gray mt-2 tracking-[0.15em] uppercase font-sans">
                 First Release
               </p>
             </div>
@@ -270,241 +372,60 @@ export default function HomePage() {
       </section>
 
       {/* ============================================ */}
-      {/* FOUNDING MEMBERS — Create exclusivity        */}
+      {/* FOUNDING MEMBERS — Exclusive perks            */}
       {/* ============================================ */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
-        <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[10px] sm:text-xs tracking-[0.35em] uppercase text-gold mb-3">
-            Exclusive Perks
-          </p>
-          <h2 className="text-2xl sm:text-3xl font-light mb-4">
-            Join the Founding Members List
-          </h2>
-          <p className="text-sm text-warm-gray max-w-lg mx-auto mb-12">
-            Sign up and instantly get your 30% off promo code. Founding Members
-            also get perks that won&apos;t be available after launch.
-          </p>
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-14">
+            <p className="text-[10px] sm:text-xs tracking-[0.4em] uppercase text-gold mb-3 font-sans">
+              Exclusive Perks
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-light mb-4">
+              Join the Founding Members
+            </h2>
+            <p className="text-sm text-warm-gray max-w-lg mx-auto font-sans">
+              Sign up and instantly get your 30% off promo code. Founding Members
+              also get perks that won&apos;t be available after launch.
+            </p>
+          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-left max-w-2xl mx-auto">
-            <div className="border border-cream-dark rounded-sm p-6 hover:border-gold/30 transition-colors">
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-cream flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" className="text-gold">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium mb-1">First Access</h3>
-                  <p className="text-xs text-warm-gray leading-relaxed">
-                    Shop the collection 24 hours before the public launch.
-                  </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-2xl mx-auto">
+            {[
+              { icon: "M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z", title: "First Access", desc: "Shop the collection 24 hours before the public launch." },
+              { icon: "M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z", title: "30% Off Launch Day", desc: "Get an exclusive 30% discount code the moment you sign up." },
+              { icon: "M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z", title: "Limited Editions", desc: "Access to members-only pieces not available to the public." },
+              { icon: "M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75", title: "Styling Content", desc: "Exclusive lookbooks and styling guides before launch day." },
+            ].map((perk) => (
+              <div key={perk.title} className="bg-white border border-cream-dark p-6 hover:border-gold/30 transition-colors">
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 rounded-full bg-cream flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" className="text-gold">
+                      <path strokeLinecap="round" strokeLinejoin="round" d={perk.icon} />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium mb-1 font-sans">{perk.title}</h3>
+                    <p className="text-xs text-warm-gray leading-relaxed font-sans">{perk.desc}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div className="border border-cream-dark rounded-sm p-6 hover:border-gold/30 transition-colors">
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-cream flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" className="text-gold">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 6h.008v.008H6V6z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium mb-1">30% Off Launch Day</h3>
-                  <p className="text-xs text-warm-gray leading-relaxed">
-                    Get an exclusive 30% discount code the moment you sign up.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="border border-cream-dark rounded-sm p-6 hover:border-gold/30 transition-colors">
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-cream flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" className="text-gold">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium mb-1">Limited Editions</h3>
-                  <p className="text-xs text-warm-gray leading-relaxed">
-                    Access to members-only pieces not available to the public.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="border border-cream-dark rounded-sm p-6 hover:border-gold/30 transition-colors">
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-cream flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" className="text-gold">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium mb-1">Styling Content</h3>
-                  <p className="text-xs text-warm-gray leading-relaxed">
-                    Exclusive lookbooks and styling guides before launch day.
-                  </p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* ============================================ */}
-      {/* BEHIND THE SCENES                            */}
-      {/* ============================================ */}
-      <section className="bg-cream">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <div className="order-2 lg:order-1">
-              <p className="text-[10px] sm:text-xs tracking-[0.35em] uppercase text-gold mb-4">
-                Behind the Scenes
-              </p>
-              <h2 className="text-2xl sm:text-3xl font-light mb-6 leading-snug">
-                From Sketch to Finish
-              </h2>
-              <div className="space-y-4 text-warm-gray leading-relaxed">
-                <p>
-                  Every piece starts with inspiration — an afternoon light, a
-                  celestial shape, a vintage detail caught in passing. We sketch,
-                  prototype, and refine until each design feels right in the hand
-                  and right on the skin.
-                </p>
-                <p>
-                  We work directly with small-batch workshops, cutting out
-                  middlemen so we can invest in better materials — 18K gold
-                  plating, titanium steel cores, genuine moonstone and zircon
-                  accents — while keeping prices fair.
-                </p>
-              </div>
-
-              {/* Process steps */}
-              <div className="mt-10 space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-full bg-white border border-cream-dark flex items-center justify-center text-xs text-gold font-medium">
-                    01
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">Design & Inspiration</p>
-                    <p className="text-xs text-warm-gray">Mood boards, sketches, material sourcing</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-full bg-white border border-cream-dark flex items-center justify-center text-xs text-gold font-medium">
-                    02
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">Prototype & Test</p>
-                    <p className="text-xs text-warm-gray">Wear-tested for comfort, durability, and tarnish resistance</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-full bg-white border border-cream-dark flex items-center justify-center text-xs text-gold font-medium">
-                    03
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">Small-Batch Production</p>
-                    <p className="text-xs text-warm-gray">Limited quantities, hand-finished details</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-8 h-8 rounded-full bg-white border border-cream-dark flex items-center justify-center text-xs text-gold font-medium">
-                    04
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">Gift-Ready Packaging</p>
-                    <p className="text-xs text-warm-gray">Signature box, soft pouch, care card included</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Collage of close-up images */}
-            <div className="order-1 lg:order-2 grid grid-cols-2 gap-3">
-              <div className="relative aspect-[3/4] rounded-sm overflow-hidden">
-                <Image
-                  src="/images/products/star-diamond-necklace/2.jpg"
-                  alt="Close-up detail"
-                  fill
-                  sizes="(max-width: 1024px) 50vw, 25vw"
-                  className="object-cover"
-                />
-              </div>
-              <div className="relative aspect-[3/4] rounded-sm overflow-hidden mt-8">
-                <Image
-                  src="/images/products/moonstone-necklace/5.jpg"
-                  alt="Close-up detail"
-                  fill
-                  sizes="(max-width: 1024px) 50vw, 25vw"
-                  className="object-cover"
-                />
-              </div>
-              <div className="relative aspect-[3/4] rounded-sm overflow-hidden -mt-8">
-                <Image
-                  src="/images/products/aquaman-pearl-necklace/1.jpg"
-                  alt="Close-up detail"
-                  fill
-                  sizes="(max-width: 1024px) 50vw, 25vw"
-                  className="object-cover"
-                />
-              </div>
-              <div className="relative aspect-[3/4] rounded-sm overflow-hidden">
-                <Image
-                  src="/images/products/heart-shaped-zircon-necklace/3.jpg"
-                  alt="Close-up detail"
-                  fill
-                  sizes="(max-width: 1024px) 50vw, 25vw"
-                  className="object-cover"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================ */}
-      {/* INSTAGRAM FOLLOW                             */}
-      {/* ============================================ */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 text-center">
-        <p className="text-[10px] sm:text-xs tracking-[0.35em] uppercase text-gold mb-3">
-          Follow the Journey
-        </p>
-        <h2 className="text-2xl sm:text-3xl font-light mb-4">
-          @elanorajewelry_2024
-        </h2>
-        <p className="text-sm text-warm-gray max-w-md mx-auto mb-6">
-          Behind-the-scenes content, styling inspiration, and launch updates — all
-          on Instagram.
-        </p>
-        <a
-          href="https://www.instagram.com/elanorajewelry_2024/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 border border-foreground text-foreground text-sm tracking-[0.15em] uppercase px-7 py-3 rounded-sm hover:bg-foreground hover:text-white transition-colors"
-        >
-          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
-          </svg>
-          Follow on Instagram
-        </a>
-      </section>
-
-      {/* ============================================ */}
-      {/* FINAL CTA — Second signup                    */}
+      {/* FINAL CTA — Dark signup                      */}
       {/* ============================================ */}
       <section className="bg-foreground text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
-          <p className="text-[10px] sm:text-xs tracking-[0.35em] uppercase text-gold-light mb-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 text-center">
+          <p className="text-[10px] sm:text-xs tracking-[0.4em] uppercase text-gold-light mb-4 font-sans">
             Don&apos;t Miss Out
           </p>
-          <h2 className="text-2xl sm:text-3xl font-light mb-4">
+          <h2 className="text-3xl sm:text-4xl font-light mb-4">
             Get 30% off when we launch.
           </h2>
-          <p className="text-sm text-white/60 mb-8 max-w-md mx-auto">
+          <p className="text-sm text-white/50 mb-10 max-w-md mx-auto font-sans">
             Sign up now and we&apos;ll send you an exclusive promo code for
             30% off your first order. Founding Members only.
           </p>

@@ -11,6 +11,7 @@ export interface Product {
   featured: boolean;
   soldOut?: boolean;
   collection?: string; // collection slug
+  lifestyleImage?: string;
   stripePriceId: string; // UPDATE: Replace with your Stripe Price ID
 }
 
@@ -71,6 +72,7 @@ const products: Product[] = [
     ],
     featured: true,
     collection: "summer-solstice",
+    lifestyleImage: "/images/lifestyle-cross-necklace.jpg",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_1", // UPDATE
   },
   {
@@ -96,8 +98,9 @@ const products: Product[] = [
       "/images/products/diamond-ring/4.jpg",
       "/images/products/diamond-ring/5.jpg",
     ],
-    featured: false,
-    soldOut: true,
+    featured: true,
+    collection: "summer-solstice",
+    lifestyleImage: "/images/lifestyle-heart-ring.jpg",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_2", // UPDATE
   },
   {
@@ -152,8 +155,9 @@ const products: Product[] = [
       "/images/products/palm-tree-necklace/4.jpg",
       "/images/products/palm-tree-necklace/5.jpg",
     ],
-    featured: false,
-    soldOut: true,
+    featured: true,
+    collection: "summer-solstice",
+    lifestyleImage: "/images/lifestyle-palm-tree.jpg",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_4", // UPDATE
   },
   {
@@ -175,6 +179,7 @@ const products: Product[] = [
     images: ["/images/products/acrylic-water-drop-earrings/1.jpg"],
     featured: true,
     collection: "summer-solstice",
+    lifestyleImage: "/images/lifestyle-water-drop-earrings.jpg",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_5", // UPDATE
   },
   {
@@ -221,7 +226,6 @@ const products: Product[] = [
     category: "Necklaces",
     imageFolder: "moonstone-necklace",
     images: [
-      "/images/products/moonstone-necklace/1.jpg",
       "/images/products/moonstone-necklace/2.jpg",
       "/images/products/moonstone-necklace/3.jpg",
       "/images/products/moonstone-necklace/4.jpg",
@@ -230,6 +234,7 @@ const products: Product[] = [
     ],
     featured: true,
     collection: "summer-solstice",
+    lifestyleImage: "/images/lifestyle-moonstone.jpg",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_7", // UPDATE
   },
   {
@@ -254,8 +259,8 @@ const products: Product[] = [
       "/images/products/heart-shaped-zircon-necklace/3.jpg",
       "/images/products/heart-shaped-zircon-necklace/4.jpg",
     ],
-    featured: true,
-    collection: "summer-solstice",
+    featured: false,
+    soldOut: true,
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_8", // UPDATE
   },
   {
@@ -283,6 +288,7 @@ const products: Product[] = [
     ],
     featured: false,
     collection: "summer-solstice",
+    lifestyleImage: "/images/lifestyle-star-necklace.jpg",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_9", // UPDATE
   },
   {
@@ -311,6 +317,7 @@ const products: Product[] = [
     ],
     featured: false,
     collection: "summer-solstice",
+    lifestyleImage: "/images/lifestyle-aquaman-pearl.jpg",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_10", // UPDATE
   },
   {
@@ -333,8 +340,9 @@ const products: Product[] = [
       "/images/products/pear-pearl-necklace/1.jpg",
       "/images/products/pear-pearl-necklace/2.jpg",
     ],
-    featured: false,
-    soldOut: true,
+    featured: true,
+    collection: "summer-solstice",
+    lifestyleImage: "/images/lifestyle-pear-pearl.jpg",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_11", // UPDATE
   },
 ];
