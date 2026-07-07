@@ -230,6 +230,10 @@ export async function POST(req: Request) {
           to: normalizedEmail,
           subject: "Welcome to Elanora — Here's Your 30% Off Code",
           html: buildWelcomeEmail(PROMO_CODE),
+          headers: {
+            "List-Unsubscribe": `<mailto:team@elanorajewelry.com?subject=Unsubscribe>`,
+            "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+          },
         });
         console.log(`[WAITLIST EMAIL SENT] ${normalizedEmail}`);
       } catch (emailErr) {
