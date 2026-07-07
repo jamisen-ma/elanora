@@ -231,7 +231,7 @@ export async function POST(req: Request) {
           subject: "Welcome to Elanora — Here's Your 30% Off Code",
           html: buildWelcomeEmail(PROMO_CODE),
           headers: {
-            "List-Unsubscribe": `<mailto:team@elanorajewelry.com?subject=Unsubscribe>`,
+            "List-Unsubscribe": `<https://elanorajewelry.com/api/unsubscribe?email=${encodeURIComponent(normalizedEmail)}>`,
             "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
           },
         });
