@@ -309,40 +309,6 @@ export default function HomePage() {
       </section>
 
       {/* ============================================ */}
-      {/* SOCIAL PROOF STATS                           */}
-      {/* ============================================ */}
-      <section className="bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-12 text-center">
-            <div>
-              <p className="text-4xl sm:text-5xl font-light text-foreground">8</p>
-              <p className="text-[10px] sm:text-xs text-warm-gray mt-2 tracking-[0.15em] uppercase font-sans">
-                Months of Design
-              </p>
-            </div>
-            <div>
-              <p className="text-4xl sm:text-5xl font-light text-foreground">6</p>
-              <p className="text-[10px] sm:text-xs text-warm-gray mt-2 tracking-[0.15em] uppercase font-sans">
-                Curated Pieces
-              </p>
-            </div>
-            <div>
-              <p className="text-4xl sm:text-5xl font-light text-foreground">18K</p>
-              <p className="text-[10px] sm:text-xs text-warm-gray mt-2 tracking-[0.15em] uppercase font-sans">
-                Gold Plated
-              </p>
-            </div>
-            <div>
-              <p className="text-4xl sm:text-5xl font-light text-foreground">Ltd.</p>
-              <p className="text-[10px] sm:text-xs text-warm-gray mt-2 tracking-[0.15em] uppercase font-sans">
-                First Release
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================ */}
       {/* FOUNDING MEMBERS — Exclusive perks            */}
       {/* ============================================ */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
