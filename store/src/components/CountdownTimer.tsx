@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-const LAUNCH_DATE = new Date("2026-07-15T09:00:00-04:00");
+const LAUNCH_DATE = new Date("2026-08-20T09:00:00-04:00");
 
 interface TimeLeft {
   days: number;

@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -9,13 +9,15 @@ export default function Footer() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-12 py-14 sm:py-16 border-b border-white/10">
           {/* Brand */}
           <div className="col-span-2 sm:col-span-1">
-            <Image
-              src="/images/logo/elanora-logo.png"
-              alt="Elanora"
-              width={100}
-              height={50}
-              className="h-10 w-auto brightness-200 mb-4"
-            />
+            <div className="mb-4">
+              <Image
+                src="/images/logo.png"
+                alt="Elanora Jewelry"
+                width={120}
+                height={120}
+                className="h-14 w-auto brightness-0 invert"
+              />
+            </div>
             <p className="text-sm text-white/40 leading-relaxed mb-5 max-w-[240px]">
               Jewelry designed to be worn every day and remembered forever.
             </p>

@@ -11,6 +11,7 @@ export interface Product {
   featured: boolean;
   soldOut?: boolean;
   collection?: string; // collection slug
+  colors?: { name: string; hex: string }[];
   lifestyleImage?: string;
   stripePriceId: string; // UPDATE: Replace with your Stripe Price ID
 }
@@ -49,6 +50,42 @@ export function getProductsByCollection(slug: string): Product[] {
 //   3. Add a new entry to this array
 const products: Product[] = [
   {
+    id: "4",
+    slug: "palm-tree-pendant-necklace",
+    name: "Palm Tree Pendant Necklace",
+    price: 1999,
+    description:
+      "A playful yet elegant palm tree pendant necklace available in silver, gold, and rose gold finishes. The minimalist tropical design makes it the perfect everyday piece or vacation accessory.",
+    details: [
+      "Palm tree silhouette pendant",
+      "Available in 3 finishes: silver, gold, rose gold",
+      "Stainless steel construction",
+      "18K plated finish",
+      "Hypoallergenic",
+      "Chain length: 18 inches with 2-inch extender",
+    ],
+    category: "Necklaces",
+    imageFolder: "palm-tree-necklace",
+    images: [
+      "/images/products/palm-tree-necklace/6.jpg",
+      "/images/products/palm-tree-necklace/1.jpg",
+      "/images/products/palm-tree-necklace/4.jpg",
+      "/images/products/palm-tree-necklace/5.jpg",
+      "/images/products/palm-tree-necklace/8.jpg",
+      "/images/products/palm-tree-necklace/9.jpg",
+      "/images/products/palm-tree-necklace/10.jpg",
+    ],
+    featured: true,
+    collection: "summer-solstice",
+    colors: [
+      { name: "Gold", hex: "#D4A937" },
+      { name: "Silver", hex: "#C0C0C0" },
+      { name: "Rose Gold", hex: "#E8B4B8" },
+    ],
+    lifestyleImage: "/images/lifestyle-palm-tree.jpg",
+    stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_4", // UPDATE
+  },
+  {
     id: "1",
     slug: "layered-cross-pendant-necklace",
     name: "Layered Cross Pendant Necklace",
@@ -67,8 +104,10 @@ const products: Product[] = [
     imageFolder: "cross-border-jewelry",
     images: [
       "/images/products/cross-border-jewelry/1.jpg",
-      "/images/products/cross-border-jewelry/2.jpg",
-      "/images/products/cross-border-jewelry/3.jpg",
+      "/images/products/cross-border-jewelry/4.jpg",
+      "/images/products/cross-border-jewelry/5.jpg",
+      "/images/products/cross-border-jewelry/6.jpg",
+      "/images/products/cross-border-jewelry/7.jpg",
     ],
     featured: true,
     collection: "summer-solstice",
@@ -100,6 +139,13 @@ const products: Product[] = [
     ],
     featured: true,
     collection: "summer-solstice",
+    colors: [
+      { name: "Purple", hex: "#8B5CF6" },
+      { name: "Green", hex: "#34D399" },
+      { name: "Red", hex: "#EF4444" },
+      { name: "Yellow", hex: "#FBBF24" },
+      { name: "Blue", hex: "#3B82F6" },
+    ],
     lifestyleImage: "/images/lifestyle-heart-ring.jpg",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_2", // UPDATE
   },
@@ -132,35 +178,6 @@ const products: Product[] = [
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_3", // UPDATE
   },
   {
-    id: "4",
-    slug: "palm-tree-pendant-necklace",
-    name: "Palm Tree Pendant Necklace",
-    price: 1999,
-    description:
-      "A playful yet elegant palm tree pendant necklace available in silver, gold, and rose gold finishes. The minimalist tropical design makes it the perfect everyday piece or vacation accessory.",
-    details: [
-      "Palm tree silhouette pendant",
-      "Available in 3 finishes: silver, gold, rose gold",
-      "Stainless steel construction",
-      "18K plated finish",
-      "Hypoallergenic",
-      "Chain length: 18 inches with 2-inch extender",
-    ],
-    category: "Necklaces",
-    imageFolder: "palm-tree-necklace",
-    images: [
-      "/images/products/palm-tree-necklace/1.jpg",
-      "/images/products/palm-tree-necklace/2.jpg",
-      "/images/products/palm-tree-necklace/3.jpg",
-      "/images/products/palm-tree-necklace/4.jpg",
-      "/images/products/palm-tree-necklace/5.jpg",
-    ],
-    featured: true,
-    collection: "summer-solstice",
-    lifestyleImage: "/images/lifestyle-palm-tree.jpg",
-    stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_4", // UPDATE
-  },
-  {
     id: "5",
     slug: "acrylic-water-drop-pendant-earrings",
     name: "Acrylic Water Drop Pendant Earrings",
@@ -176,7 +193,13 @@ const products: Product[] = [
     ],
     category: "Earrings",
     imageFolder: "acrylic-water-drop-earrings",
-    images: ["/images/products/acrylic-water-drop-earrings/1.jpg"],
+    images: [
+      "/images/products/acrylic-water-drop-earrings/2.jpg",
+      "/images/products/acrylic-water-drop-earrings/3.jpg",
+      "/images/products/acrylic-water-drop-earrings/4.jpg",
+      "/images/products/acrylic-water-drop-earrings/5.jpg",
+      "/images/products/acrylic-water-drop-earrings/6.jpg",
+    ],
     featured: true,
     collection: "summer-solstice",
     lifestyleImage: "/images/lifestyle-water-drop-earrings.jpg",
@@ -226,6 +249,7 @@ const products: Product[] = [
     category: "Necklaces",
     imageFolder: "moonstone-necklace",
     images: [
+      "/images/products/moonstone-necklace/1.jpg",
       "/images/products/moonstone-necklace/2.jpg",
       "/images/products/moonstone-necklace/3.jpg",
       "/images/products/moonstone-necklace/4.jpg",
@@ -316,7 +340,7 @@ const products: Product[] = [
       "/images/products/aquaman-pearl-necklace/6.png",
     ],
     featured: false,
-    collection: "summer-solstice",
+    soldOut: true,
     lifestyleImage: "/images/lifestyle-aquaman-pearl.jpg",
     stripePriceId: "price_REPLACE_WITH_YOUR_STRIPE_PRICE_ID_10", // UPDATE
   },
@@ -339,6 +363,10 @@ const products: Product[] = [
     images: [
       "/images/products/pear-pearl-necklace/1.jpg",
       "/images/products/pear-pearl-necklace/2.jpg",
+      "/images/products/pear-pearl-necklace/3.jpg",
+      "/images/products/pear-pearl-necklace/4.jpg",
+      "/images/products/pear-pearl-necklace/5.jpg",
+      "/images/products/pear-pearl-necklace/6.jpg",
     ],
     featured: true,
     collection: "summer-solstice",

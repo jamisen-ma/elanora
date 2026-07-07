@@ -1,19 +1,12 @@
 import { NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { promises as fs } from "fs";
 import path from "path";
 
 const PROMO_CODE = "FOUNDING30";
 
-// Gmail SMTP transporter — uses your own Gmail account
-const transporter = process.env.GMAIL_APP_PASSWORD
-  ? nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
-      },
-    })
+const resend = process.env.RESEND_API_KEY
+  ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
 function buildWelcomeEmail(promoCode: string): string {
@@ -104,7 +97,7 @@ function buildWelcomeEmail(promoCode: string): string {
                         </td>
                         <td style="font-size:14px;line-height:1.5;color:#6b6360;">
                           <strong style="color:#1a1a1a;">First access</strong> &mdash;
-                          You&rsquo;ll be the first to shop when the collection drops on July 15, 2026.
+                          You&rsquo;ll be the first to shop when the collection drops on August 20, 2026.
                         </td>
                       </tr>
                     </table>
@@ -228,23 +221,23 @@ export async function POST(req: Request) {
       }
     }
 
-    // Send welcome email via Gmail
-    if (transporter) {
+    // Send welcome email via Resend
+    if (resend) {
       try {
-        await transporter.sendMail({
-          from: `"Elanora" <${process.env.GMAIL_USER}>`,
+        const fromAddress = process.env.RESEND_FROM_EMAIL || "Elanora <onboarding@resend.dev>";
+        await resend.emails.send({
+          from: fromAddress,
           to: normalizedEmail,
           subject: "Welcome to Elanora — Here's Your 30% Off Code",
           html: buildWelcomeEmail(PROMO_CODE),
         });
         console.log(`[WAITLIST EMAIL SENT] ${normalizedEmail}`);
       } catch (emailErr) {
-        // Log but don't fail the signup if email fails
         console.error("[WAITLIST EMAIL ERROR]", emailErr);
       }
     } else {
       console.log(
-        "[WAITLIST] No GMAIL_APP_PASSWORD set — skipping email send"
+        "[WAITLIST] No RESEND_API_KEY set — skipping email send"
       );
     }
 

@@ -33,12 +33,6 @@ export default function ProductCard({ product }: { product: Product }) {
         )}
         {!product.soldOut && (
           <>
-            {/* Material badge */}
-            <div className="absolute top-3 left-3">
-              <span className="bg-white/90 backdrop-blur-sm text-[9px] tracking-[0.15em] uppercase text-warm-gray px-2.5 py-1">
-                18K Gold
-              </span>
-            </div>
             {/* Hover overlay */}
             <div className="absolute inset-x-0 bottom-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
               <div className="bg-white/95 backdrop-blur-sm text-center py-2.5 text-[10px] tracking-[0.2em] uppercase text-foreground">

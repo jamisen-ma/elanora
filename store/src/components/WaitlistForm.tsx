@@ -126,7 +126,7 @@ export default function WaitlistForm({ variant = "hero" }: WaitlistFormProps) {
         </div>
 
         <p className={`text-xs ${isDark ? "text-white/40" : "text-warm-gray-light"}`}>
-          Save this code — use it when the collection drops July 15, 2026.
+          Save this code — use it when the collection drops August 20, 2026.
         </p>
       </div>
     );

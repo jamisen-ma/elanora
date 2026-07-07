@@ -8,6 +8,9 @@ export default function AddToCartButton({ product }: { product: Product }) {
   const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const [selectedColor, setSelectedColor] = useState(
+    product.colors?.[0]?.name
+  );
 
   if (product.soldOut) {
     return (
@@ -21,13 +24,38 @@ export default function AddToCartButton({ product }: { product: Product }) {
   }
 
   const handleAdd = () => {
-    addItem(product, quantity);
+    addItem(product, quantity, selectedColor);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
 
   return (
     <div className="space-y-4">
+      {/* Color selector */}
+      {product.colors && product.colors.length > 0 && (
+        <div>
+          <label className="text-xs tracking-[0.15em] uppercase text-warm-gray block mb-2">
+            Color — {selectedColor}
+          </label>
+          <div className="flex gap-3">
+            {product.colors.map((color) => (
+              <button
+                key={color.name}
+                onClick={() => setSelectedColor(color.name)}
+                className={`w-8 h-8 rounded-full border-2 transition-all ${
+                  selectedColor === color.name
+                    ? "border-foreground scale-110"
+                    : "border-cream-dark hover:border-warm-gray"
+                }`}
+                style={{ backgroundColor: color.hex }}
+                aria-label={color.name}
+                title={color.name}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Quantity selector */}
       <div>
         <label className="text-xs tracking-[0.15em] uppercase text-warm-gray block mb-2">

@@ -13,7 +13,7 @@ export default function PromoBanner() {
         <span className="text-gold-light font-medium">30% off</span>
         {" "}for Founding Members —{" "}
         <span className="hidden sm:inline">Join the waitlist and get your exclusive code. </span>
-        Launching July 15, 2026
+        Launching August 20, 2026
       </p>
       <button
         onClick={() => setDismissed(true)}

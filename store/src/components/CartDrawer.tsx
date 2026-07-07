@@ -59,7 +59,7 @@ export default function CartDrawer() {
           ) : (
             <ul className="space-y-6">
               {items.map((item) => (
-                <li key={item.product.id} className="flex gap-4">
+                <li key={`${item.product.id}-${item.color || ''}`} className="flex gap-4">
                   <Link
                     href={`/product/${item.product.slug}`}
                     onClick={() => setIsOpen(false)}
@@ -81,13 +81,16 @@ export default function CartDrawer() {
                     >
                       {item.product.name}
                     </Link>
+                    {item.color && (
+                      <p className="text-xs text-warm-gray mt-0.5">{item.color}</p>
+                    )}
                     <p className="text-sm text-warm-gray mt-0.5">
                       {formatPrice(item.product.price)}
                     </p>
                     <div className="flex items-center justify-between mt-2">
                       <div className="flex items-center border border-cream-dark rounded-sm">
                         <button
-                          onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                          onClick={() => updateQuantity(item.product.id, item.quantity - 1, item.color)}
                           disabled={item.quantity <= 1}
                           className="px-2 py-1 text-xs text-warm-gray hover:text-foreground disabled:opacity-30 transition-colors"
                           aria-label="Decrease quantity"
@@ -98,7 +101,7 @@ export default function CartDrawer() {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                          onClick={() => updateQuantity(item.product.id, item.quantity + 1, item.color)}
                           className="px-2 py-1 text-xs text-warm-gray hover:text-foreground transition-colors"
                           aria-label="Increase quantity"
                         >
@@ -106,7 +109,7 @@ export default function CartDrawer() {
                         </button>
                       </div>
                       <button
-                        onClick={() => removeItem(item.product.id)}
+                        onClick={() => removeItem(item.product.id, item.color)}
                         className="text-xs text-warm-gray-light hover:text-red-500 transition-colors underline"
                       >
                         Remove

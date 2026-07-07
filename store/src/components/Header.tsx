@@ -83,11 +83,11 @@ export default function Header() {
             {/* Logo */}
             <Link href="/" className="absolute left-1/2 -translate-x-1/2">
               <Image
-                src="/images/logo/elanora-logo.png"
-                alt="Elanora"
+                src="/images/logo.png"
+                alt="Elanora Jewelry"
                 width={120}
-                height={60}
-                className={`h-10 sm:h-12 w-auto transition-all ${isHome && !scrolled ? "brightness-200" : ""}`}
+                height={120}
+                className={`h-12 sm:h-14 w-auto transition-all duration-300 ${isHome && !scrolled ? "brightness-0 invert" : ""}`}
                 priority
               />
             </Link>
