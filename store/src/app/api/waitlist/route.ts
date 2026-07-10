@@ -27,9 +27,11 @@ function buildWelcomeEmail(promoCode: string): string {
           <!-- Header -->
           <tr>
             <td style="padding:40px 40px 30px;text-align:center;border-bottom:1px solid #f0ece4;">
-              <h1 style="margin:0;font-size:28px;font-weight:300;letter-spacing:0.15em;color:#1a1a1a;">
-                E L A N O R A
-              </h1>
+              <a href="https://elanorajewelry.com" style="text-decoration:none;">
+                <h1 style="margin:0;font-size:28px;font-weight:300;letter-spacing:0.15em;color:#1a1a1a;">
+                  E L A N O R A
+                </h1>
+              </a>
               <p style="margin:8px 0 0;font-size:10px;letter-spacing:0.3em;color:#b8976b;text-transform:uppercase;">
                 Fine Jewelry
               </p>
@@ -137,11 +139,18 @@ function buildWelcomeEmail(promoCode: string): string {
             </td>
           </tr>
 
-          <!-- CTA Button -->
+          <!-- CTA Buttons -->
+          <tr>
+            <td style="padding:0 40px 16px;text-align:center;">
+              <a href="https://elanorajewelry.com/shop" style="display:inline-block;background-color:#1a1a1a;color:#ffffff;text-decoration:none;font-size:12px;letter-spacing:0.15em;text-transform:uppercase;padding:14px 32px;">
+                Browse the Collection
+              </a>
+            </td>
+          </tr>
           <tr>
             <td style="padding:0 40px 40px;text-align:center;">
-              <a href="https://www.instagram.com/elanorajewelry_2024/" style="display:inline-block;background-color:#1a1a1a;color:#ffffff;text-decoration:none;font-size:12px;letter-spacing:0.15em;text-transform:uppercase;padding:14px 32px;">
-                Follow Us on Instagram
+              <a href="https://www.instagram.com/elanorajewelry_2024/" style="display:inline-block;color:#b8976b;text-decoration:none;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;">
+                Follow Us on Instagram &rarr;
               </a>
             </td>
           </tr>
