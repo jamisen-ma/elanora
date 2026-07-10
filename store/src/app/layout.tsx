@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { DM_Sans, Cormorant_Garamond } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { CartProvider } from "@/context/CartContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CustomAnalytics from "@/components/Analytics";
@@ -22,7 +21,7 @@ const cormorant = Cormorant_Garamond({
 
 export const metadata: Metadata = {
   title: {
-    default: "Elanora — Launching July 2026",
+    default: "Elanora — Launching August 2026",
     template: "%s | Elanora",
   },
   description:
@@ -38,7 +37,7 @@ export const metadata: Metadata = {
     "fine jewelry",
   ],
   openGraph: {
-    title: "Elanora — Launching July 2026",
+    title: "Elanora — Launching August 2026",
     description:
       "Jewelry designed to be worn every day and remembered forever. Join the waitlist for early access.",
     type: "website",
@@ -54,11 +53,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${dmSans.variable} ${cormorant.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <CartProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </CartProvider>
+        <Header />
+        <main className="flex-1">{children}</main>
+        <Footer />
         <Analytics />
         <SpeedInsights />
         <CustomAnalytics />

@@ -61,48 +61,6 @@ export default function HomePage() {
       </section>
 
       {/* ============================================ */}
-      {/* EDITORIAL SPLIT — Story + Visual             */}
-      {/* ============================================ */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 lg:gap-0 items-stretch min-h-[600px]">
-          {/* Left — Image placeholder */}
-          <div className="relative aspect-[4/5] lg:aspect-auto overflow-hidden">
-            <Image src="/images/editorial-portrait.jpg" alt="Woman wearing layered cross necklace" fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" unoptimized />
-          </div>
-
-          {/* Right — Copy */}
-          <div className="bg-white flex items-center p-8 sm:p-12 lg:p-16">
-            <div className="max-w-md">
-              <p className="text-[10px] sm:text-xs tracking-[0.4em] uppercase text-gold mb-4 font-sans">
-                The Summer Solstice Collection
-              </p>
-              <h2 className="text-3xl sm:text-4xl font-light mb-6 leading-snug">
-                Six pieces.
-                <br />
-                Made for the
-                <br />
-                <span className="italic">longest days.</span>
-              </h2>
-              <p className="text-warm-gray leading-relaxed mb-8 font-sans">
-                Celestial motifs, moonstone shimmer, and romantic gold details —
-                designed to catch the light from sunrise to sunset. Limited
-                quantities, crafted to last.
-              </p>
-              <Link
-                href="/shop"
-                className="inline-flex items-center gap-3 text-sm tracking-[0.2em] uppercase text-foreground border-b-2 border-foreground pb-1 hover:text-gold hover:border-gold transition-colors font-sans"
-              >
-                Shop the Collection
-                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================ */}
       {/* FEATURED PRODUCTS — Grid with hover          */}
       {/* ============================================ */}
       <section className="bg-white py-20 sm:py-28">
@@ -113,7 +71,7 @@ export default function HomePage() {
                 Curated for You
               </p>
               <h2 className="text-3xl sm:text-4xl font-light">
-                Bestsellers
+                The Collection
               </h2>
             </div>
             <Link
@@ -145,7 +103,7 @@ export default function HomePage() {
                   {/* Hover overlay with quick-view */}
                   <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                     <div className="bg-white/95 backdrop-blur-sm text-center py-3 text-xs tracking-[0.2em] uppercase text-foreground font-sans">
-                      Quick View
+                      View Details
                     </div>
                   </div>
                 </div>

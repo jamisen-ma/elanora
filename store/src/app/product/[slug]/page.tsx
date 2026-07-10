@@ -4,8 +4,8 @@ import Image from "next/image";
 import { getAllProducts, getProductBySlug, getCollectionBySlug, formatPrice } from "@/data/products";
 import { getStylingGuide } from "@/data/stylingGuides";
 import ImageGallery from "@/components/ImageGallery";
-import AddToCartButton from "@/components/AddToCartButton";
 import ProductCard from "@/components/ProductCard";
+import ProductWaitlistCTA from "@/components/ProductWaitlistCTA";
 import StylingGuideSection from "@/components/StylingGuide";
 
 export function generateStaticParams() {
@@ -139,8 +139,8 @@ export default async function ProductPage({
               </ul>
             </div>
 
-            {/* Add to cart */}
-            <AddToCartButton product={product} />
+            {/* Waitlist CTA */}
+            <ProductWaitlistCTA />
 
             {/* Share */}
             <div className="border-t border-cream-dark mt-6 pt-6">

@@ -236,6 +236,7 @@ export async function POST(req: Request) {
         const fromAddress = process.env.RESEND_FROM_EMAIL || "Elanora <onboarding@resend.dev>";
         await resend.emails.send({
           from: fromAddress,
+          replyTo: "elanorajewelry2024@gmail.com",
           to: normalizedEmail,
           subject: "Welcome to Elanora — Here's Your 30% Off Code",
           html: buildWelcomeEmail(PROMO_CODE),
@@ -247,6 +248,20 @@ export async function POST(req: Request) {
         console.log(`[WAITLIST EMAIL SENT] ${normalizedEmail}`);
       } catch (emailErr) {
         console.error("[WAITLIST EMAIL ERROR]", emailErr);
+      }
+
+      // Add to Resend Audience for tracking
+      const audienceId = process.env.RESEND_AUDIENCE_ID;
+      if (audienceId) {
+        try {
+          await resend.contacts.create({
+            email: normalizedEmail,
+            audienceId,
+          });
+          console.log(`[WAITLIST CONTACT ADDED] ${normalizedEmail}`);
+        } catch (contactErr) {
+          console.error("[WAITLIST CONTACT ERROR]", contactErr);
+        }
       }
     } else {
       console.log(

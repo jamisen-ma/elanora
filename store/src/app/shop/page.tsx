@@ -4,9 +4,9 @@ import { getAllProducts } from "@/data/products";
 import ShopContent from "@/components/ShopContent";
 
 export const metadata: Metadata = {
-  title: "Shop All Jewelry",
+  title: "Preview the Collection",
   description:
-    "Browse our curated collection of fine jewelry — necklaces, rings, and accessories.",
+    "Preview our debut collection of fine jewelry — launching August 20, 2026. Join the waitlist for 30% off.",
 };
 
 
@@ -24,11 +24,11 @@ export default function ShopPage() {
             The Collection
           </p>
           <h1 className="text-3xl sm:text-5xl font-light text-white mb-4">
-            Shop Jewelry
+            Preview the Collection
           </h1>
           <p className="text-sm text-white/60 max-w-md mx-auto">
-            Every piece is thoughtfully selected and crafted with care. Find the
-            perfect addition to your jewelry collection.
+            Our debut collection launches August 20, 2026. Browse every piece
+            and sign up for 30% off your first order.
           </p>
         </div>
       </section>

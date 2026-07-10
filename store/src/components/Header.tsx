@@ -4,12 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { useCart } from "@/context/CartContext";
-import CartDrawer from "./CartDrawer";
 import PromoBanner from "./PromoBanner";
 
 export default function Header() {
-  const { totalItems, setIsOpen } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
@@ -41,8 +38,7 @@ export default function Header() {
     : "text-warm-gray hover:text-gold";
 
   return (
-    <>
-      <div className="fixed top-0 left-0 right-0 z-40">
+    <div className="fixed top-0 left-0 right-0 z-40">
       {(!isHome || scrolled) && <PromoBanner />}
       <header className={`transition-all duration-300 ${headerBg}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -96,23 +92,9 @@ export default function Header() {
             <div className="flex items-center gap-3 sm:gap-5">
               <button
                 onClick={scrollToSignup}
-                className="hidden sm:inline-block bg-gold text-white text-[10px] tracking-[0.2em] uppercase px-5 py-2.5 hover:bg-gold-dark transition-colors"
+                className="bg-gold text-white text-[10px] tracking-[0.2em] uppercase px-5 py-2.5 hover:bg-gold-dark transition-colors"
               >
-                Join Waitlist
-              </button>
-              <button
-                onClick={() => setIsOpen(true)}
-                className={`relative p-2 ${textColor} hover:text-gold transition-colors`}
-                aria-label="Open cart"
-              >
-                <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                </svg>
-                {totalItems > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 bg-gold text-white text-[10px] font-medium w-4.5 h-4.5 flex items-center justify-center rounded-full">
-                    {totalItems}
-                  </span>
-                )}
+                Get 30% Off
               </button>
             </div>
           </div>
@@ -150,14 +132,12 @@ export default function Header() {
                 onClick={scrollToSignup}
                 className="mt-4 bg-gold text-white text-xs tracking-[0.2em] uppercase px-6 py-3.5 hover:bg-gold-dark transition-colors w-full"
               >
-                Join the Waitlist — 30% Off
+                Get 30% Off — Join the Waitlist
               </button>
             </nav>
           </div>
         )}
       </header>
-      </div>
-      <CartDrawer />
-    </>
+    </div>
   );
 }

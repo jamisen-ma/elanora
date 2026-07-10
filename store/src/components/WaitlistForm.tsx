@@ -4,7 +4,7 @@ import { useState } from "react";
 import { trackEvent } from "@/components/Analytics";
 
 interface WaitlistFormProps {
-  variant?: "hero" | "bottom";
+  variant?: "hero" | "bottom" | "product";
 }
 
 const PROMO_CODE = "FOUNDING30";
@@ -73,7 +73,7 @@ export default function WaitlistForm({ variant = "hero" }: WaitlistFormProps) {
 
   // Success state — show promo code
   if (status === "success") {
-    const isDark = variant === "bottom";
+    const isDark = variant === "bottom" || variant === "hero";
 
     return (
       <div className={`text-center max-w-md mx-auto ${isDark ? "" : ""}`}>
@@ -128,6 +128,34 @@ export default function WaitlistForm({ variant = "hero" }: WaitlistFormProps) {
         <p className={`text-xs ${isDark ? "text-white/40" : "text-warm-gray-light"}`}>
           Save this code — use it when the collection drops August 20, 2026.
         </p>
+      </div>
+    );
+  }
+
+  // Product variant (light background, inline)
+  if (variant === "product") {
+    return (
+      <div>
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Your email address"
+            required
+            className="flex-1 bg-white border border-cream-dark text-foreground placeholder:text-warm-gray-light text-sm px-4 py-3 focus:outline-none focus:border-gold transition-colors"
+          />
+          <button
+            type="submit"
+            disabled={status === "loading"}
+            className="bg-foreground text-white text-xs tracking-[0.15em] uppercase px-6 py-3 hover:bg-gold transition-colors disabled:opacity-60 whitespace-nowrap"
+          >
+            {status === "loading" ? "Joining..." : "Get 30% Off"}
+          </button>
+        </form>
+        {status === "error" && (
+          <p className="text-sm text-red-500 mt-2">{errorMsg}</p>
+        )}
       </div>
     );
   }
