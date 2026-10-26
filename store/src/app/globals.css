@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+/* Announcement bar height; PromoBanner overwrites this with the measured value.
+   These defaults avoid a jump before it runs. */
+:root {
+  --promo-h: 50px;
+}
+@media (min-width: 40rem) {
+  :root {
+    --promo-h: 32px;
+  }
+}
+
 @theme inline {
   --color-background: #ffffff;
   --color-foreground: #1a1a1a;

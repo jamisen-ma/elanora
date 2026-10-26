@@ -1,14 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import type { Product } from "@/data/products";
 import ProductCard from "./ProductCard";
 
-const categories = ["All", "Necklaces", "Earrings", "Rings"] as const;
+const categories = ["All", "Necklaces", "Earrings", "Rings", "Bracelets"] as const;
 type Category = (typeof categories)[number];
 
 export default function ShopContent({ products }: { products: Product[] }) {
   const [active, setActive] = useState<Category>("All");
+
+  // Follow the category in the URL (?category=rings), used by the header and footer.
+  const param = useSearchParams().get("category");
+  useEffect(() => {
+    const match = categories.find((c) => c.toLowerCase() === param?.toLowerCase());
+    queueMicrotask(() => setActive(match ?? "All"));
+  }, [param]);
 
   const filtered =
     active === "All"
@@ -20,6 +28,7 @@ export default function ShopContent({ products }: { products: Product[] }) {
     Necklaces: products.filter((p) => p.category === "Necklaces").length,
     Earrings: products.filter((p) => p.category === "Earrings").length,
     Rings: products.filter((p) => p.category === "Rings").length,
+    Bracelets: products.filter((p) => p.category === "Bracelets").length,
   };
 
   return (

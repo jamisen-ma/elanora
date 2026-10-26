@@ -1,14 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function PromoBanner() {
   const [dismissed, setDismissed] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Publish the bar's height as --promo-h so the homepage hero can fill exactly the
+  // rest of the viewport (it changes with wrapping, resizing and dismissing).
+  useEffect(() => {
+    const root = document.documentElement;
+    const el = ref.current;
+    if (!el) {
+      root.style.setProperty("--promo-h", "0px");
+      return;
+    }
+    const update = () => root.style.setProperty("--promo-h", `${el.offsetHeight}px`);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [dismissed]);
 
   if (dismissed) return null;
 
   return (
-    <div className="bg-foreground text-white text-center py-2 px-4 relative">
+    <div ref={ref} className="bg-foreground text-white text-center py-2 px-4 relative">
       <p className="text-[10px] sm:text-xs tracking-[0.15em] uppercase">
         <span className="text-gold-light font-medium">30% off</span>
         {" "}for Founding Members —{" "}
