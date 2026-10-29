@@ -80,7 +80,7 @@ export default function ProductLines() {
         <header className="text-center">
           <h2
             id="product-lines-heading"
-            className="text-[11px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/70"
+            className="text-[13px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/70"
           >
             Three ways to make it yours
           </h2>
@@ -117,18 +117,18 @@ export default function ProductLines() {
                   </div>
                 </div>
 
-                <p className="mt-8 text-[10px] tracking-[0.25em] text-[#1d1d1f]/45 sm:mt-10">
+                <p className="mt-8 text-[12px] tracking-[0.25em] text-[#1d1d1f]/45 sm:mt-10">
                   {l.index}
                 </p>
-                <h3 className="mt-2 text-[12px] font-medium uppercase tracking-[0.28em]">
+                <h3 className="mt-2 text-[14px] font-medium uppercase tracking-[0.28em]">
                   {l.name}
                 </h3>
-                <p className="mt-4 text-[14px] leading-[1.6] text-[#6e6e73]">
+                <p className="mt-4 text-[16px] leading-[1.6] text-[#6e6e73]">
                   {l.description[0]}
                   <br />
                   {l.description[1]}
                 </p>
-                <span className="relative mt-7 inline-block pb-1.5 text-[11px] font-medium uppercase tracking-[0.2em]">
+                <span className="relative mt-7 inline-block pb-1.5 text-[13px] font-medium uppercase tracking-[0.2em]">
                   {l.cta} &rarr;
                   <span aria-hidden className="absolute inset-x-0 bottom-0 h-px bg-[#1d1d1f]/20" />
                   <span

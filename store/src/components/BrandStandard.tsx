@@ -33,7 +33,7 @@ export default function BrandStandard() {
     <section aria-labelledby="standard-heading" className="bg-white text-[#1d1d1f]">
       <div className="mx-auto flex max-w-[1200px] flex-col justify-center px-8 py-24 sm:px-12 sm:py-28 md:min-h-[55vh] lg:min-h-[60vh] lg:px-16 lg:py-24">
         <header className="text-center">
-          <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/70">
+          <p className="text-[13px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/70">
             The Elanora Standard
           </p>
           <h2
@@ -49,11 +49,11 @@ export default function BrandStandard() {
         <ul className="mx-auto mt-16 grid w-full max-w-[960px] grid-cols-1 gap-y-14 text-center sm:mt-20 md:grid-cols-3 md:gap-x-12 lg:mt-20 lg:gap-x-16">
           {points.map((p) => (
             <li key={p.index}>
-              <p className="text-[10px] tracking-[0.25em] text-[#1d1d1f]/45">{p.index}</p>
-              <h3 className="mt-2 text-[12px] font-medium uppercase tracking-[0.28em]">
+              <p className="text-[12px] tracking-[0.25em] text-[#1d1d1f]/45">{p.index}</p>
+              <h3 className="mt-2 text-[14px] font-medium uppercase tracking-[0.28em]">
                 {p.title}
               </h3>
-              <p className="mx-auto mt-4 max-w-[17rem] text-balance text-[14px] leading-[1.6] text-[#6e6e73]">
+              <p className="mx-auto mt-4 max-w-[17rem] text-balance text-[16px] leading-[1.6] text-[#6e6e73]">
                 {p.body}
               </p>
             </li>

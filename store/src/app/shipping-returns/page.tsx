@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CUSTOM_POLICY, CUSTOM_TERMS } from "@/data/customOrderPolicy";
 
 export const metadata: Metadata = {
   title: "Shipping & Returns",
@@ -35,7 +36,7 @@ export default function ShippingReturnsPage() {
               <thead>
                 <tr className="bg-cream">
                   <th className="text-left px-5 py-3 text-xs tracking-widest uppercase text-warm-gray font-medium">Destination</th>
-                  <th className="text-left px-5 py-3 text-xs tracking-widest uppercase text-warm-gray font-medium">Delivery</th>
+                  <th className="text-left px-5 py-3 text-xs tracking-widest uppercase text-warm-gray font-medium">Transit after dispatch</th>
                   <th className="text-left px-5 py-3 text-xs tracking-widest uppercase text-warm-gray font-medium">Cost</th>
                 </tr>
               </thead>
@@ -60,19 +61,42 @@ export default function ShippingReturnsPage() {
               all orders over $75 — domestic and international.
             </p>
             <p>
-              All orders are processed within 1 &ndash; 2 business days.
-              Orders placed on weekends or holidays will be processed on the
-              next business day.
+              In-stock orders are usually processed within 1 &ndash; 2 business days.
+              Made-to-order pieces need production time before dispatch; check the
+              product page for the estimated lead time. Orders placed on weekends
+              or holidays begin processing on the next business day.
             </p>
             <p>
               Once your order has shipped, you will receive a confirmation
-              email with a tracking number. Please allow up to 24 hours for
+              email with a tracking number. Transit usually takes 5 &ndash; 10 business days.
+              Please allow up to 24 hours for
               tracking information to update.
             </p>
             <p>
               International orders may be subject to customs duties and import
               taxes, which are the responsibility of the customer.
             </p>
+          </div>
+        </section>
+
+        <hr className="border-cream-dark" />
+
+        {/* Custom order payment and returns */}
+        <section id="custom-orders" className="scroll-mt-24">
+          <h2 className="text-lg font-medium mb-5">Custom Orders: Payment, Cancellation &amp; Returns</h2>
+          <div className="space-y-3 text-sm text-warm-gray leading-relaxed">
+            <p>
+              These terms apply to custom pieces, including engagement rings designed with Design Your Ring.
+              {" "}{CUSTOM_POLICY.inquiry}
+            </p>
+            <ul className="list-none space-y-2 ml-1">
+              {CUSTOM_TERMS.map((t) => (
+                <li key={t} className="flex items-start gap-2">
+                  <span className="text-gold mt-0.5 text-[8px]">&#9670;</span>
+                  {t}
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 
@@ -88,8 +112,13 @@ export default function ShippingReturnsPage() {
           </h2>
           <div className="space-y-3 text-sm text-warm-gray leading-relaxed">
             <p>
+              The return, exchange and refund terms below apply to non-custom items. Custom pieces
+              are final sale; see{" "}
+              <a href="#custom-orders" className="text-foreground underline underline-offset-4">Custom Orders</a>.
+            </p>
+            <p>
               We want you to love your Elanora purchase. If you&apos;re not
-              completely satisfied, you may return any unworn item within
+              completely satisfied, you may return an eligible unworn, non-custom item within
               <span className="text-foreground font-medium"> 30 days </span>
               of delivery for a full refund to your original payment method.
             </p>
@@ -129,7 +158,7 @@ export default function ShippingReturnsPage() {
           <div className="space-y-3 text-sm text-warm-gray leading-relaxed">
             <p>
               Need a different size or style? We&apos;re happy to help with
-              exchanges. Email us at{" "}
+              exchanges for eligible non-custom items. Email us at{" "}
               <span className="text-foreground">hello@elanora.com</span> and
               we&apos;ll arrange a one-time exchange at no additional shipping
               cost.

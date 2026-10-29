@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CUSTOM_POLICY } from "@/data/customOrderPolicy";
 
 export const metadata: Metadata = {
   title: "FAQ",
@@ -11,17 +12,17 @@ const faqs = [
   {
     question: "What materials are your jewelry made from?",
     answer:
-      "Our pieces are crafted from premium materials including 18K gold-plated stainless steel, titanium steel, and genuine gemstones. All metals are hypoallergenic and tarnish-resistant, making them safe for sensitive skin.",
+      "Materials vary by design. Please check the product page for the exact metal, finish, and stone details of the piece you’re considering. If you have a metal sensitivity, contact us before ordering and we’ll help you review the listed materials.",
   },
   {
     question: "Is your jewelry waterproof?",
     answer:
-      "While our stainless steel and titanium pieces are water-resistant, we recommend removing jewelry before showering, swimming, or exercising to preserve the gold plating and extend its lifespan.",
+      "We recommend removing jewelry before showering, swimming, or exercising. Water, perspiration, and chemicals can affect some finishes and stones; see the product details and care instructions for guidance specific to your piece.",
   },
   {
     question: "How long does shipping take?",
     answer:
-      "Domestic (US) and international orders to Canada, UK, and Australia ship within 1–2 business days and arrive in 5–10 business days. Shipping is a flat $9.99, or free on orders over $75.",
+      "In-stock orders are usually processed within 1–2 business days. Made-to-order pieces need production time before dispatch; the product page lists the estimated lead time. Once shipped, delivery usually takes 5–10 business days. Shipping is $9.99, or free on orders over $75.",
   },
   {
     question: "Do you ship internationally?",
@@ -31,12 +32,20 @@ const faqs = [
   {
     question: "What is your return policy?",
     answer:
-      "We offer a 30-day return policy. Items must be unworn, undamaged, and in original packaging with tags attached. Email us at hello@elanora.com with your order number to start a return.",
+      `Eligible unworn, non-custom items may be returned within 30 days of delivery in their original condition and packaging. ${CUSTOM_POLICY.finalSale} ${CUSTOM_POLICY.rights} See Shipping & Returns for details.`,
+  },
+  {
+    question: "How does payment work for a custom order?",
+    answer: `${CUSTOM_POLICY.inquiry} ${CUSTOM_POLICY.payment} ${CUSTOM_POLICY.nonRefundable} ${CUSTOM_POLICY.shipping}`,
+  },
+  {
+    question: "Can I cancel or return a custom order?",
+    answer: `${CUSTOM_POLICY.inquiry} ${CUSTOM_POLICY.nonRefundable} ${CUSTOM_POLICY.finalSale} ${CUSTOM_POLICY.rights}`,
   },
   {
     question: "Can I exchange an item for a different size or style?",
     answer:
-      "Absolutely! We offer one-time exchanges at no additional shipping cost. Email us at hello@elanora.com and we'll arrange it. Exchanges are subject to availability.",
+      `Eligible non-custom items may be exchanged once at no additional shipping cost, subject to availability. Email us at hello@elanora.com for help. ${CUSTOM_POLICY.finalSale}`,
   },
   {
     question: "How do I find my ring size?",

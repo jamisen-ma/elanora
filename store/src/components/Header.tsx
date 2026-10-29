@@ -18,6 +18,11 @@ const navLinks = [
 
 const navItem = `${didone.className} text-[12px] font-medium uppercase tracking-[0.12em] xl:text-[13px] xl:tracking-[0.16em] text-[#1d1d1f]/85 transition-colors hover:text-[#1d1d1f]`;
 
+// Next.js only scrolls to the top of the page content, which sits below the announcement
+// bar — so the bar would scroll out of view (and the homepage hero leave a white strip).
+// Header links scroll the window to the very top instead.
+const toTop = () => window.scrollTo({ top: 0, behavior: "instant" });
+
 export default function Header() {
   const { totalItems, setIsOpen } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -87,7 +92,7 @@ export default function Header() {
               Bridal sits on the right, next to search and bag. */}
           <nav className="hidden items-center gap-5 xl:gap-8 lg:flex" aria-label="Main">
             {navLinks.slice(0, 4).map((l) => (
-              <Link key={l.label} href={l.href} className={navItem}>
+              <Link key={l.label} href={l.href} scroll={false} onClick={toTop} className={navItem}>
                 {l.label}
               </Link>
             ))}
@@ -96,15 +101,19 @@ export default function Header() {
           {/* Center: wordmark */}
           <Link
             href="/"
+            scroll={false}
             className={`${didone.className} absolute left-1/2 -translate-x-1/2 pl-[0.38em] text-[18px] font-normal tracking-[0.38em] text-[#1d1d1f] lg:text-[21px]`}
-            onClick={() => setMobileMenuOpen(false)}
+            onClick={() => {
+              setMobileMenuOpen(false);
+              toTop();
+            }}
           >
             ELANORA
           </Link>
 
           {/* Right: Search (desktop) + Bag */}
           <div className="flex items-center gap-5">
-            <Link href={navLinks[4].href} className={`hidden lg:mr-3 lg:inline xl:mr-5 ${navItem}`}>
+            <Link href={navLinks[4].href} scroll={false} onClick={toTop} className={`hidden lg:mr-3 lg:inline xl:mr-5 ${navItem}`}>
               {navLinks[4].label}
             </Link>
             <Link
@@ -127,7 +136,7 @@ export default function Header() {
                 <path strokeLinecap="round" d="M7 7V5.5a3 3 0 016 0V7" />
               </svg>
               {totalItems > 0 && (
-                <span className="absolute -right-1 -top-0.5 text-[10px] leading-none text-[#1d1d1f]">
+                <span className="absolute -right-1 -top-0.5 text-[12px] leading-none text-[#1d1d1f]">
                   {totalItems}
                 </span>
               )}
@@ -145,10 +154,14 @@ export default function Header() {
               <Link
                 key={l.label}
                 href={l.href}
+                scroll={false}
                 className={`${didone.className} py-2.5 text-[22px] font-normal tracking-[-0.01em] ${
                   l.label === "Search" ? "text-[#1d1d1f]/60" : "text-[#1d1d1f]"
                 }`}
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  toTop();
+                }}
               >
                 {l.label}
               </Link>

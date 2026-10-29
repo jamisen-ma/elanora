@@ -49,7 +49,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-4 lg:grid-cols-[repeat(4,minmax(0,1fr))_1.4fr] lg:gap-x-10">
           {groups.map((g) => (
             <div key={g.title}>
-              <p className="text-[11px] font-medium uppercase tracking-[0.24em]">{g.title}</p>
+              <p className="text-[13px] font-medium uppercase tracking-[0.24em]">{g.title}</p>
               <ul className="mt-5 space-y-3">
                 {g.links.map((l) => (
                   <li key={l.label}>
@@ -57,12 +57,12 @@ export default function Footer() {
                       <a
                         href={l.href}
                         {...(l.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                        className="text-[13px] text-[#6e6e73] transition-colors hover:text-[#1d1d1f]"
+                        className="text-[15px] text-[#6e6e73] transition-colors hover:text-[#1d1d1f]"
                       >
                         {l.label}
                       </a>
                     ) : (
-                      <Link href={l.href} className="text-[13px] text-[#6e6e73] transition-colors hover:text-[#1d1d1f]">
+                      <Link href={l.href} className="text-[15px] text-[#6e6e73] transition-colors hover:text-[#1d1d1f]">
                         {l.label}
                       </Link>
                     )}
@@ -73,16 +73,16 @@ export default function Footer() {
           ))}
 
           <div className="col-span-2 md:col-span-4 lg:col-span-1">
-            <p className="text-[11px] font-medium uppercase tracking-[0.24em]">Stay in touch</p>
-            <p className="mt-5 text-[13px] text-[#6e6e73]">New pieces and launch news.</p>
+            <p className="text-[13px] font-medium uppercase tracking-[0.24em]">Stay in touch</p>
+            <p className="mt-5 text-[15px] text-[#6e6e73]">New pieces, gemstone stories, and notes from Elanora.</p>
             <div className="mt-4">
               <FooterSignup />
             </div>
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col items-start justify-between gap-3 border-t border-[#1d1d1f]/10 pt-6 text-[11px] tracking-[0.04em] text-[#86868b] sm:flex-row sm:items-center">
-          <span className="pl-[0.42em] text-[13px] font-light tracking-[0.42em] text-[#1d1d1f]">ELANORA</span>
+        <div className="mt-16 flex flex-col items-start justify-between gap-3 border-t border-[#1d1d1f]/10 pt-6 text-[13px] tracking-[0.04em] text-[#86868b] sm:flex-row sm:items-center">
+          <span className="pl-[0.42em] text-[15px] font-light tracking-[0.42em] text-[#1d1d1f]">ELANORA</span>
           <span>&copy; {new Date().getFullYear()} Elanora. All rights reserved.</span>
         </div>
       </div>

@@ -46,7 +46,7 @@ export default function InColorBanner() {
 
         {/* Copy */}
         <div className="px-8 pb-24 pt-6 text-center sm:pb-28 lg:pb-32 lg:pt-4">
-          <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/70">
+          <p className="text-[13px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/70">
             In Color
           </p>
           <h2
@@ -55,12 +55,12 @@ export default function InColorBanner() {
           >
             A little <em className="italic">more color.</em>
           </h2>
-          <p className="mt-5 text-[14px] leading-relaxed tracking-[0.01em] text-[#6e6e73] sm:text-[15px]">
+          <p className="mt-5 text-[16px] leading-relaxed tracking-[0.01em] text-[#6e6e73] sm:text-[16px]">
             Gemstones made to stand out.
           </p>
           <Link
             href="/in-color"
-            className="group relative mt-10 inline-block pb-1.5 text-[12px] font-medium uppercase tracking-[0.2em] sm:mt-12"
+            className="group relative mt-10 inline-block pb-1.5 text-[14px] font-medium uppercase tracking-[0.2em] sm:mt-12"
           >
             Explore color &rarr;
             <span

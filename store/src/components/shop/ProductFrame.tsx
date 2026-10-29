@@ -61,7 +61,7 @@ export default function ProductFrame({
         />
       )}
       {!src && (
-        <span className="absolute inset-x-0 bottom-4 text-center text-[10px] uppercase tracking-[0.22em] text-[#1d1d1f]/30">
+        <span className="absolute inset-x-0 bottom-4 text-center text-[12px] uppercase tracking-[0.22em] text-[#1d1d1f]/30">
           [Image pending]
         </span>
       )}

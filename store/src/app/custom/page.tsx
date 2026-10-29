@@ -2,69 +2,94 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { Cormorant_Garamond } from "next/font/google";
 import CustomRequest from "@/components/custom/CustomRequest";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Custom Jewelry",
-  description: "Start with one of our designs, share a reference, or describe your idea. Made to order.",
+  description: "Any diamond color, size, metal or style — share a photo or describe a feeling, and we’ll make it real together. Made to order.",
 };
 
 const serif = Cormorant_Garamond({ subsets: ["latin"], weight: ["400"] });
 
-// Custom jewelry: a short four-step explanation and an inquiry form. Not a configurator —
-// customers start from an ELANORA design or their own idea and we confirm the details.
-
+// Kept deliberately short: the whole business in four lines. Full terms live on
+// /shipping-returns#custom-orders (src/data/customOrderPolicy.ts).
 const STEPS = [
-  { title: "Choose a starting point", text: ["Choose an ELANORA design or share your own idea."] },
-  { title: "Tell us what you want", text: ["Tell us the stone, metal, size, and any changes you want."] },
-  { title: "We confirm the details", text: ["We’ll confirm the design, price, and details with you before production."] },
-  { title: "We make it", text: ["Your piece is made to order.", "Please allow 4–8 weeks for production."] },
+  { number: "01", title: "Tell us your idea", text: "Free. It’s not an order." },
+  { number: "02", title: "Get your price", text: "We send the design and total price." },
+  { number: "03", title: "Pay to start", text: "We make your piece in about 4–8 weeks." },
+  { number: "04", title: "We ship it", text: "Nothing more to pay — it’s on its way." },
 ];
 
 export default function CustomPage() {
   return (
     <div className="bg-[#faf9f7] text-[#1d1d1f]">
-      <section className="px-6 pb-14 pt-16 text-center sm:pb-16 sm:pt-20 lg:pt-24">
-        <h1 className="text-[11px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/75">Custom Jewelry</h1>
+      <section className="px-6 pb-8 pt-10 text-center sm:pt-12 lg:pt-12">
+        <h1 className="text-[13px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/75">Custom Jewelry</h1>
         <p
-          className={`${serif.className} mt-5 text-balance text-[2.25rem] leading-[1.08] tracking-[-0.01em] md:mt-6 md:text-[2.75rem] lg:text-[3.25rem]`}
+          className={`${serif.className} mt-4 text-balance text-[2.25rem] leading-[1.08] tracking-[-0.01em] md:text-[2.75rem] lg:text-[3.25rem]`}
         >
-          Tell us what you want.
+          Dream it. We&rsquo;ll make it shine.
         </p>
-        <p className="mx-auto mt-5 max-w-md text-[14px] leading-[1.7] text-[#1d1d1f]/70">
-          Start with one of our designs, share a reference, or describe your idea.
+        <p className="mx-auto mt-3 max-w-md text-[16px] leading-[1.7] text-[#1d1d1f]/70">
+          Any color, any size, any metal, any style &mdash; or just a photo or a feeling. Tell us, and we&rsquo;ll make it real together.
         </p>
+        <a href="#custom-request" className="mt-6 inline-flex bg-[#1d1d1f] px-8 py-3.5 text-[13px] font-medium uppercase tracking-[0.22em] text-white transition-opacity hover:opacity-85">
+          Begin your piece
+        </a>
       </section>
 
-      <div className="relative mx-auto aspect-[4/5] w-full max-w-[1120px] overflow-hidden sm:aspect-[3/2] lg:aspect-[16/8]">
-        <Image
-          src="/images/catalog/oval-three-stone-diamond-ring/05-on-hand-v3.webp"
-          alt="An ELANORA oval three-stone diamond ring worn on the hand"
-          fill
-          priority
-          unoptimized
-          sizes="(max-width: 1120px) 100vw, 1120px"
-          className="object-cover"
-          style={{ objectPosition: "50% 55%" }}
-        />
+      <div className="px-6">
+        {/* soft, feathered edges so the photo melts into the page background */}
+        <div
+          className="relative mx-auto aspect-[2/1] w-full max-w-[760px] overflow-hidden sm:aspect-[3/1]"
+          style={{
+            WebkitMaskImage:
+              "linear-gradient(to right, transparent, #000 7%, #000 93%, transparent), linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent)",
+            WebkitMaskComposite: "source-in",
+            maskImage:
+              "linear-gradient(to right, transparent, #000 7%, #000 93%, transparent), linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent)",
+            maskComposite: "intersect",
+          }}
+        >
+          <Image
+            src="/images/custom/loose-diamonds-row.webp"
+            alt="A row of loose diamonds in sunlight: white round, pink cushion, white oval, yellow radiant, white pear and blue emerald cut"
+            fill
+            priority
+            unoptimized
+            sizes="(max-width: 808px) 100vw, 760px"
+            className="object-cover"
+            style={{ objectPosition: "50% 52%" }}
+          />
+        </div>
       </div>
 
-      <section aria-label="How it works" className="mx-auto max-w-[1232px] px-6 py-20 sm:py-24 lg:px-14">
-        <ol className="grid gap-12 sm:grid-cols-2 sm:gap-x-12 sm:gap-y-14 lg:grid-cols-4 lg:gap-10">
-          {STEPS.map((s, i) => (
-            <li key={s.title} className="border-t border-[#d2d2d7] pt-6">
-              <span className="block text-[10px] tracking-[0.2em] text-[#86868b]">{String(i + 1).padStart(2, "0")}</span>
-              <h2 className="mt-3 text-[11px] font-medium uppercase tracking-[0.24em]">{s.title}</h2>
-              {s.text.map((t) => (
-                <p key={t} className="mt-3 text-[14px] leading-[1.7] text-[#1d1d1f]/70">
-                  {t}
-                </p>
-              ))}
+      <section aria-label="How custom works" className="mx-auto max-w-[1232px] px-6 pb-14 pt-8 sm:pb-16 sm:pt-10 lg:px-14">
+        <h2 className={`${serif.className} text-center text-4xl leading-tight sm:text-5xl`}>How it works</h2>
+        {/* small cue to scroll on to the steps */}
+        <svg width="18" height="10" viewBox="0 0 18 10" fill="none" aria-hidden className="mx-auto mb-10 mt-3 text-[#1d1d1f]/45 motion-safe:animate-bounce sm:mb-12">
+          <path d="M1 1l8 8 8-8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        <ol className="grid gap-10 sm:grid-cols-2 sm:gap-x-12 sm:gap-y-14 lg:grid-cols-4 lg:gap-x-10 lg:gap-y-12">
+          {STEPS.map((s) => (
+            <li key={s.title} className="border-t border-[#d2d2d7] pt-5">
+              <span className="block text-[12px] tracking-[0.2em] text-[#86868b]">{s.number}</span>
+              <h3 className="mt-3 text-[13px] font-medium uppercase tracking-[0.2em]">{s.title}</h3>
+              <p className="mt-3 text-[16px] leading-[1.7] text-[#1d1d1f]/70">{s.text}</p>
             </li>
           ))}
         </ol>
       </section>
 
-      <CustomRequest />
+      <p className="mx-auto mb-12 max-w-xl px-6 text-center text-[15px] leading-[1.7] text-[#1d1d1f]/60">
+        Payment is non-refundable once made, and custom pieces can&rsquo;t be returned or exchanged. Your legal rights still apply.{" "}
+        <Link href="/shipping-returns#custom-orders" className="underline underline-offset-4 hover:text-[#1d1d1f]">
+          Full policy
+        </Link>
+      </p>
+      <div id="custom-request" className="scroll-mt-20">
+        <CustomRequest />
+      </div>
     </div>
   );
 }

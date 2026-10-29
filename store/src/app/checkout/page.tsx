@@ -170,7 +170,7 @@ export default function CheckoutPage() {
               {loading ? "Redirecting..." : "Pay with Stripe"}
             </button>
 
-            <p className="text-[11px] text-warm-gray-light mt-3 text-center">
+            <p className="text-[13px] text-warm-gray-light mt-3 text-center">
               You&apos;ll be redirected to Stripe&apos;s secure checkout
             </p>
 
@@ -178,7 +178,7 @@ export default function CheckoutPage() {
               <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
               </svg>
-              <span className="text-[10px] tracking-wide uppercase">Secure 256-bit SSL</span>
+              <span className="text-[12px] tracking-wide uppercase">Secure 256-bit SSL</span>
             </div>
           </div>
         </div>

@@ -26,11 +26,8 @@ export default function PromoBanner() {
 
   return (
     <div ref={ref} className="bg-foreground text-white text-center py-2 px-4 relative">
-      <p className="text-[10px] sm:text-xs tracking-[0.15em] uppercase">
-        <span className="text-gold-light font-medium">30% off</span>
-        {" "}for Founding Members —{" "}
-        <span className="hidden sm:inline">Join the waitlist and get your exclusive code. </span>
-        Launching July 15, 2026
+      <p className="text-[12px] sm:text-xs tracking-[0.15em] uppercase">
+        Custom and made-to-order jewelry <span aria-hidden>·</span> Made with you in mind
       </p>
       <button
         onClick={() => setDismissed(true)}

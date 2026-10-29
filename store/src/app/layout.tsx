@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Alegreya_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { CartProvider } from "@/context/CartContext";
@@ -9,34 +9,33 @@ import PromoBanner from "@/components/PromoBanner";
 import CustomAnalytics from "@/components/Analytics";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Fallback body font where Optima isn't installed (Windows, Android).
+const bodySans = Alegreya_Sans({
+  variable: "--font-alegreya-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "700"],
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "Elanora — Launching July 2026",
+    default: "Elanora — Jewelry Made for You",
     template: "%s | Elanora",
   },
   description:
-    "Jewelry designed to be worn every day and remembered forever. Join the Founding Members list for early access to our first collection.",
+    "Explore thoughtfully selected jewelry, colorful gemstones, and custom pieces made to order by Elanora.",
   keywords: [
     "jewelry",
-    "gold jewelry",
-    "necklaces",
-    "earrings",
-    "launch",
-    "pre-order",
-    "waitlist",
-    "fine jewelry",
+    "custom jewelry",
+    "gemstone jewelry",
+    "engagement rings",
+    "made to order jewelry",
   ],
   openGraph: {
-    title: "Elanora — Launching July 2026",
+    title: "Elanora — Jewelry Made for You",
     description:
-      "Jewelry designed to be worn every day and remembered forever. Join the waitlist for early access.",
+      "Explore thoughtfully selected jewelry, colorful gemstones, and custom pieces made to order by Elanora.",
     type: "website",
-    url: "https://elanora-beta.vercel.app",
+    url: "https://elanora.com",
   },
 };
 
@@ -46,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} h-full antialiased`}>
+    <html lang="en" className={`${bodySans.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <CartProvider>
           <PromoBanner />

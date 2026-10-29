@@ -13,7 +13,7 @@ export default function OurStory() {
   return (
     <section aria-labelledby="our-story-heading" className="bg-[#faf7f3] text-[#1d1d1f]">
       <div className="mx-auto flex min-h-[78svh] max-w-[1200px] flex-col justify-center px-8 py-32 sm:px-12 sm:py-40 lg:min-h-[88vh] lg:px-16 lg:py-48">
-        <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/70">
+        <p className="text-[13px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/70">
           Our Story
         </p>
         <h2
@@ -22,7 +22,7 @@ export default function OurStory() {
         >
           Jewelry for a life <em className="italic">well lived.</em>
         </h2>
-        <p className="mt-10 max-w-[26rem] text-[14px] leading-[1.75] tracking-[0.005em] text-[#6e6e73] sm:text-[15px] lg:mt-14 lg:ml-[calc(50%-4rem)]">
+        <p className="mt-10 max-w-[26rem] text-[16px] leading-[1.75] tracking-[0.005em] text-[#6e6e73] sm:text-[16px] lg:mt-14 lg:ml-[calc(50%-4rem)]">
           From custom diamonds to colorful gemstones and everyday pieces, ELANORA creates
           jewelry to be worn, loved, and lived in.
         </p>

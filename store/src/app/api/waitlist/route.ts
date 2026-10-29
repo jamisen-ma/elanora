@@ -3,8 +3,6 @@ import nodemailer from "nodemailer";
 import { promises as fs } from "fs";
 import path from "path";
 
-const PROMO_CODE = "FOUNDING30";
-
 // Gmail SMTP transporter — uses your own Gmail account
 const transporter = process.env.GMAIL_APP_PASSWORD
   ? nodemailer.createTransport({
@@ -16,7 +14,7 @@ const transporter = process.env.GMAIL_APP_PASSWORD
     })
   : null;
 
-function buildWelcomeEmail(promoCode: string): string {
+function buildWelcomeEmail(): string {
   return `
 <!DOCTYPE html>
 <html>
@@ -47,7 +45,7 @@ function buildWelcomeEmail(promoCode: string): string {
           <tr>
             <td style="padding:40px 40px 20px;text-align:center;">
               <p style="margin:0 0 6px;font-size:11px;letter-spacing:0.3em;color:#b8976b;text-transform:uppercase;">
-                Welcome, Founding Member
+                A note from Elanora
               </p>
               <h2 style="margin:0;font-size:24px;font-weight:300;color:#1a1a1a;line-height:1.4;">
                 You&rsquo;re on the list.
@@ -59,40 +57,17 @@ function buildWelcomeEmail(promoCode: string): string {
           <tr>
             <td style="padding:0 40px 30px;text-align:center;">
               <p style="margin:0;font-size:15px;line-height:1.7;color:#6b6360;">
-                Thank you for joining the Elanora Founding Members list.
-                As one of our earliest supporters, you&rsquo;ll get exclusive
-                first access to the collection when it drops &mdash; plus
-                <strong style="color:#1a1a1a;">30% off your first order</strong>.
+                Thank you for staying in touch with Elanora. We’ll share new pieces,
+                gemstone stories, and occasional notes from our studio.
               </p>
             </td>
           </tr>
 
-          <!-- Promo Code Box -->
-          <tr>
-            <td style="padding:0 40px 30px;text-align:center;">
-              <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
-                <tr>
-                  <td style="background-color:#faf9f7;border:2px dashed #d4c5a9;padding:20px 40px;text-align:center;">
-                    <p style="margin:0 0 8px;font-size:11px;letter-spacing:0.2em;color:#6b6360;text-transform:uppercase;">
-                      Your exclusive code
-                    </p>
-                    <p style="margin:0;font-size:32px;font-weight:600;letter-spacing:0.15em;color:#b8976b;font-family:'Courier New',monospace;">
-                      ${promoCode}
-                    </p>
-                    <p style="margin:8px 0 0;font-size:12px;color:#6b6360;">
-                      30% off your first order
-                    </p>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <!-- What's Next -->
+          <!-- What's next -->
           <tr>
             <td style="padding:0 40px 30px;">
               <p style="margin:0 0 16px;font-size:11px;letter-spacing:0.25em;color:#b8976b;text-transform:uppercase;text-align:center;">
-                What&rsquo;s Next
+                Stay in touch
               </p>
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
@@ -103,8 +78,8 @@ function buildWelcomeEmail(promoCode: string): string {
                           <span style="font-size:14px;color:#b8976b;">&#10029;</span>
                         </td>
                         <td style="font-size:14px;line-height:1.5;color:#6b6360;">
-                          <strong style="color:#1a1a1a;">First access</strong> &mdash;
-                          You&rsquo;ll be the first to shop when the collection drops on July 15, 2026.
+                          <strong style="color:#1a1a1a;">New designs</strong> &mdash;
+                          Discover new pieces and collections as they arrive.
                         </td>
                       </tr>
                     </table>
@@ -118,8 +93,8 @@ function buildWelcomeEmail(promoCode: string): string {
                           <span style="font-size:14px;color:#b8976b;">&#10029;</span>
                         </td>
                         <td style="font-size:14px;line-height:1.5;color:#6b6360;">
-                          <strong style="color:#1a1a1a;">Limited editions</strong> &mdash;
-                          Select pieces will only be available to Founding Members.
+                          <strong style="color:#1a1a1a;">Gemstone stories</strong> &mdash;
+                          Get inspiration for adding color to your everyday style.
                         </td>
                       </tr>
                     </table>
@@ -133,8 +108,8 @@ function buildWelcomeEmail(promoCode: string): string {
                           <span style="font-size:14px;color:#b8976b;">&#10029;</span>
                         </td>
                         <td style="font-size:14px;line-height:1.5;color:#6b6360;">
-                          <strong style="color:#1a1a1a;">Behind the scenes</strong> &mdash;
-                          We&rsquo;ll share sneak peeks and styling content before launch.
+                          <strong style="color:#1a1a1a;">Custom pieces</strong> &mdash;
+                          Learn how to start a piece with an idea of your own.
                         </td>
                       </tr>
                     </table>
@@ -160,7 +135,7 @@ function buildWelcomeEmail(promoCode: string): string {
                 E L A N O R A
               </p>
               <p style="margin:0 0 12px;font-size:11px;color:#6b6360;">
-                Jewelry designed to be worn every day and remembered forever.
+                Thoughtful jewelry for a life well lived.
               </p>
               <p style="margin:0;font-size:10px;color:#a09890;">
                 &copy; 2026 Elanora. All rights reserved.
@@ -234,8 +209,8 @@ export async function POST(req: Request) {
         await transporter.sendMail({
           from: `"Elanora" <${process.env.GMAIL_USER}>`,
           to: normalizedEmail,
-          subject: "Welcome to Elanora — Here's Your 30% Off Code",
-          html: buildWelcomeEmail(PROMO_CODE),
+          subject: "A note from Elanora",
+          html: buildWelcomeEmail(),
         });
         console.log(`[WAITLIST EMAIL SENT] ${normalizedEmail}`);
       } catch (emailErr) {
@@ -250,7 +225,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      promoCode: PROMO_CODE,
       message: "You're on the list!",
     });
   } catch {

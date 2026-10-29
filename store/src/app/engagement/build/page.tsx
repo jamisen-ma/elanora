@@ -1,10 +1,6 @@
-import RingBuilder from "@/components/engagement/RingBuilder";
+import { redirect } from "next/navigation";
 
-export const metadata = {
-  title: "Build Your Engagement Ring",
-  description: "Build your engagement ring. Choose your lab-grown diamond, setting and metal.",
-};
-
+// The old Ring Studio now lives at Design Your Ring.
 export default function BuildYourRingPage() {
-  return <RingBuilder />;
+  redirect("/engagement/design?step=setting");
 }

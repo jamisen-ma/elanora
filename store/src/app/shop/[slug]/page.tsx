@@ -7,6 +7,8 @@ import ProductPurchase from "@/components/shop/ProductPurchase";
 import { MetalProvider } from "@/components/shop/MetalContext";
 import { PAGE_BG } from "@/components/shop/ProductFrame";
 import { productSerif } from "@/lib/fonts";
+import { settingForSlug } from "@/data/ringDesign";
+import { CUSTOM_POLICY, CUSTOM_TERMS } from "@/data/customOrderPolicy";
 
 // Product page: gallery left, name / price / stone / metal / size / ADD TO BAG right,
 // then short information sections. Text in [BRACKETS] is still to be provided.
@@ -36,6 +38,9 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   if (!item) notFound();
 
 
+  // Engagement settings are designed in Design Your Ring and ordered as custom pieces.
+  const isSetting = !!settingForSlug(item.slug);
+
   const sections: { title: string; body: React.ReactNode }[] = [
     { title: "Details", body: <List lines={item.details} /> },
     { title: "Materials", body: <List lines={item.materials} /> },
@@ -56,7 +61,18 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     },
     {
       title: "Returns & Order Policy",
-      body: (
+      body: isSetting ? (
+        <div className="space-y-2">
+          <ul className="list-disc space-y-1 pl-4">
+            {[CUSTOM_POLICY.inquiry, ...CUSTOM_TERMS].map((t) => (
+              <li key={t}>{t}</li>
+            ))}
+          </ul>
+          <Link href="/shipping-returns#custom-orders" className="underline underline-offset-4 hover:text-[#1d1d1f]">
+            Custom order policy
+          </Link>
+        </div>
+      ) : (
         <p>
           [Returns and order policy for this piece — to be provided.]{" "}
           <Link href="/shipping-returns" className="underline underline-offset-4 hover:text-[#1d1d1f]">
@@ -81,7 +97,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
         {/* Details */}
         <div className="lg:pr-[4vw] lg:pt-1 xl:pr-[5vw]">
-          <nav className="text-[11px] uppercase tracking-[0.2em]">
+          <nav className="text-[13px] uppercase tracking-[0.2em]">
             <Link
               href={categoryHref[item.type] ?? "/shop"}
               className="underline decoration-[#1d1d1f]/60 underline-offset-[5px] hover:decoration-[#1d1d1f]"
@@ -101,7 +117,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           >
             {item.name}
           </h1>
-          <p className="mt-2 text-[11px] uppercase leading-relaxed tracking-[0.2em] text-[#8a7358]">
+          <p className="mt-2 text-[13px] uppercase leading-relaxed tracking-[0.2em] text-[#8a7358]">
             {eyebrow}
           </p>
 
@@ -110,7 +126,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             {item.sizes?.length ? (
               <Link
                 href="/size-guide"
-                className="text-[12px] underline underline-offset-[5px] hover:text-[#1d1d1f]/70"
+                className="text-[14px] underline underline-offset-[5px] hover:text-[#1d1d1f]/70"
               >
                 Size Guide
               </Link>
@@ -119,19 +135,19 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
           <ProductPurchase item={item} shapes={shapes} />
 
-          <p className="mt-5 text-[13px] leading-[1.6] text-[#1d1d1f]/80">{item.stone}</p>
+          <p className="mt-5 text-[15px] leading-[1.6] text-[#1d1d1f]/80">{item.stone}</p>
 
           <div className="mt-5 border-t border-[#1d1d1f]/10">
             {sections.map((s) => (
               <details key={s.title} className="group border-b border-[#1d1d1f]/10">
-                <summary className="flex cursor-pointer list-none items-center justify-between py-3.5 text-[11px] font-medium uppercase tracking-[0.2em] [&::-webkit-details-marker]:hidden">
+                <summary className="flex cursor-pointer list-none items-center justify-between py-3.5 text-[13px] font-medium uppercase tracking-[0.2em] [&::-webkit-details-marker]:hidden">
                   {s.title}
                   <span aria-hidden className="text-[16px] font-light leading-none">
                     <span className="group-open:hidden">+</span>
                     <span className="hidden group-open:inline">&minus;</span>
                   </span>
                 </summary>
-                <div className="pb-6 text-[13px] leading-[1.75] text-[#6e6e73]">{s.body}</div>
+                <div className="pb-6 text-[15px] leading-[1.75] text-[#6e6e73]">{s.body}</div>
               </details>
             ))}
           </div>

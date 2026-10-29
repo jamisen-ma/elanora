@@ -49,7 +49,7 @@ export default function ArchivePage() {
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="object-cover opacity-60"
                 />
-                <span className="absolute top-3 left-3 bg-red-500 text-white text-[10px] tracking-[0.15em] uppercase px-3 py-1 rounded-sm">
+                <span className="absolute top-3 left-3 bg-red-500 text-white text-[12px] tracking-[0.15em] uppercase px-3 py-1 rounded-sm">
                   Archived
                 </span>
               </div>
@@ -94,7 +94,7 @@ export default function ArchivePage() {
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="object-cover"
                 />
-                <span className="absolute top-3 left-3 bg-green-500 text-white text-[10px] tracking-[0.15em] uppercase px-3 py-1 rounded-sm">
+                <span className="absolute top-3 left-3 bg-green-500 text-white text-[12px] tracking-[0.15em] uppercase px-3 py-1 rounded-sm">
                   Active
                 </span>
               </div>

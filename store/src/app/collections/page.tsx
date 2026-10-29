@@ -48,7 +48,7 @@ export default function CollectionsPage() {
                     />
                   )}
                   <div className="absolute top-4 left-4">
-                    <span className="bg-gold text-white text-[10px] tracking-[0.2em] uppercase px-4 py-1.5 rounded-sm">
+                    <span className="bg-gold text-white text-[12px] tracking-[0.2em] uppercase px-4 py-1.5 rounded-sm">
                       New
                     </span>
                   </div>

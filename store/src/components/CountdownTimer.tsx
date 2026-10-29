@@ -35,7 +35,7 @@ function TimeBlock({ value, label }: { value: number; label: string }) {
           {String(value).padStart(2, "0")}
         </span>
       </div>
-      <span className="text-[10px] sm:text-xs tracking-[0.2em] uppercase text-warm-gray mt-2">
+      <span className="text-[12px] sm:text-xs tracking-[0.2em] uppercase text-warm-gray mt-2">
         {label}
       </span>
     </div>

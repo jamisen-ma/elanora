@@ -3,7 +3,7 @@
 //
 //   EL-<type>-<shape>-<nnn>   e.g. EL-RG-OV-001
 //   type:  RG ring · BR bracelet · NK necklace · ER earrings
-//   shape: RD round · OV oval · EM emerald · PE pear · RA radiant · CU cushion · MQ marquise · PR princess · HT heart · XX none
+//   shape: RD round · OV oval · EM emerald · PE pear · RA radiant · CU cushion · MQ marquise · PR princess · AS asscher · HT heart · XX none
 //   nnn:   running number across the whole catalogue, in the order products were added.
 //
 // A number never changes once assigned (even if the product is renamed) and is never reused.
@@ -56,4 +56,11 @@ export const productCodes: Record<string, string> = {
   "heart-halo-diamond-necklace": "EL-NK-HT-044",
   "round-emerald-diamond-tennis-bracelet": "EL-BR-RD-045",
   "pink-heart-diamond-bracelet": "EL-BR-HT-046",
+  "marquise-solitaire-diamond-ring": "EL-RG-MQ-047",
+  "radiant-solitaire-diamond-ring": "EL-RG-RA-048",
+  "cushion-solitaire-diamond-ring": "EL-RG-CU-049",
+  "asscher-solitaire-diamond-ring": "EL-RG-AS-050",
+  "princess-solitaire-diamond-ring": "EL-RG-PR-051",
+  "heart-solitaire-diamond-ring": "EL-RG-HT-052",
+  "pink-diamond-angel-wing-bracelet": "EL-BR-PE-053",
 };

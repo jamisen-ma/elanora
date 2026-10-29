@@ -27,7 +27,7 @@ export default function ProductCard({ product }: { product: Product }) {
           className={`object-cover transition-transform duration-700 ease-out group-hover:scale-105 ${product.soldOut ? "opacity-70" : ""}`}
         />
         {product.soldOut && (
-          <span className="absolute top-3 left-3 bg-foreground text-white text-[10px] tracking-[0.15em] uppercase px-3 py-1 rounded-sm">
+          <span className="absolute top-3 left-3 bg-foreground text-white text-[12px] tracking-[0.15em] uppercase px-3 py-1 rounded-sm">
             Sold Out
           </span>
         )}

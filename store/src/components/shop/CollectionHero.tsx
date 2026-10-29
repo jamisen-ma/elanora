@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Cormorant_Garamond } from "next/font/google";
 
 // Full-width editorial hero for a collection page (used in place of the plain intro).
@@ -19,6 +20,8 @@ export interface CollectionHeroProps {
   desktopPosition?: string;
   /** object-position for the mobile crop */
   mobilePosition?: string;
+  /** optional call to action under the subline */
+  cta?: { label: string; href: string };
 }
 
 export default function CollectionHero({
@@ -29,6 +32,7 @@ export default function CollectionHero({
   subline,
   desktopPosition = "70% 40%",
   mobilePosition = "86% 50%",
+  cta,
 }: CollectionHeroProps) {
   return (
     <section aria-label={eyebrow ?? headline} className="relative">
@@ -37,14 +41,22 @@ export default function CollectionHero({
         <div className="mx-auto w-full max-w-[1440px] lg:px-14">
           <div className="lg:max-w-[26rem]">
             {eyebrow && (
-              <p className="mb-5 text-[11px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/75 md:mb-6">{eyebrow}</p>
+              <p className="mb-5 text-[13px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/75 md:mb-6">{eyebrow}</p>
             )}
             <h1
               className={`${serif.className} text-balance text-[2.25rem] leading-[1.08] tracking-[-0.01em] text-[#1d1d1f] md:text-[2.75rem] lg:text-[3rem] xl:text-[3.25rem]`}
             >
               {headline}
             </h1>
-            {subline && <p className="mt-4 text-[14px] leading-[1.7] text-[#1d1d1f]/70 md:mt-5">{subline}</p>}
+            {subline && <p className="mt-4 text-[16px] leading-[1.7] text-[#1d1d1f]/70 md:mt-5">{subline}</p>}
+            {cta && (
+              <Link
+                href={cta.href}
+                className="mt-6 inline-flex h-11 items-center justify-center bg-[#8a7358] px-8 text-[14px] font-medium uppercase tracking-[0.2em] text-white transition-colors hover:bg-[#75604a] md:mt-7"
+              >
+                {cta.label}
+              </Link>
+            )}
           </div>
         </div>
       </div>

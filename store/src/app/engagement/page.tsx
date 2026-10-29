@@ -23,6 +23,7 @@ export default function EngagementPage() {
         subline: "Lab-grown diamonds. Made to order.",
         desktopPosition: "60% 50%",
         mobilePosition: "64% 62%",
+        cta: { label: "Design Your Ring", href: "/engagement/design" },
       }}
     />
   );

@@ -46,7 +46,7 @@ export default function ShopContent({ products }: { products: Product[] }) {
             }`}
           >
             {cat}
-            <span className="ml-1.5 text-[10px] opacity-60">
+            <span className="ml-1.5 text-[12px] opacity-60">
               ({counts[cat]})
             </span>
           </button>

@@ -73,7 +73,7 @@ export default function HeroProducts() {
                   <h3 className={`${serif.className} text-[1.25rem] sm:text-[1.35rem] leading-tight font-normal`}>
                     {p.name}
                   </h3>
-                  <p className="text-[13px] mt-0.5 text-[#7a6d63] font-light tracking-wide">
+                  <p className="text-[15px] mt-0.5 text-[#7a6d63] font-light tracking-wide">
                     {p.price}
                   </p>
                 </div>
@@ -85,7 +85,7 @@ export default function HeroProducts() {
         <div className="text-center mt-12">
           <Link
             href="/shop"
-            className="text-[11px] sm:text-xs tracking-[0.3em] uppercase text-[#2a211c] hover:text-[#7a6d63] transition-colors"
+            className="text-[13px] sm:text-xs tracking-[0.3em] uppercase text-[#2a211c] hover:text-[#7a6d63] transition-colors"
           >
             Shop All →
           </Link>

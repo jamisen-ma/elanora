@@ -150,7 +150,7 @@ export const catalog: CatalogItem[] = [
     sizes: RING_SIZES,
     carats: CARATS,
     images: [
-      { src: "/images/catalog/oval-three-stone-diamond-ring/01-sku-v6.webp", kind: "sku" },
+      { src: "/images/catalog/oval-three-stone-diamond-ring/01-sku-v7.webp", kind: "sku" },
       { src: "/images/catalog/oval-three-stone-diamond-ring/02-three-quarter-v3.webp", kind: "detail" },
       { src: "/images/catalog/oval-three-stone-diamond-ring/03-profile.webp", kind: "detail" },
       { src: "/images/catalog/oval-three-stone-diamond-ring/05-on-hand-v3.webp", kind: "on-body" },
@@ -204,6 +204,7 @@ export const catalog: CatalogItem[] = [
     price: null,
     type: "Rings",
     collections: ["engagement-bridal"],
+    shapeGroup: "solitaire-diamond-ring",
     shape: "Oval",
     stone: "Oval diamond solitaire in four claws. [Carat, color, clarity — to be provided]",
     stoneGroup: "Diamond",
@@ -256,6 +257,7 @@ export const catalog: CatalogItem[] = [
     price: null,
     type: "Rings",
     collections: ["engagement-bridal"],
+    shapeGroup: "solitaire-diamond-ring",
     shape: "Round",
     stone: "Round diamond solitaire in four claws. [Carat, color, clarity — to be provided]",
     stoneGroup: "Diamond",
@@ -386,6 +388,7 @@ export const catalog: CatalogItem[] = [
     price: null,
     type: "Rings",
     collections: ["engagement-bridal"],
+    shapeGroup: "solitaire-diamond-ring",
     shape: "Emerald",
     stone: "Emerald-cut diamond solitaire in four claws. [Carat, color, clarity — to be provided]",
     stoneGroup: "Diamond",
@@ -473,11 +476,12 @@ export const catalog: CatalogItem[] = [
     carats: CARATS,
     images: [
       { src: "/images/catalog/yellow-pear-halo-diamond-ring/01-sku.webp", kind: "sku" },
-      { src: "/images/catalog/yellow-pear-halo-diamond-ring/02-three-quarter.webp", kind: "detail" },
+      // 02 re-made (-v2): the old three-quarter had the pear lying along the band and oversized halo stones
+      { src: "/images/catalog/yellow-pear-halo-diamond-ring/02-three-quarter-v2.webp", kind: "detail" },
       { src: "/images/catalog/yellow-pear-halo-diamond-ring/03-profile.webp", kind: "detail" },
       { src: "/images/catalog/yellow-pear-halo-diamond-ring/05-on-hand.webp", kind: "on-body" },
     ],
-    metalImages: ringMetalImages("yellow-pear-halo-diamond-ring"),
+    metalImages: ringMetalImages("yellow-pear-halo-diamond-ring", "-v2"),
     details: ["[DETAILS — to be provided]"],
     materials: ["[MATERIALS — to be provided]"],
     rank: 13,
@@ -542,6 +546,7 @@ export const catalog: CatalogItem[] = [
     price: null,
     type: "Rings",
     collections: ["engagement-bridal"],
+    shapeGroup: "solitaire-diamond-ring",
     shape: "Pear",
     stone: "Pear diamond solitaire in three claws on a tapered band. [Carat, color, clarity — to be provided]",
     stoneGroup: "Diamond",
@@ -1209,6 +1214,205 @@ export const catalog: CatalogItem[] = [
     rank: 46,
     addedRank: -43,
   },
+  {
+    // PRODUCT 47 — solitaire family, shape variant of 010 (same tapered band and head)
+    slug: "marquise-solitaire-diamond-ring",
+    name: "Marquise Solitaire Diamond Ring",
+    price: null,
+    type: "Rings",
+    collections: ["engagement-bridal"],
+    shapeGroup: "solitaire-diamond-ring",
+    shape: "Marquise",
+    stone: "Marquise diamond solitaire, set north-south, with V-claws on both points and two side claws on a tapered band. [Carat, color, clarity — to be provided]",
+    stoneGroup: "Diamond",
+    metals: RING_METALS,
+    defaultMetal: "Platinum",
+    sizes: RING_SIZES,
+    carats: CARATS,
+    images: [
+      { src: "/images/catalog/marquise-solitaire-diamond-ring/01-sku.webp", kind: "sku" },
+      { src: "/images/catalog/marquise-solitaire-diamond-ring/02-three-quarter.webp", kind: "detail" },
+      { src: "/images/catalog/marquise-solitaire-diamond-ring/03-profile.webp", kind: "detail" },
+      { src: "/images/catalog/marquise-solitaire-diamond-ring/05-on-hand.webp", kind: "on-body" },
+    ],
+    metalImages: ringMetalImages("marquise-solitaire-diamond-ring"),
+    details: ["[DETAILS — to be provided]"],
+    materials: ["[MATERIALS — to be provided]"],
+    rank: 47,
+    addedRank: -44,
+  },
+  {
+    // PRODUCT 48 — solitaire family, shape variant of 010 (same tapered band and head)
+    slug: "radiant-solitaire-diamond-ring",
+    name: "Radiant-Cut Solitaire Diamond Ring",
+    price: null,
+    type: "Rings",
+    collections: ["engagement-bridal"],
+    shapeGroup: "solitaire-diamond-ring",
+    shape: "Radiant",
+    stone: "Radiant-cut diamond solitaire in four claws on a tapered band. [Carat, color, clarity — to be provided]",
+    stoneGroup: "Diamond",
+    metals: RING_METALS,
+    defaultMetal: "Platinum",
+    sizes: RING_SIZES,
+    carats: CARATS,
+    images: [
+      { src: "/images/catalog/radiant-solitaire-diamond-ring/01-sku.webp", kind: "sku" },
+      { src: "/images/catalog/radiant-solitaire-diamond-ring/02-three-quarter.webp", kind: "detail" },
+      { src: "/images/catalog/radiant-solitaire-diamond-ring/03-profile.webp", kind: "detail" },
+      { src: "/images/catalog/radiant-solitaire-diamond-ring/05-on-hand.webp", kind: "on-body" },
+    ],
+    metalImages: ringMetalImages("radiant-solitaire-diamond-ring"),
+    details: ["[DETAILS — to be provided]"],
+    materials: ["[MATERIALS — to be provided]"],
+    rank: 48,
+    addedRank: -45,
+  },
+  {
+    // PRODUCT 49 — solitaire family, shape variant of 010 (same tapered band and head)
+    slug: "cushion-solitaire-diamond-ring",
+    name: "Cushion-Cut Solitaire Diamond Ring",
+    price: null,
+    type: "Rings",
+    collections: ["engagement-bridal"],
+    shapeGroup: "solitaire-diamond-ring",
+    shape: "Cushion",
+    stone: "Cushion-cut diamond solitaire in four claws on a tapered band. [Carat, color, clarity — to be provided]",
+    stoneGroup: "Diamond",
+    metals: RING_METALS,
+    defaultMetal: "Platinum",
+    sizes: RING_SIZES,
+    carats: CARATS,
+    images: [
+      { src: "/images/catalog/cushion-solitaire-diamond-ring/01-sku.webp", kind: "sku" },
+      { src: "/images/catalog/cushion-solitaire-diamond-ring/02-three-quarter.webp", kind: "detail" },
+      { src: "/images/catalog/cushion-solitaire-diamond-ring/03-profile.webp", kind: "detail" },
+      { src: "/images/catalog/cushion-solitaire-diamond-ring/05-on-hand.webp", kind: "on-body" },
+    ],
+    metalImages: ringMetalImages("cushion-solitaire-diamond-ring"),
+    details: ["[DETAILS — to be provided]"],
+    materials: ["[MATERIALS — to be provided]"],
+    rank: 49,
+    addedRank: -46,
+  },
+  {
+    // PRODUCT 50 — solitaire family, shape variant of 010 (same tapered band and head)
+    slug: "asscher-solitaire-diamond-ring",
+    name: "Asscher-Cut Solitaire Diamond Ring",
+    price: null,
+    type: "Rings",
+    collections: ["engagement-bridal"],
+    shapeGroup: "solitaire-diamond-ring",
+    shape: "Asscher",
+    stone: "Asscher-cut diamond solitaire in four claws on a tapered band. [Carat, color, clarity — to be provided]",
+    stoneGroup: "Diamond",
+    metals: RING_METALS,
+    defaultMetal: "Platinum",
+    sizes: RING_SIZES,
+    carats: CARATS,
+    images: [
+      { src: "/images/catalog/asscher-solitaire-diamond-ring/01-sku.webp", kind: "sku" },
+      { src: "/images/catalog/asscher-solitaire-diamond-ring/02-three-quarter.webp", kind: "detail" },
+      { src: "/images/catalog/asscher-solitaire-diamond-ring/03-profile.webp", kind: "detail" },
+      { src: "/images/catalog/asscher-solitaire-diamond-ring/05-on-hand.webp", kind: "on-body" },
+    ],
+    metalImages: ringMetalImages("asscher-solitaire-diamond-ring"),
+    details: ["[DETAILS — to be provided]"],
+    materials: ["[MATERIALS — to be provided]"],
+    rank: 50,
+    addedRank: -47,
+  },
+  {
+    // PRODUCT 51 — solitaire family, shape variant of 010 (same tapered band and head)
+    slug: "princess-solitaire-diamond-ring",
+    name: "Princess-Cut Solitaire Diamond Ring",
+    price: null,
+    type: "Rings",
+    collections: ["engagement-bridal"],
+    shapeGroup: "solitaire-diamond-ring",
+    shape: "Princess",
+    stone: "Princess-cut diamond solitaire in four corner claws on a tapered band. [Carat, color, clarity — to be provided]",
+    stoneGroup: "Diamond",
+    metals: RING_METALS,
+    defaultMetal: "Platinum",
+    sizes: RING_SIZES,
+    carats: CARATS,
+    images: [
+      { src: "/images/catalog/princess-solitaire-diamond-ring/01-sku.webp", kind: "sku" },
+      { src: "/images/catalog/princess-solitaire-diamond-ring/02-three-quarter.webp", kind: "detail" },
+      { src: "/images/catalog/princess-solitaire-diamond-ring/03-profile.webp", kind: "detail" },
+      { src: "/images/catalog/princess-solitaire-diamond-ring/05-on-hand.webp", kind: "on-body" },
+    ],
+    metalImages: ringMetalImages("princess-solitaire-diamond-ring"),
+    details: ["[DETAILS — to be provided]"],
+    materials: ["[MATERIALS — to be provided]"],
+    rank: 51,
+    addedRank: -48,
+  },
+  {
+    // PRODUCT 52 — solitaire family, shape variant of 010 (same tapered band and head)
+    slug: "heart-solitaire-diamond-ring",
+    name: "Heart Solitaire Diamond Ring",
+    price: null,
+    type: "Rings",
+    collections: ["engagement-bridal"],
+    shapeGroup: "solitaire-diamond-ring",
+    shape: "Heart",
+    stone: "Heart-shaped diamond solitaire with a V-claw at the point on a tapered band. [Carat, color, clarity — to be provided]",
+    stoneGroup: "Diamond",
+    metals: RING_METALS,
+    defaultMetal: "Platinum",
+    sizes: RING_SIZES,
+    carats: CARATS,
+    images: [
+      { src: "/images/catalog/heart-solitaire-diamond-ring/01-sku.webp", kind: "sku" },
+      { src: "/images/catalog/heart-solitaire-diamond-ring/02-three-quarter.webp", kind: "detail" },
+      { src: "/images/catalog/heart-solitaire-diamond-ring/03-profile.webp", kind: "detail" },
+      { src: "/images/catalog/heart-solitaire-diamond-ring/05-on-hand.webp", kind: "on-body" },
+    ],
+    metalImages: ringMetalImages("heart-solitaire-diamond-ring"),
+    details: ["[DETAILS — to be provided]"],
+    materials: ["[MATERIALS — to be provided]"],
+    rank: 52,
+    addedRank: -49,
+  },
+  {
+    // PRODUCT 53 — angel wing bracelet, pink pear drop (matches necklace 024 and earrings 029/030)
+    slug: "pink-diamond-angel-wing-bracelet",
+    name: "Pink Diamond Angel Wing Bracelet",
+    price: null,
+    type: "Bracelets",
+    stone: "Pink pear-shaped diamond drop under a round diamond, with pavé-set diamond wings, on a fine cable chain. [Carat, color, clarity — to be provided]",
+    stoneGroup: "Diamond",
+    metals: RING_METALS,
+    defaultMetal: "14k Rose Gold",
+    sizes: BRACELET_LENGTHS,
+    images: [
+      { src: "/images/catalog/pink-diamond-angel-wing-bracelet/01-main.webp", kind: "sku" },
+      { src: "/images/catalog/pink-diamond-angel-wing-bracelet/01-main-page.webp", kind: "detail" },
+      { src: "/images/catalog/pink-diamond-angel-wing-bracelet/05-on-body.webp", kind: "on-body" },
+    ],
+    // rose gold is the default set above; white gold and platinum share one white-metal set
+    metalImages: Object.fromEntries(
+      (
+        [
+          ["14k Yellow Gold", "yellow-gold"],
+          ["14k White Gold", "white"],
+          ["Platinum", "white"],
+        ] as const
+      ).map(([metal, tone]) => [
+        metal,
+        [
+          { src: `/images/catalog/pink-diamond-angel-wing-bracelet/01-main-page-${tone}.webp`, kind: "detail" },
+          { src: `/images/catalog/pink-diamond-angel-wing-bracelet/05-on-body-${tone}.webp`, kind: "on-body" },
+        ] as GalleryImage[],
+      ]),
+    ),
+    details: ["[DETAILS — to be provided]"],
+    materials: ["[MATERIALS — to be provided]"],
+    rank: 53,
+    addedRank: -50,
+  },
 ];
 
 export const jewelryTypes: JewelryType[] = ["Rings", "Bracelets", "Necklaces", "Earrings"];
@@ -1221,14 +1425,14 @@ export const inCollection = (id: CollectionId) => catalog.filter((i) => i.collec
 export const productHref = (item: CatalogItem) => `/shop/${item.slug}`;
 
 // Display order for the Shape selector.
-const SHAPE_ORDER = ["Round", "Oval", "Emerald", "Pear", "Heart", "Radiant", "Cushion", "Marquise", "Princess", "Asscher"];
+export const SHAPE_ORDER = ["Round", "Oval", "Emerald", "Marquise", "Pear", "Radiant", "Cushion", "Asscher", "Princess", "Heart"];
 /** The same design in other stone shapes (including the piece itself), in SHAPE_ORDER. */
 export const shapeVariants = (item: CatalogItem) =>
   item.shapeGroup
     ? catalog
         .filter((i) => i.shapeGroup === item.shapeGroup && i.shape)
         .sort((a, b) => SHAPE_ORDER.indexOf(a.shape!) - SHAPE_ORDER.indexOf(b.shape!))
-    : [];
+    : [item];
 /** The default-metal on-hand photo, used as the hover image on collection cards. */
 export const onBodyImage = (item: CatalogItem) => item.images.find((i) => i.kind === "on-body")?.src;
 export const getCatalogItem = (slug: string) => catalog.find((i) => i.slug === slug);

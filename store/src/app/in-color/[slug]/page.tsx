@@ -35,7 +35,7 @@ export default async function InColorProductPage({ params }: { params: Promise<{
   return (
     <div className="bg-white px-6 pb-28 pt-8 text-[#1d1d1f] md:px-10 lg:pt-12">
       <div className="mx-auto max-w-[1280px]">
-        <nav className="text-[11px] uppercase tracking-[0.2em] text-[#86868b]">
+        <nav className="text-[13px] uppercase tracking-[0.2em] text-[#86868b]">
           <Link href="/in-color" className="hover:text-[#1d1d1f]">
             In Color
           </Link>
@@ -69,17 +69,17 @@ export default async function InColorProductPage({ params }: { params: Promise<{
           </div>
 
           <div className="lg:sticky lg:top-28 lg:self-start">
-            <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/70">In Color</p>
+            <p className="text-[13px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/70">In Color</p>
             <h1 className={`${productSerif.className} mt-4 text-[2.25rem] font-normal leading-[1.1] tracking-[-0.015em] sm:text-[2.75rem]`}>
               {p.name}
             </h1>
-            <p className="mt-2 text-[13px] text-[#86868b]">
+            <p className="mt-2 text-[15px] text-[#86868b]">
               {p.gemstone} &middot; {metalLabel[p.metal]}
             </p>
-            <p className="mt-3 text-[15px]">{formatUSD(p.price)}</p>
-            <p className="mt-6 max-w-md text-[14px] leading-[1.7] text-[#6e6e73]">{p.description}</p>
+            <p className="mt-3 text-[16px]">{formatUSD(p.price)}</p>
+            <p className="mt-6 max-w-md text-[16px] leading-[1.7] text-[#6e6e73]">{p.description}</p>
 
-            <dl className="mt-10 border-t border-[#ececec] text-[13px]">
+            <dl className="mt-10 border-t border-[#ececec] text-[15px]">
               {[
                 ["Color", p.color],
                 ["Gemstone", p.gemstone],
@@ -93,11 +93,9 @@ export default async function InColorProductPage({ params }: { params: Promise<{
               ))}
             </dl>
 
-            <p className="mt-10 text-[10px] uppercase tracking-[0.24em] text-[#86868b]">Available at launch</p>
-
             <Link
               href="/in-color"
-              className="mt-12 inline-block border-b border-[#1d1d1f]/20 pb-1.5 text-[11px] font-medium uppercase tracking-[0.2em] hover:border-[#1d1d1f]"
+              className="mt-12 inline-block border-b border-[#1d1d1f]/20 pb-1.5 text-[13px] font-medium uppercase tracking-[0.2em] hover:border-[#1d1d1f]"
             >
               &larr; Back to In Color
             </Link>

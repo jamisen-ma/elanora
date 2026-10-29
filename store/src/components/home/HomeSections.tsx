@@ -1,14 +1,16 @@
-import { Fragment, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Cormorant_Garamond } from "next/font/google";
 import { colorImage, type ICColor } from "@/data/inColor";
 import { catalog, fromPrice, productHref, onBodyImage } from "@/data/catalog";
 import ProductFrame from "@/components/shop/ProductFrame";
+import AboutLetter from "./AboutLetter";
 import { productSerif } from "@/lib/fonts";
 
 // Homepage sections after the hero:
-// Custom Jewelry → Gemstones → The Elanora Edit → Made to Order → About Elanora.
+// Popular styles → custom idea → The Elanora Edit → About. (Gemstones is kept
+// below but not shown on the homepage for now.)
 // Copy is deliberately short and literal. Palette: white / warm ivory / charcoal;
 // the only color comes from the gemstone photography.
 
@@ -18,7 +20,7 @@ const serif = Cormorant_Garamond({ subsets: ["latin"], weight: ["400"], style: [
 
 function Label({ children, as: Tag = "p" }: { children: ReactNode; as?: "p" | "h2" }) {
   return (
-    <Tag className="text-[11px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/70">{children}</Tag>
+    <Tag className="text-[13px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/70">{children}</Tag>
   );
 }
 
@@ -36,7 +38,7 @@ function TextLink({ href, children }: { href: string; children: ReactNode }) {
   return (
     <Link
       href={href}
-      className="group relative inline-block pb-1.5 text-[11px] font-medium uppercase tracking-[0.22em] text-[#1d1d1f]"
+      className="group relative inline-block pb-1.5 text-[13px] font-medium uppercase tracking-[0.22em] text-[#1d1d1f]"
     >
       {children}
       <span aria-hidden className="absolute inset-x-0 bottom-0 h-px bg-[#1d1d1f]/25" />
@@ -48,70 +50,154 @@ function TextLink({ href, children }: { href: string; children: ReactNode }) {
   );
 }
 
-/** Numbered steps joined by hairlines; horizontal from md, stacked on mobile. */
-function Steps({ steps }: { steps: { title: string; text?: string }[] }) {
+/* ---------- How it works: setting → diamond → quote (same steps as Design Your Ring) ---------- */
+
+const HOW_IT_WORKS: { word: string; icon: ReactNode }[] = [
+  {
+    word: "Choose a Setting",
+    icon: (
+      // ring with a stone
+      <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden>
+        <path d="M8 2.5h4l1.5 2L10 7.5 6.5 4.5z" strokeLinejoin="round" />
+        <ellipse cx="10" cy="12.5" rx="6.5" ry="5" />
+      </svg>
+    ),
+  },
+  {
+    word: "Choose a Diamond",
+    icon: (
+      // faceted diamond
+      <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden>
+        <path d="M5 3.5h10l3 4-8 9-8-9z M2 7.5h16 M7.5 3.5 6 7.5l4 9 4-9-1.5-4" strokeLinejoin="round" />
+      </svg>
+    ),
+  },
+  {
+    word: "Get Your Price",
+    icon: (
+      // envelope
+      <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden>
+        <rect x="2.5" y="4.5" width="15" height="11" rx="0.5" />
+        <path d="M2.5 5l7.5 6 7.5-6" strokeLinejoin="round" />
+      </svg>
+    ),
+  },
+];
+
+function HowItWorks() {
   return (
-    <ol className="flex flex-col items-center md:flex-row md:items-start md:justify-center">
-      {steps.map((s, i) => (
-        <Fragment key={s.title}>
-          {i > 0 && (
-            <li
-              aria-hidden
-              className="my-4 h-7 w-px bg-[#d2d2d7] md:mx-8 md:my-0 md:mt-[7px] md:h-px md:w-16 lg:mx-10 lg:w-24"
-            />
-          )}
-          <li className="text-center md:min-w-[11rem]">
-            <span className="block text-[10px] tracking-[0.2em] text-[#86868b]">
-              {String(i + 1).padStart(2, "0")}
+    <ol aria-label="How it works" className="mx-auto mt-5 grid max-w-[880px] grid-cols-3 gap-2 sm:mt-6 md:gap-6">
+      {HOW_IT_WORKS.map((s, i) => (
+        <li key={s.word} className="flex flex-col items-center gap-1.5 text-center md:flex-row md:justify-center md:gap-3 md:text-left">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center bg-[#f0efed] text-[16px] font-semibold text-[#1d1d1f]">
+            {i + 1}
+          </span>
+          <span className="min-w-0">
+            <span className={`${serif.className} flex items-center justify-center gap-1 text-[17px] leading-tight text-[#1d1d1f] md:justify-start`}>
+              {s.icon}
+              {s.word}
             </span>
-            <span className="mt-2 block whitespace-nowrap text-[11px] font-medium uppercase tracking-[0.26em]">
-              {s.title}
-            </span>
-            {s.text && <span className="mt-2 block text-[13px] text-[#6e6e73]">{s.text}</span>}
-          </li>
-        </Fragment>
+          </span>
+        </li>
       ))}
     </ol>
   );
 }
 
-/* ---------- 02 — Custom jewelry ---------- */
+/* ---------- 02 — Popular styles to customize ---------- */
 
-export function CustomJewelry() {
+// The four starting points shown on the homepage, in this order. Each opens its own
+// product page, where the stone size, metal and size can be chosen.
+const POPULAR_SLUGS = [
+  "round-solitaire-diamond-ring",
+  "yellow-pear-halo-diamond-ring",
+  "heart-halo-diamond-necklace",
+  "round-diamond-tennis-bracelet",
+];
+// Homepage-only lifestyle shots shown on hover (the product pages keep their own on-body images).
+const POPULAR_HOVER: Record<string, string> = {
+  "yellow-pear-halo-diamond-ring": "/images/home/popular/yellow-pear-halo-diamond-ring.webp",
+  "heart-halo-diamond-necklace": "/images/home/popular/heart-halo-diamond-necklace.webp",
+  "round-diamond-tennis-bracelet": "/images/home/popular/round-diamond-tennis-bracelet.webp",
+};
+
+export function PopularStyles() {
+  const items = POPULAR_SLUGS.map((slug) => catalog.find((p) => p.slug === slug)).filter((p) => p !== undefined);
+
   return (
-    <section aria-labelledby="custom-heading" className="bg-[#faf7f3] px-6 pb-20 pt-14 text-center text-[#1d1d1f] sm:pb-24 sm:pt-16 lg:pb-28 lg:pt-20">
-      <Label as="h2">
-        <span id="custom-heading">Custom Jewelry</span>
-      </Label>
-      <Headline>
-        Start with a design.
-        <br />
-        Make it yours.
-      </Headline>
-      <p className="mx-auto mt-5 max-w-md text-[14px] leading-[1.7] text-[#1d1d1f]/70">
-        Choose one of our designs or tell us what you want.
-      </p>
-      <div className="mt-7 sm:mt-8">
-        <TextLink href="/custom">Start Customizing &rarr;</TextLink>
-      </div>
+    <section id="popular-styles" aria-labelledby="popular-styles-heading" className="bg-white px-6 py-10 text-[#1d1d1f] sm:py-12 lg:py-14">
+      <div className="mx-auto max-w-[1280px]">
+        <div className="text-center">
+          <Label as="h2"><span id="popular-styles-heading">The Classics</span></Label>
+          <Headline>Start with a favorite.</Headline>
+        </div>
 
-      {/* The photo's edges fade out so its linen backdrop melts into the section's
-          warm off-white with no visible box. */}
-      <div className="relative mx-auto mt-10 aspect-[4/3] max-w-[760px] overflow-hidden sm:mt-12 md:aspect-[16/9]">
-        <Image
-          src="/images/made-yours/products/editorial-your-way.webp"
-          alt="Loose lab-grown diamonds in different shapes beside an empty ring setting"
-          fill
-          unoptimized
-          sizes="(max-width: 800px) 100vw, 760px"
-          className="object-cover brightness-[1.04] saturate-[0.9] [mask-image:linear-gradient(to_right,transparent,#000_18%,#000_82%,transparent),linear-gradient(to_bottom,transparent,#000_16%,#000_84%,transparent)] [mask-composite:intersect] [-webkit-mask-composite:source-in]"
-        />
+        <HowItWorks />
+
+        <div className="mt-6 text-center sm:mt-7">
+          <Link
+            href="/shop"
+            className="inline-flex min-h-11 items-center bg-[#1d1d1f] px-8 text-[13px] font-medium uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-85"
+          >
+            Shop All &rarr;
+          </Link>
+        </div>
+
+        <ul className="mx-auto mt-6 flex max-w-[1200px] snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [scrollbar-width:none] sm:mt-8 sm:gap-6 md:grid md:grid-cols-4 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">
+          {items.map((p) => (
+            <li key={p.slug} className="w-[76%] shrink-0 snap-start sm:w-[45%] md:w-auto">
+              <Link href={productHref(p)} className="group block">
+                <ProductFrame src={p.images[0]?.src} alt={p.name} hoverSrc={POPULAR_HOVER[p.slug] ?? onBodyImage(p)} sizes="(max-width: 767px) 76vw, 25vw" />
+                <div className="mt-5 text-center">
+                  <h3 className={`${productSerif.className} text-[16px] font-normal leading-snug tracking-[-0.01em] sm:text-[18px]`}>{p.name}</h3>
+                  <p className="mt-1.5 text-[15px] text-[#6e6e73]">{fromPrice(p)}</p>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+
       </div>
     </section>
   );
 }
 
-/* ---------- 03 — Gemstones ---------- */
+/* ---------- 03 — Start with your own idea ---------- */
+
+export function CustomIdea() {
+  return (
+    <section aria-labelledby="custom-idea-heading" className="bg-[#faf7f3] px-6 py-16 text-[#1d1d1f] sm:py-20 lg:py-24">
+      <div className="mx-auto grid max-w-[1120px] items-center gap-8 md:grid-cols-[1fr_1fr] md:gap-14 lg:gap-20">
+        <div className="relative mx-auto aspect-[4/3] w-full max-w-[560px] overflow-hidden md:order-2 md:aspect-[5/4]">
+          <Image
+            src="/images/made-yours/products/editorial-your-way.webp"
+            alt="Loose diamonds and a ring setting ready to inspire a custom design"
+            fill
+            unoptimized
+            sizes="(max-width: 767px) 100vw, 50vw"
+            className="object-cover"
+          />
+        </div>
+        <div className="text-center md:order-1 md:text-left">
+          <Label as="h2"><span id="custom-idea-heading">Custom design</span></Label>
+          <p className={`${serif.className} mt-5 text-balance text-[2rem] leading-[1.12] tracking-[-0.01em] sm:text-[2.5rem] lg:text-[2.75rem]`}>
+            Have your own idea?
+          </p>
+          <p className="mx-auto mt-4 max-w-md text-[16px] leading-[1.75] text-[#1d1d1f]/70 md:mx-0">
+            Any stone, any metal, any idea — let’s make it real together.
+          </p>
+          <div className="mt-7">
+            <Link href="/custom" className="inline-flex min-h-11 items-center bg-[#1d1d1f] px-7 text-[13px] font-medium uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-85">
+              Share your idea
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- 04 — Gemstones ---------- */
 
 const GEM_COLORS: ICColor[] = ["Pink", "Blue", "Green", "Yellow"];
 
@@ -161,7 +247,7 @@ export function Gemstones() {
                     className="object-contain mix-blend-multiply transition-transform duration-500 ease-out group-hover:scale-[1.06]"
                   />
                 </div>
-                <span className="mt-2 inline-block border-b border-transparent pb-1 text-[11px] font-medium uppercase tracking-[0.24em] transition-colors group-hover:border-[#1d1d1f]/30">
+                <span className="mt-2 inline-block border-b border-transparent pb-1 text-[13px] font-medium uppercase tracking-[0.24em] transition-colors group-hover:border-[#1d1d1f]/30">
                   {c}
                 </span>
               </Link>
@@ -179,10 +265,27 @@ export function Gemstones() {
 
 /* ---------- 04 — The Elanora Edit ---------- */
 
+// Hand-picked, in this order.
+const EDIT_SLUGS = [
+  "pink-diamond-angel-wing-necklace",
+  "pink-heart-diamond-bracelet",
+  "yellow-diamond-angel-wing-drop-earrings",
+  "oval-three-stone-diamond-ring",
+];
+// Pieces shown here in a metal other than their default: grid photo, hover photo and
+// the metal pre-selected on the product page.
+const EDIT_METAL: Record<string, { metal: string; src: string; hoverSrc: string }> = {
+  "yellow-diamond-angel-wing-drop-earrings": {
+    metal: "14k Yellow Gold",
+    src: "/images/catalog/yellow-diamond-angel-wing-drop-earrings/01-main-yellow-gold.webp",
+    hoverSrc: "/images/catalog/yellow-diamond-angel-wing-drop-earrings/05-on-ear-yellow-gold.webp",
+  },
+};
+
 export function ElanoraEdit() {
-  const items = catalog.slice(0, 4);
+  const items = EDIT_SLUGS.map((slug) => catalog.find((p) => p.slug === slug)).filter((p) => p !== undefined);
   return (
-    <section aria-labelledby="edit-heading" className="bg-white px-6 py-24 text-[#1d1d1f] sm:py-28 md:px-10 lg:py-32">
+    <section aria-labelledby="edit-heading" className="bg-white px-6 py-14 text-[#1d1d1f] sm:py-16 md:px-10 lg:py-20">
       <div className="text-center">
         <Label as="h2">
           <span id="edit-heading">The Elanora Edit</span>
@@ -190,49 +293,29 @@ export function ElanoraEdit() {
         <Headline>Our favorite pieces.</Headline>
       </div>
 
-      <ul className="mx-auto mt-14 grid max-w-[1280px] grid-cols-2 gap-x-4 gap-y-12 sm:mt-16 sm:gap-x-6 lg:grid-cols-4 lg:gap-x-8">
+      <ul className="mx-auto mt-8 grid max-w-[1280px] grid-cols-2 gap-x-4 gap-y-12 sm:mt-10 sm:gap-x-6 lg:grid-cols-4 lg:gap-x-8">
         {items.map((p) => (
           <li key={p.slug}>
-            <Link href={productHref(p)} className="group block">
-              <ProductFrame src={p.images[0]?.src} alt={p.name} hoverSrc={onBodyImage(p)} />
+            <Link
+              href={EDIT_METAL[p.slug] ? `${productHref(p)}?metal=${encodeURIComponent(EDIT_METAL[p.slug].metal)}` : productHref(p)}
+              className="group block"
+            >
+              <ProductFrame
+                src={EDIT_METAL[p.slug]?.src ?? p.images[0]?.src}
+                alt={p.name}
+                hoverSrc={EDIT_METAL[p.slug]?.hoverSrc ?? onBodyImage(p)}
+              />
               <div className="mt-5 text-center">
                 <h3 className={`${productSerif.className} text-[16px] font-normal leading-snug tracking-[-0.01em] sm:text-[18px]`}>{p.name}</h3>
-                <p className="mt-1.5 text-[13px] text-[#6e6e73]">{fromPrice(p)}</p>
+                <p className="mt-1.5 text-[15px] text-[#6e6e73]">{fromPrice(p)}</p>
               </div>
             </Link>
           </li>
         ))}
       </ul>
 
-      <div className="mt-14 text-center">
+      <div className="mt-10 text-center">
         <TextLink href="/shop">Shop All &rarr;</TextLink>
-      </div>
-    </section>
-  );
-}
-
-/* ---------- 05 — Made to order ---------- */
-
-export function MadeToOrder() {
-  return (
-    <section aria-labelledby="mto-heading" className="bg-[#faf7f3] px-6 py-24 text-center text-[#1d1d1f] sm:py-28 lg:py-32">
-      <Label as="h2">
-        <span id="mto-heading">Made to Order</span>
-      </Label>
-      <Headline>We make your jewelry after you order.</Headline>
-
-      <div className="mt-14 sm:mt-16">
-        <Steps
-          steps={[
-            { title: "You order", text: "Choose your options." },
-            { title: "We make it", text: "Your piece is made for you." },
-            { title: "We ship it", text: "Delivered to you when it’s ready." },
-          ]}
-        />
-      </div>
-
-      <div className="mt-14">
-        <TextLink href="/faq">Learn More &rarr;</TextLink>
       </div>
     </section>
   );
@@ -241,15 +324,6 @@ export function MadeToOrder() {
 /* ---------- 06 — About ---------- */
 
 export function AboutElanora() {
-  return (
-    <section aria-labelledby="about-heading" className="bg-white px-6 py-24 text-center text-[#1d1d1f] sm:py-28 lg:py-32">
-      <Label as="h2">
-        <span id="about-heading">About Elanora</span>
-      </Label>
-      <Headline>Jewelry made to order, just for you.</Headline>
-      <div className="mt-10">
-        <TextLink href="/about">Our Story &rarr;</TextLink>
-      </div>
-    </section>
-  );
+  // Brand story as a sealed letter that opens on scroll (see AboutLetter).
+  return <AboutLetter />;
 }

@@ -43,7 +43,7 @@ export default function EverydayBanner() {
         </div>
 
         <div className="px-8 pb-24 pt-14 text-center sm:pb-28 lg:px-0 lg:pb-0 lg:pt-0 lg:pl-[1vw] lg:pr-[7vw] lg:text-left">
-          <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/70">
+          <p className="text-[13px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/70">
             Everyday
           </p>
           <h2
@@ -54,14 +54,14 @@ export default function EverydayBanner() {
             <br />
             minus the <em className="italic">occasion.</em>
           </h2>
-          <p className="mt-5 text-[14px] leading-relaxed tracking-[0.01em] text-[#6e6e73] sm:text-[15px]">
+          <p className="mt-5 text-[16px] leading-relaxed tracking-[0.01em] text-[#6e6e73] sm:text-[16px]">
             Designed to wear often.
             <br />
             Priced to make that easy.
           </p>
           <Link
             href="/shop"
-            className="group relative mt-10 inline-block pb-1.5 text-[12px] font-medium uppercase tracking-[0.2em] sm:mt-12"
+            className="group relative mt-10 inline-block pb-1.5 text-[14px] font-medium uppercase tracking-[0.2em] sm:mt-12"
           >
             Shop everyday &rarr;
             <span aria-hidden className="absolute inset-x-0 bottom-0 h-px bg-[#1d1d1f]/25" />

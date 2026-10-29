@@ -36,7 +36,7 @@ export default function FooterSignup() {
   };
 
   if (status === "success") {
-    return <p className="text-[13px] text-[#1d1d1f]">You&rsquo;re on the list. Check your inbox.</p>;
+    return <p className="text-[15px] text-[#1d1d1f]">You&rsquo;re on the list. Check your inbox.</p>;
   }
 
   return (
@@ -52,17 +52,17 @@ export default function FooterSignup() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Email address"
-          className="min-w-0 flex-1 bg-transparent py-2.5 text-[13px] text-[#1d1d1f] placeholder:text-[#86868b] focus:outline-none"
+          className="min-w-0 flex-1 bg-transparent py-2.5 text-[15px] text-[#1d1d1f] placeholder:text-[#86868b] focus:outline-none"
         />
         <button
           type="submit"
           disabled={status === "loading"}
-          className="pb-2.5 text-[11px] font-medium uppercase tracking-[0.2em] text-[#1d1d1f] disabled:opacity-50"
+          className="pb-2.5 text-[13px] font-medium uppercase tracking-[0.2em] text-[#1d1d1f] disabled:opacity-50"
         >
           {status === "loading" ? "…" : "Sign Up"}
         </button>
       </div>
-      {status === "error" && <p className="mt-2 text-[12px] text-[#b42318]">{error}</p>}
+      {status === "error" && <p className="mt-2 text-[14px] text-[#b42318]">{error}</p>}
     </form>
   );
 }

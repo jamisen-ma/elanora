@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "elanora",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--prefix", "store"],
+      "runtimeExecutable": "/bin/zsh",
+      "runtimeArgs": ["-c", "export PATH=\"$HOME/.local/node/bin:$PATH\"; npm run dev --prefix /Users/kristina/elanora/store"],
       "port": 3000
     }
   ]

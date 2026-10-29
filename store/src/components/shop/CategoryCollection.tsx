@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Cormorant_Garamond } from "next/font/google";
-import { fromPrice, jewelryTypes, onBodyImage, productHref, type CatalogItem } from "@/data/catalog";
+import { SHAPE_ORDER, fromPrice, jewelryTypes, onBodyImage, productHref, type CatalogItem } from "@/data/catalog";
 import ProductFrame from "./ProductFrame";
 import CollectionHero, { type CollectionHeroProps } from "./CollectionHero";
 import { productSerif } from "@/lib/fonts";
@@ -20,7 +20,6 @@ type GroupKey = "type" | "shape" | "stone" | "metal" | "price";
 type Selected = Record<GroupKey, string[]>;
 const EMPTY: Selected = { type: [], shape: [], stone: [], metal: [], price: [] };
 
-const SHAPE_ORDER = ["Round", "Oval", "Emerald", "Pear", "Radiant", "Cushion", "Marquise", "Princess"];
 
 const PRICE_RANGES = [
   { id: "under-500", label: "Under $500", min: 0, max: 499 },
@@ -148,7 +147,7 @@ export default function CategoryCollection({
       {/* Breadcrumb + filter / sort */}
       <div className="px-6 md:px-10">
         <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-6">
-          <nav aria-label="Breadcrumb" className="min-w-0 truncate whitespace-nowrap text-[10px] uppercase tracking-[0.16em] sm:text-[12px] sm:tracking-[0.24em]">
+          <nav aria-label="Breadcrumb" className="min-w-0 truncate whitespace-nowrap text-[12px] uppercase tracking-[0.16em] sm:text-[14px] sm:tracking-[0.24em]">
             {label === "All Jewelry" ? (
               <span className="text-[#6e6e73]">All Jewelry</span>
             ) : (
@@ -163,7 +162,7 @@ export default function CategoryCollection({
               </>
             )}
           </nav>
-          <div className="flex shrink-0 items-center gap-5 text-[10px] uppercase tracking-[0.16em] sm:gap-8 sm:text-[12px] sm:tracking-[0.24em] [&_button]:uppercase">
+          <div className="flex shrink-0 items-center gap-5 text-[12px] uppercase tracking-[0.16em] sm:gap-8 sm:text-[14px] sm:tracking-[0.24em] [&_button]:uppercase">
             <button
               type="button"
               onClick={() => setSidebarOpen((o) => !o)}
@@ -211,7 +210,7 @@ export default function CategoryCollection({
                             setSort(s.id);
                             setSortOpen(false);
                           }}
-                          className={`block w-full px-5 py-2.5 text-left text-[11px] uppercase tracking-[0.2em] ${
+                          className={`block w-full px-5 py-2.5 text-left text-[13px] uppercase tracking-[0.2em] ${
                             sort === s.id ? "text-[#1d1d1f]" : "text-[#86868b] hover:text-[#1d1d1f]"
                           }`}
                         >
@@ -230,7 +229,7 @@ export default function CategoryCollection({
       {/* Active filters */}
       {active.length > 0 && (
         <div className="px-6 md:px-10">
-          <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-x-6 gap-y-2 pt-5 text-[11px] uppercase tracking-[0.18em] [&_button]:uppercase">
+          <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-x-6 gap-y-2 pt-5 text-[13px] uppercase tracking-[0.18em] [&_button]:uppercase">
             {active.map((f) => (
               <button
                 key={`${f.key}-${f.value}`}
@@ -259,14 +258,14 @@ export default function CategoryCollection({
           )}
           <div>
             {items.length === 0 ? (
-              <p className="py-24 text-center text-[14px] text-[#6e6e73]">New pieces coming soon.</p>
+              <p className="py-24 text-center text-[16px] text-[#6e6e73]">New pieces coming soon.</p>
             ) : results.length === 0 ? (
               <div className="py-24 text-center">
-                <p className="text-[14px] text-[#6e6e73]">No pieces match these filters.</p>
+                <p className="text-[16px] text-[#6e6e73]">No pieces match these filters.</p>
                 <button
                   type="button"
                   onClick={clearAll}
-                  className="mt-5 text-[11px] uppercase tracking-[0.2em] underline underline-offset-4"
+                  className="mt-5 text-[13px] uppercase tracking-[0.2em] underline underline-offset-4"
                 >
                   Clear All
                 </button>
@@ -290,15 +289,15 @@ export default function CategoryCollection({
       {sheetOpen && (
         <div className="fixed inset-0 z-50 flex flex-col bg-white lg:hidden" role="dialog" aria-modal="true" aria-label="Filters">
           <div className="flex h-14 items-center justify-between border-b border-[#ececec] px-6">
-            <p className="text-[11px] font-medium uppercase tracking-[0.24em]">Filter</p>
-            <button type="button" onClick={() => setSheetOpen(false)} className="text-[11px] uppercase tracking-[0.2em]">
+            <p className="text-[13px] font-medium uppercase tracking-[0.24em]">Filter</p>
+            <button type="button" onClick={() => setSheetOpen(false)} className="text-[13px] uppercase tracking-[0.2em]">
               Close
             </button>
           </div>
           <div className="flex-1 overflow-y-auto px-6 pb-6">
             <FilterGroups groups={groups} selected={selected} onToggle={toggle} startOpen />
           </div>
-          <div className="flex items-center justify-between border-t border-[#ececec] px-6 py-5 text-[11px] uppercase tracking-[0.2em] [&_button]:uppercase">
+          <div className="flex items-center justify-between border-t border-[#ececec] px-6 py-5 text-[13px] uppercase tracking-[0.2em] [&_button]:uppercase">
             <button type="button" onClick={clearAll} className="text-[#86868b]">
               Clear All
             </button>
@@ -335,13 +334,13 @@ function FilterGroups({
               type="button"
               onClick={() => setOpen((o) => ({ ...o, [g.key]: !isOpen }))}
               aria-expanded={isOpen}
-              className="flex w-full items-center justify-between py-4 text-left text-[11px] font-medium uppercase tracking-[0.22em]"
+              className="flex w-full items-center justify-between py-4 text-left text-[13px] font-medium uppercase tracking-[0.22em]"
             >
               <span>
                 {g.label}
                 {count > 0 && <span className="ml-2 text-[#86868b]">{count}</span>}
               </span>
-              <span aria-hidden className="text-[14px] font-light leading-none">
+              <span aria-hidden className="text-[16px] font-light leading-none">
                 {isOpen ? "−" : "+"}
               </span>
             </button>
@@ -356,7 +355,7 @@ function FilterGroups({
                         role="checkbox"
                         aria-checked={on}
                         onClick={() => onToggle(g.key, o.value)}
-                        className="flex items-center gap-3 text-[13px]"
+                        className="flex items-center gap-3 text-[15px]"
                       >
                         <span
                           aria-hidden
@@ -382,7 +381,7 @@ function Tile({ item, priority }: { item: CatalogItem; priority?: boolean }) {
       <ProductFrame src={item.images[0]?.src} alt={item.name} priority={priority} hoverSrc={onBodyImage(item)} />
       <div className="mt-5 text-center">
         <h3 className={`${productSerif.className} text-[16px] font-normal leading-snug tracking-[-0.01em] sm:text-[18px]`}>{item.name}</h3>
-        <p className="mt-1.5 text-[13px] text-[#6e6e73]">{fromPrice(item)}</p>
+        <p className="mt-1.5 text-[15px] text-[#6e6e73]">{fromPrice(item)}</p>
       </div>
     </Link>
   );

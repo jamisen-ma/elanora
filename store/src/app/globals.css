@@ -21,14 +21,20 @@
   --color-cream-dark: #f0ebe3;
   --color-warm-gray: #6b6462;
   --color-warm-gray-light: #9a9493;
-  --font-sans: var(--font-geist-sans);
+  /* Body text: Optima (built into Apple devices); Alegreya Sans is the closest
+     web font for everyone else. */
+  --font-sans: Optima, "Optima Nova", "Optima nova LT Pro", var(--font-alegreya-sans);
+  /* Tailwind's small sizes, two steps larger (older pages use text-xs / text-sm). */
+  --text-xs: 0.875rem;
+  --text-sm: 1rem;
   --font-mono: var(--font-geist-mono);
 }
 
 body {
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  /* Optima (built into Apple devices); Alegreya Sans elsewhere */
+  font-family: Optima, "Optima Nova", "Optima nova LT Pro", var(--font-alegreya-sans), system-ui, sans-serif;
 }
 
 @utility line-clamp-2 {
@@ -57,4 +63,48 @@ html {
 
 @utility animate-fade-in-up {
   animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* Two-handle carat slider (ring designer): two range inputs stacked on one track; only
+   the thumbs take pointer events so either handle can be dragged. */
+.carat-range input[type="range"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  pointer-events: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.carat-range input[type="range"]::-webkit-slider-runnable-track {
+  background: transparent;
+  height: 100%;
+}
+.carat-range input[type="range"]::-moz-range-track {
+  background: transparent;
+}
+.carat-range input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  pointer-events: auto;
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background: #fff;
+  border: 1.5px solid #1d1d1f;
+  cursor: grab;
+}
+.carat-range input[type="range"]::-moz-range-thumb {
+  pointer-events: auto;
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background: #fff;
+  border: 1.5px solid #1d1d1f;
+  cursor: grab;
+}
+.carat-range input[type="range"]:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid #8a7358;
+  outline-offset: 2px;
 }
