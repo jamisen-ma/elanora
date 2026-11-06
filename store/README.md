@@ -78,19 +78,20 @@ store/
 
 ## Stripe Checkout Setup
 
+Prices come from `src/data/catalog.ts` and are worked out on the server in `src/app/api/checkout/route.ts`,
+so you do **not** need to create products or prices in Stripe.
+
 1. Create a [Stripe account](https://dashboard.stripe.com/register)
-2. Create products and prices in the [Stripe Dashboard](https://dashboard.stripe.com/products)
-3. Copy your API keys from [Stripe API Keys](https://dashboard.stripe.com/apikeys)
-4. Create `.env.local` from the example:
-   ```bash
-   cp .env.local.example .env.local
-   ```
-5. Fill in your keys:
+2. Copy your secret key from [Stripe API Keys](https://dashboard.stripe.com/apikeys) (`sk_test_...` while testing)
+3. Put it in `.env.local` (and in your host's environment variables, e.g. Vercel → Settings → Environment Variables):
    ```
    STRIPE_SECRET_KEY=sk_test_...
-   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+   NEXT_PUBLIC_SITE_URL=https://your-domain.com
    ```
-6. Update each product's `stripePriceId` in `src/data/products.ts` with the Price IDs from your Stripe Dashboard
+4. Test with card `4242 4242 4242 4242`, any future date, any CVC
+5. To go live: activate your Stripe account, swap in the `sk_live_...` key, and redeploy
+
+Shipping is $9.99, free from $75. Sales tax: activate Stripe Tax in the Dashboard, then set `STRIPE_AUTOMATIC_TAX=true`.
 
 ## Features
 
