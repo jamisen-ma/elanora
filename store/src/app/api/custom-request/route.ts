@@ -74,8 +74,10 @@ export async function POST(req: Request) {
     }
   }
 
-  // The custom form asks for a budget range; Design Your Ring requests (with a ring summary) don't.
-  if (!ring && !data.budget) {
+  // The custom form asks for a budget range; Design Your Ring requests (with a ring summary)
+  // and product-page quote requests (e.g. the Custom Name Necklace, sent with `product`) don't.
+  const productQuote = String(form.get("product") ?? "").trim();
+  if (!ring && !productQuote && !data.budget) {
     return NextResponse.json({ error: "Please choose a budget range." }, { status: 400 });
   }
 

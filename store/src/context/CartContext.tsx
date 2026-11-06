@@ -40,13 +40,35 @@ function saveCart(items: CartItem[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
 }
 
+// Add-on chains (bag line id "<slug>|chain|…") are sold only with their pendant: never more
+// chains than pendants of the same piece, and none once the pendant leaves the bag.
+function limitAddOns(items: CartItem[]): CartItem[] {
+  const isAddOn = (i: CartItem) => i.product.id.includes("|chain|");
+  const pendants = new Map<string, number>();
+  for (const i of items) if (!isAddOn(i)) pendants.set(i.product.slug, (pendants.get(i.product.slug) ?? 0) + i.quantity);
+  let left = new Map(pendants);
+  const out: CartItem[] = [];
+  for (const i of items) {
+    if (!isAddOn(i)) {
+      out.push(i);
+      continue;
+    }
+    const allowed = left.get(i.product.slug) ?? 0;
+    if (allowed <= 0) continue;
+    const quantity = Math.min(i.quantity, allowed);
+    left = left.set(i.product.slug, allowed - quantity);
+    out.push(quantity === i.quantity ? i : { ...i, quantity });
+  }
+  return out;
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setItems(loadCart());
+    setItems(limitAddOns(loadCart()));
     setMounted(true);
   }, []);
 
@@ -70,14 +92,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const removeItem = useCallback((productId: string) => {
-    setItems((prev) => prev.filter((item) => item.product.id !== productId));
+    setItems((prev) => limitAddOns(prev.filter((item) => item.product.id !== productId)));
   }, []);
 
   const updateQuantity = useCallback((productId: string, quantity: number) => {
     if (quantity < 1) return;
     setItems((prev) =>
-      prev.map((item) =>
-        item.product.id === productId ? { ...item, quantity } : item
+      limitAddOns(
+        prev.map((item) =>
+          item.product.id === productId ? { ...item, quantity } : item
+        )
       )
     );
   }, []);

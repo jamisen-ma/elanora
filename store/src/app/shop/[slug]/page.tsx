@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Cormorant_Garamond } from "next/font/google";
-import { catalog, fromPrice, getCatalogItem, productHref, shapeVariants } from "@/data/catalog";
+import { catalog, getCatalogItem, productHref, shapeVariants } from "@/data/catalog";
 import ProductGallery from "@/components/shop/ProductGallery";
 import ProductPurchase from "@/components/shop/ProductPurchase";
+import ProductPrice from "@/components/shop/ProductPrice";
 import { MetalProvider } from "@/components/shop/MetalContext";
 import { PAGE_BG } from "@/components/shop/ProductFrame";
 import { productSerif } from "@/lib/fonts";
@@ -46,7 +47,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     { title: "Materials", body: <List lines={item.materials} /> },
     {
       title: "Made to Order",
-      body: <p>We make this piece after you order. [Production time — to be provided.]</p>,
+      // Shared by every product page (current and future).
+      body: <p>We make this piece after you order. Production time: 2–6 weeks.</p>,
     },
     {
       title: "Shipping",
@@ -116,13 +118,15 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             className={`${productSerif.className} mt-4 text-balance text-[1.9rem] font-normal leading-[1.1] tracking-[-0.015em] sm:text-[2.1rem] lg:text-[clamp(1.8rem,2.2vw,2.5rem)]`}
           >
             {item.name}
+            {/* Pieces sold without a chain say so in the product page title only. */}
+            {item.chainAddOn && " (Pendant Only)"}
           </h1>
           <p className="mt-2 text-[13px] uppercase leading-relaxed tracking-[0.2em] text-[#8a7358]">
             {eyebrow}
           </p>
 
           <div className="mt-4 flex items-baseline justify-between gap-6">
-            <p className={`${serif.className} text-[1.25rem] tracking-[-0.005em]`}>{fromPrice(item)}</p>
+            <p className={`${serif.className} text-[1.25rem] tracking-[-0.005em]`}><ProductPrice item={item} /></p>
             {item.sizes?.length ? (
               <Link
                 href="/size-guide"

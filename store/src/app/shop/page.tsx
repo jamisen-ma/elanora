@@ -7,11 +7,12 @@ export const metadata: Metadata = {
   description: "Shop all ELANORA jewelry. Lab-grown diamonds and gemstones, made to order.",
 };
 
+// Newest products first (Featured sort follows the order products were added).
 export default function ShopPage() {
   return (
     <CategoryCollection
       label="All Jewelry"
-      items={catalog}
+      items={catalog.map((i) => ({ ...i, rank: i.addedRank }))}
       showTypeFilter
     />
   );

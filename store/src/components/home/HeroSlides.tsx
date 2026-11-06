@@ -14,6 +14,8 @@ export interface HeroSlide {
   mobilePosition?: string;
   /** object-position from lg up (default centre) */
   desktopPosition?: string;
+  /** soft light fade over the left side (lg+) so the dark headline stays readable on busy photos */
+  scrim?: boolean;
 }
 
 const INTERVAL = 6000;
@@ -53,6 +55,12 @@ export default function HeroSlides({ slides }: { slides: HeroSlide[] }) {
               ["--desktop-pos" as string]: s.desktopPosition ?? "50% 50%",
             }}
           />
+          {s.scrim && (
+            <div
+              aria-hidden
+              className="absolute inset-0 hidden bg-[linear-gradient(90deg,rgba(255,250,244,0.78)_0%,rgba(255,250,244,0.55)_28%,rgba(255,250,244,0)_52%)] lg:block"
+            />
+          )}
         </div>
       ))}
 

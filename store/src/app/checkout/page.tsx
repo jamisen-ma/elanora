@@ -77,7 +77,7 @@ export default function CheckoutPage() {
             {items.map((item) => (
               <li key={item.product.id} className="flex gap-4 py-5">
                 <Link
-                  href={`/product/${item.product.slug}`}
+                  href={`/shop/${item.product.slug}`}
                   className="relative w-24 h-24 flex-shrink-0 bg-cream rounded-sm overflow-hidden"
                 >
                   <Image
@@ -90,7 +90,7 @@ export default function CheckoutPage() {
                 </Link>
                 <div className="flex-1 min-w-0">
                   <Link
-                    href={`/product/${item.product.slug}`}
+                    href={`/shop/${item.product.slug}`}
                     className="text-sm font-medium hover:text-gold transition-colors"
                   >
                     {item.product.name}

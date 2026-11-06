@@ -2,47 +2,79 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { useCart } from "@/context/CartContext";
-import { CARAT_LEAD_TIME, type CatalogItem } from "@/data/catalog";
+import { CARAT_LEAD_TIME, formatUSD, optionPrice, type CatalogItem } from "@/data/catalog";
 import { useMetal } from "./MetalContext";
 import ShapeSelector, { type ShapeOption } from "./ShapeSelector";
 import Link from "next/link";
 import { designHref, settingForSlug, SHAPES, type Shape } from "@/data/ringDesign";
 import NecklaceLengthGuide from "./NecklaceLengthGuide";
+import NameQuote from "./NameQuote";
 
 // Piece configurator: Shape (for pieces made in several stone shapes), Metal swatches, Carat Weight (lab-grown, every size made to
 // order), Ring Size, Bracelet Length or Chain Length, then ADD TO BAG. The bag line is one color / carat / size
-// combination. Until the piece has a price, ADD TO BAG stays off.
+// combination, or, for options listed in `sizePieces`, one line per piece. Until the piece has a price, ADD TO BAG stays off.
 
 // Display form of a metal name, e.g. "14k Yellow Gold" -> "14K Yellow Gold".
 const metalLabel = (m: string) => m.replace(/^(\d+)k\b/i, (_, n) => `${n}K`);
 
 const swatchFor = (name: string) => {
   const n = name.toLowerCase();
-  if (n.includes("yellow")) return "#e3cb6e";
+  if (n.includes("yellow") || n.includes("gold over")) return "#e3cb6e"; // gold over sterling silver reads as yellow gold
   if (n.includes("rose")) return "#ecc6ae";
   if (n.includes("platinum")) return "#cfd1d4";
   if (n.includes("white")) return "#dcdcdc";
+  if (n.includes("silver")) return "#c9ccd1";
   return "#d9d6d1"; // unconfirmed / placeholder option
 };
 
 export default function ProductPurchase({ item, shapes = [] }: { item: CatalogItem; shapes?: ShapeOption[] }) {
   const { addItem } = useCart();
-  const { metal, setMetal } = useMetal();
-  const [carat, setCarat] = useState(item.carats?.[0] ?? "");
-  const [size, setSize] = useState("");
+  const { metal, setMetal, size, setSize, carat: chosenCarat, setCarat } = useMetal();
+  const carat = chosenCarat || item.carats?.[0] || "";
+  // Optional chain add-on (pendants sold without a chain): its own bag line, never sold alone.
+  const chain = item.chainAddOn;
+  const chainMetal = chain?.metalFor?.[metal] ?? metal;
+  const [withChain, setWithChain] = useState(false);
+  const [chainLength, setChainLength] = useState("");
+  const [initial, setInitial] = useState("");
   const [added, setAdded] = useState(false);
 
   const needsSize = !!item.sizes?.length;
-  const ready = item.price !== null && (!needsSize || !!size);
+  // Price of the chosen carat or size when those are priced differently (e.g. chain lengths).
+  const unitPrice = optionPrice(item, metal, carat, size);
+  const needsInitial = !!item.initials?.length;
+  const ready =
+    item.price !== null && (!needsSize || !!size) && (!needsInitial || !!initial) && (!withChain || !!chainLength);
 
   const add = () => {
-    if (!ready || item.price === null) return;
-    const variant = [metal, carat, size].filter(Boolean).join(" / ");
+    if (!ready || unitPrice === null) return;
+    // Options that stand for separate pieces add each piece as its own bag line.
+    const pieces = item.sizePieces?.[size];
+    if (pieces) {
+      for (const piece of pieces)
+        addItem({
+          id: `${item.slug}|${piece.name}`,
+          slug: item.slug,
+          name: `${item.name} — ${piece.name}`,
+          price: piece.price * 100,
+          description: "",
+          details: [],
+          category: item.type,
+          imageFolder: "",
+          images: item.images.map((i) => i.src),
+          featured: false,
+          stripePriceId: "",
+        });
+      setAdded(true);
+      setTimeout(() => setAdded(false), 2000);
+      return;
+    }
+    const variant = [initial && `Initial ${initial}`, metal, carat, size].filter(Boolean).join(" / ");
     addItem({
-      id: `${item.slug}|${metal}|${carat}|${size}`,
+      id: `${item.slug}|${initial}|${metal}|${carat}|${size}`,
       slug: item.slug,
       name: variant ? `${item.name} — ${variant}` : item.name,
-      price: item.price * 100,
+      price: unitPrice * 100,
       description: "",
       details: [],
       category: item.type,
@@ -51,6 +83,20 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
       featured: false,
       stripePriceId: "",
     });
+    if (chain && withChain && chainLength)
+      addItem({
+        id: `${item.slug}|chain|${chainMetal}|${chainLength}`,
+        slug: item.slug,
+        name: `${metalLabel(chainMetal)} Chain, ${chainLength} — for the ${item.name}`,
+        price: chain.price * 100,
+        description: "",
+        details: [],
+        category: item.type,
+        imageFolder: "",
+        images: item.images.map((i) => i.src),
+        featured: false,
+        stripePriceId: "",
+      });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
@@ -59,10 +105,12 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
   // are chosen in Design Your Ring, which ends in a quote request.
   const setting = settingForSlug(item.slug);
   const hasCarats = !setting && !!item.carats?.length;
+  const caratPriced = !!(item.caratPrices || item.metalCaratPrices);
   const sizeLabel =
-    item.type === "Bracelets" ? "Bracelet Length" : item.type === "Necklaces" ? "Chain Length" : "Ring Size";
+    item.sizeLabel ??
+    (item.type === "Bracelets" ? "Bracelet Length" : item.type === "Necklaces" ? "Chain Length" : "Ring Size");
   // Necklaces show an on-body length comparison inside the open Chain Length menu.
-  const hasLengthGuide = item.type === "Necklaces" && needsSize;
+  const hasLengthGuide = item.type === "Necklaces" && needsSize && !item.sizeLabel;
 
   return (
     <div className="mt-4 border-t border-[#1d1d1f]/15">
@@ -116,16 +164,45 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
         </>
       ) : (
         <>
+      {needsInitial && (
+        <div className="border-b border-[#1d1d1f]/15 py-3">
+          <div className="flex items-baseline justify-between">
+            <p className="text-[13px] font-medium uppercase leading-tight tracking-[0.18em]">Initial</p>
+            <p className="text-[15px] leading-tight" aria-live="polite">
+              {initial || "Select a letter"}
+            </p>
+          </div>
+          <div role="radiogroup" aria-label="Initial" className="mt-2.5 grid grid-cols-9 gap-1 sm:grid-cols-13">
+            {item.initials!.map((l) => (
+              <button
+                key={l}
+                type="button"
+                role="radio"
+                aria-checked={initial === l}
+                onClick={() => setInitial(l)}
+                className={`flex h-9 items-center justify-center border text-[15px] transition-colors ${
+                  initial === l
+                    ? "border-[#8a7358] bg-[#8a7358] text-white"
+                    : "border-[#1d1d1f]/15 hover:border-[#1d1d1f]/60"
+                }`}
+              >
+                {l}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       {(hasCarats || needsSize) && (
         <div className="grid grid-cols-2 gap-3 border-b border-[#1d1d1f]/15 py-3">
           {hasCarats && (
-            <div>
-              <p className="mb-1.5 text-[15px] leading-tight">Carat Weight</p>
+            <div className={needsSize ? "" : "col-span-2"}>
+              <p className="mb-1.5 text-[15px] leading-tight">{caratPriced ? "Center Diamond" : "Carat Weight"}</p>
               <Listbox
-                label="Carat weight"
+                label={caratPriced ? "Center diamond carat weight" : "Carat weight"}
                 value={carat}
                 options={item.carats!}
-                note={CARAT_LEAD_TIME}
+                note={caratPriced ? (o) => formatUSD(optionPrice(item, metal, o, size) ?? 0) : CARAT_LEAD_TIME}
+                full={!needsSize}
                 onChange={setCarat}
               />
             </div>
@@ -134,7 +211,7 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
             <div className={hasCarats ? "" : "col-span-2"}>
               <p className="mb-1.5 text-[15px] leading-tight">{sizeLabel}</p>
               {hasLengthGuide ? (
-                <LengthListbox label={sizeLabel} value={size} options={item.sizes!} onChange={setSize} />
+                <LengthListbox label={sizeLabel} value={size} options={item.sizes!} prices={item.sizePrices} onChange={setSize} />
               ) : (
                 <div className="relative">
                   <select
@@ -146,7 +223,9 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
                   >
                     <option value="">Select</option>
                     {item.sizes!.map((s) => (
-                      <option key={s}>{s}</option>
+                      <option key={s} value={s}>
+                        {item.sizePrices?.[s] !== undefined ? `${s} — ${formatUSD(item.sizePrices[s])}` : s}
+                      </option>
                     ))}
                   </select>
                   <Chevron className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2" />
@@ -157,18 +236,52 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
         </div>
       )}
 
+      {item.customName ? (
+        <NameQuote item={item} metal={metal} size={size} />
+      ) : (
+        <>
+      {chain && (
+        <div className="border-b border-[#1d1d1f]/15 py-3">
+          <label className="flex cursor-pointer items-center justify-between gap-3 text-[15px] leading-tight">
+            <span className="flex items-center gap-2.5">
+              <input
+                type="checkbox"
+                checked={withChain}
+                onChange={(e) => setWithChain(e.target.checked)}
+                className="h-4 w-4 accent-[#8a7358]"
+              />
+              Add a {metalLabel(chainMetal)} chain
+            </span>
+            <span className="text-[#1d1d1f]/70">+{formatUSD(chain.price)}</span>
+          </label>
+          {withChain && (
+            <div className="mt-2.5">
+              {/* same menu as Chain Length on other necklaces, with the on-body length comparison */}
+              <LengthListbox label="Chain length" value={chainLength} options={chain.lengths} onChange={setChainLength} />
+            </div>
+          )}
+          <p className="mt-2 text-[13px] text-[#1d1d1f]/60">Pendant only unless you add the chain. The chain is available only with the pendant.</p>
+        </div>
+      )}
+
       <button
         type="button"
         onClick={add}
         disabled={!ready}
         className="mt-3 h-11 w-full bg-[#8a7358] text-[14px] font-medium uppercase tracking-[0.2em] text-white transition-colors hover:bg-[#75604a] disabled:cursor-not-allowed disabled:bg-[#8a7358]/45"
       >
-        {added ? "Added to Bag" : "Add to Bag"}
+        {added
+          ? "Added to Bag"
+          : chain && withChain && unitPrice !== null
+            ? `Add to Bag — ${formatUSD(unitPrice + chain.price)}`
+            : "Add to Bag"}
       </button>
       <p className="mt-2 text-[14px] text-[#1d1d1f]/70">
         Made to order.
         {item.price === null && <span className="ml-2 text-[#86868b]">[Add to bag turns on once the price is set.]</span>}
       </p>
+        </>
+      )}
         </>
       )}
     </div>
@@ -189,12 +302,14 @@ function Listbox({
   value,
   options,
   note,
+  full = false,
   onChange,
 }: {
   label: string;
   value: string;
   options: string[];
-  note: string;
+  note: string | ((option: string) => string); // shown beside every option (lead time, or that option's price)
+  full?: boolean; // the menu spans the whole row (no second column beside it)
   onChange: (v: string) => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -253,7 +368,7 @@ function Listbox({
           id={id}
           role="listbox"
           aria-label={label}
-          className="absolute left-0 top-0 z-20 w-[calc(200%+0.75rem)] border border-[#1d1d1f] bg-white py-1"
+          className={`absolute left-0 top-0 z-20 ${full ? "w-full" : "w-[calc(200%+0.75rem)]"} border border-[#1d1d1f] bg-white py-1`}
         >
           {options.map((o, i) => (
             <li
@@ -267,7 +382,7 @@ function Listbox({
               }`}
             >
               <span>{o}</span>
-              <span className="text-[14px] text-[#1d1d1f]/80">{note}</span>
+              <span className="text-[14px] text-[#1d1d1f]/80">{typeof note === "function" ? note(o) : note}</span>
             </li>
           ))}
           <li role="presentation" className="mt-1">
@@ -293,11 +408,13 @@ function LengthListbox({
   label,
   value,
   options,
+  prices,
   onChange,
 }: {
   label: string;
   value: string;
   options: string[];
+  prices?: Record<string, number>;
   onChange: (v: string) => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -351,9 +468,10 @@ function LengthListbox({
                 onChange(o);
                 setOpen(false);
               }}
-              className={`cursor-pointer px-3 py-2.5 text-[15px] ${o === value || o === hover ? "bg-[#f6f6f1]" : ""}`}
+              className={`flex cursor-pointer items-center justify-between px-3 py-2.5 text-[15px] ${o === value || o === hover ? "bg-[#f6f6f1]" : ""}`}
             >
-              {o}
+              <span>{o}</span>
+              {prices?.[o] !== undefined && <span className="text-[14px] text-[#1d1d1f]/70">{formatUSD(prices[o])}</span>}
             </li>
           ))}
         </ul>

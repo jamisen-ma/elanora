@@ -27,11 +27,18 @@ export default function HomePage() {
             {/* Campaign images, cross-fading in a loop */}
             <HeroSlides
               slides={[
+                {
+                  src: "/images/hero/hero-winter-carol.webp",
+                  alt: "A woman on a snowy New York street in winter sun wearing the ELANORA pink snowflake layered diamond necklace",
+                  mobilePosition: "68% 40%",
+                  desktopPosition: "80% 50%",
+                  scrim: true,
+                },
                 { src: "/images/hero/hero-hand-v5.webp", alt: "Hand wearing lab-grown diamond rings and tennis bracelets" },
                 {
-                  src: "/images/hero/hero-angel-wing-v2.webp",
+                  src: "/images/hero/hero-angel-wing-v3.webp",
                   alt: "A woman with blonde curls wearing the ELANORA pink diamond angel wing necklace and earrings, a round diamond tennis bracelet and a pavé diamond ring",
-                  mobilePosition: "77% 30%",
+                  mobilePosition: "71% 30%",
                 },
               ]}
             />

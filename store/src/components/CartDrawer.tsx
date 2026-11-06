@@ -61,7 +61,7 @@ export default function CartDrawer() {
               {items.map((item) => (
                 <li key={item.product.id} className="flex gap-4">
                   <Link
-                    href={`/product/${item.product.slug}`}
+                    href={`/shop/${item.product.slug}`}
                     onClick={() => setIsOpen(false)}
                     className="relative w-20 h-20 flex-shrink-0 bg-cream rounded-sm overflow-hidden"
                   >
@@ -75,7 +75,7 @@ export default function CartDrawer() {
                   </Link>
                   <div className="flex-1 min-w-0">
                     <Link
-                      href={`/product/${item.product.slug}`}
+                      href={`/shop/${item.product.slug}`}
                       onClick={() => setIsOpen(false)}
                       className="text-sm font-medium hover:text-gold transition-colors block truncate"
                     >
