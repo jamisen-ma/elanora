@@ -1,5 +1,6 @@
 import CategoryCollection from "@/components/shop/CategoryCollection";
 import { inCollection } from "@/data/catalog";
+import DesignSteps from "@/components/shop/DesignSteps";
 
 // Engagement & Bridal is a collection, not a jewelry category: it lists every product
 // tagged "engagement-bridal" (rings today; bands, earrings etc. later), using the same
@@ -14,7 +15,7 @@ export default function EngagementPage() {
   return (
     <CategoryCollection
       label="Engagement & Bridal"
-      items={inCollection("engagement-bridal")}
+      items={inCollection("engagement-bridal").map((i) => ({ ...i, rank: i.addedRank }))} // newest first
       showTypeFilter
       hero={{
         src: "/images/heroes/engagement-bridal-v5.webp",
@@ -23,8 +24,9 @@ export default function EngagementPage() {
         subline: "Lab-grown diamonds. Made to order.",
         desktopPosition: "60% 50%",
         mobilePosition: "64% 62%",
-        cta: { label: "Design Your Ring", href: "/engagement/design" },
+        // no hero button: the Design Your Ring steps right below carry it (avoids two in a row)
       }}
+      intro={<DesignSteps />}
     />
   );
 }

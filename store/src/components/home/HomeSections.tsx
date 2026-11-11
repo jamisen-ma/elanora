@@ -1,20 +1,19 @@
 import { type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Cormorant_Garamond } from "next/font/google";
 import { colorImage, type ICColor } from "@/data/inColor";
 import { catalog, fromPrice, productHref, onBodyImage } from "@/data/catalog";
 import ProductFrame from "@/components/shop/ProductFrame";
 import AboutLetter from "./AboutLetter";
-import { productSerif } from "@/lib/fonts";
+import EditVideoCard from "@/components/edit/EditVideoCard";
+import { editVideosNewestFirst } from "@/data/theEdit";
+import { cormorant as serif, productSerif } from "@/lib/fonts";
 
 // Homepage sections after the hero:
 // Popular styles → custom idea → The Elanora Edit → About. (Gemstones is kept
 // below but not shown on the homepage for now.)
 // Copy is deliberately short and literal. Palette: white / warm ivory / charcoal;
 // the only color comes from the gemstone photography.
-
-const serif = Cormorant_Garamond({ subsets: ["latin"], weight: ["400"], style: ["normal", "italic"] });
 
 /* ---------- shared bits ---------- */
 
@@ -50,113 +49,48 @@ function TextLink({ href, children }: { href: string; children: ReactNode }) {
   );
 }
 
-/* ---------- How it works: setting → diamond → quote (same steps as Design Your Ring) ---------- */
+/* ---------- 02 — Shop by category ---------- */
 
-const HOW_IT_WORKS: { word: string; icon: ReactNode }[] = [
-  {
-    word: "Choose a Setting",
-    icon: (
-      // ring with a stone
-      <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden>
-        <path d="M8 2.5h4l1.5 2L10 7.5 6.5 4.5z" strokeLinejoin="round" />
-        <ellipse cx="10" cy="12.5" rx="6.5" ry="5" />
-      </svg>
-    ),
-  },
-  {
-    word: "Choose a Diamond",
-    icon: (
-      // faceted diamond
-      <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden>
-        <path d="M5 3.5h10l3 4-8 9-8-9z M2 7.5h16 M7.5 3.5 6 7.5l4 9 4-9-1.5-4" strokeLinejoin="round" />
-      </svg>
-    ),
-  },
-  {
-    word: "Get Your Price",
-    icon: (
-      // envelope
-      <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden>
-        <rect x="2.5" y="4.5" width="15" height="11" rx="0.5" />
-        <path d="M2.5 5l7.5 6 7.5-6" strokeLinejoin="round" />
-      </svg>
-    ),
-  },
+// One card per jewelry category, each with a representative piece's photo (on-body photo on
+// hover) and a link to the category page. Change `slug` to show a different piece.
+const CATEGORY_CARDS = [
+  { label: "Necklaces", href: "/necklaces", slug: "pink-round-halo-diamond-necklace" },
+  { label: "Rings", href: "/rings", slug: "yellow-pear-halo-diamond-ring" },
+  { label: "Earrings", href: "/earrings", slug: "heart-halo-diamond-stud-earrings" },
+  { label: "Bracelets", href: "/bracelets", slug: "round-diamond-tennis-bracelet" },
 ];
-
-function HowItWorks() {
-  return (
-    <ol aria-label="How it works" className="mx-auto mt-5 grid max-w-[880px] grid-cols-3 gap-2 sm:mt-6 md:gap-6">
-      {HOW_IT_WORKS.map((s, i) => (
-        <li key={s.word} className="flex flex-col items-center gap-1.5 text-center md:flex-row md:justify-center md:gap-3 md:text-left">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center bg-[#f0efed] text-[16px] font-semibold text-[#1d1d1f]">
-            {i + 1}
-          </span>
-          <span className="min-w-0">
-            <span className={`${serif.className} flex items-center justify-center gap-1 text-[17px] leading-tight text-[#1d1d1f] md:justify-start`}>
-              {s.icon}
-              {s.word}
-            </span>
-          </span>
-        </li>
-      ))}
-    </ol>
-  );
-}
-
-/* ---------- 02 — Popular styles to customize ---------- */
-
-// The four starting points shown on the homepage, in this order. Each opens its own
-// product page, where the stone size, metal and size can be chosen.
-const POPULAR_SLUGS = [
-  "round-solitaire-diamond-ring",
-  "yellow-pear-halo-diamond-ring",
-  "heart-halo-diamond-necklace",
-  "round-diamond-tennis-bracelet",
-];
-// Homepage-only lifestyle shots shown on hover (the product pages keep their own on-body images).
-const POPULAR_HOVER: Record<string, string> = {
-  "yellow-pear-halo-diamond-ring": "/images/home/popular/yellow-pear-halo-diamond-ring.webp",
-  "heart-halo-diamond-necklace": "/images/home/popular/heart-halo-diamond-necklace.webp",
-  "round-diamond-tennis-bracelet": "/images/home/popular/round-diamond-tennis-bracelet.webp",
-};
 
 export function PopularStyles() {
-  const items = POPULAR_SLUGS.map((slug) => catalog.find((p) => p.slug === slug)).filter((p) => p !== undefined);
+  const cards = CATEGORY_CARDS.map((c) => ({ ...c, item: catalog.find((p) => p.slug === c.slug) }));
 
   return (
     <section id="popular-styles" aria-labelledby="popular-styles-heading" className="bg-white px-6 py-10 text-[#1d1d1f] sm:py-12 lg:py-14">
       <div className="mx-auto max-w-[1280px]">
         <div className="text-center">
-          <Label as="h2"><span id="popular-styles-heading">The Classics</span></Label>
-          <Headline>Start with a favorite.</Headline>
+          <Label as="h2"><span id="popular-styles-heading">Shop by Category</span></Label>
         </div>
 
-        <HowItWorks />
-
-        <div className="mt-6 text-center sm:mt-7">
-          <Link
-            href="/shop"
-            className="inline-flex min-h-11 items-center bg-[#1d1d1f] px-8 text-[13px] font-medium uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-85"
-          >
-            Shop All &rarr;
-          </Link>
-        </div>
-
-        <ul className="mx-auto mt-6 flex max-w-[1200px] snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [scrollbar-width:none] sm:mt-8 sm:gap-6 md:grid md:grid-cols-4 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">
-          {items.map((p) => (
-            <li key={p.slug} className="w-[76%] shrink-0 snap-start sm:w-[45%] md:w-auto">
-              <Link href={productHref(p)} className="group block">
-                <ProductFrame src={p.images[0]?.src} alt={p.name} hoverSrc={POPULAR_HOVER[p.slug] ?? onBodyImage(p)} sizes="(max-width: 767px) 76vw, 25vw" />
+        {/* phones: one full card plus most of the next, a hint that the row scrolls */}
+        <ul className="mx-auto mt-8 flex max-w-[1200px] snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [scrollbar-width:none] sm:gap-6 md:grid md:grid-cols-4 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">
+          {cards.map((c) => (
+            <li key={c.href} className="w-[60%] shrink-0 snap-start sm:w-[40%] md:w-auto">
+              <Link href={c.href} className="group block">
+                <ProductFrame
+                  src={c.item?.images[0]?.src}
+                  alt={c.label}
+                  hoverSrc={c.item ? onBodyImage(c.item) : undefined}
+                  sizes="(max-width: 767px) 60vw, 25vw"
+                />
                 <div className="mt-5 text-center">
-                  <h3 className={`${productSerif.className} text-[16px] font-normal leading-snug tracking-[-0.01em] sm:text-[18px]`}>{p.name}</h3>
-                  <p className="mt-1.5 text-[15px] text-[#6e6e73]">{fromPrice(p)}</p>
+                  <h3 className={`${productSerif.className} text-[18px] font-normal leading-snug tracking-[-0.01em] sm:text-[20px]`}>{c.label}</h3>
+                  <p className="mt-1.5 text-[12px] font-medium uppercase tracking-[0.2em] text-[#6e6e73] transition-colors group-hover:text-[#1d1d1f]">
+                    Shop {c.label} &rarr;
+                  </p>
                 </div>
               </Link>
             </li>
           ))}
         </ul>
-
       </div>
     </section>
   );
@@ -181,14 +115,14 @@ export function CustomIdea() {
         <div className="text-center md:order-1 md:text-left">
           <Label as="h2"><span id="custom-idea-heading">Custom design</span></Label>
           <p className={`${serif.className} mt-5 text-balance text-[2rem] leading-[1.12] tracking-[-0.01em] sm:text-[2.5rem] lg:text-[2.75rem]`}>
-            Have your own idea?
+            Dream it. We’ll make it.
           </p>
           <p className="mx-auto mt-4 max-w-md text-[16px] leading-[1.75] text-[#1d1d1f]/70 md:mx-0">
-            Any stone, any metal, any idea — let’s make it real together.
+            Choose your stone, your metal and your design. We’ll craft a piece made only for you.
           </p>
           <div className="mt-7">
             <Link href="/custom" className="inline-flex min-h-11 items-center bg-[#1d1d1f] px-7 text-[13px] font-medium uppercase tracking-[0.2em] text-white transition-opacity hover:opacity-85">
-              Share your idea
+              Design Your Jewelry
             </Link>
           </div>
         </div>
@@ -267,20 +201,16 @@ export function Gemstones() {
 
 // Hand-picked, in this order.
 const EDIT_SLUGS = [
-  "pink-diamond-angel-wing-necklace",
-  "pink-heart-diamond-bracelet",
-  "yellow-diamond-angel-wing-drop-earrings",
-  "oval-three-stone-diamond-ring",
+  "pink-perfume-bottle-diamond-necklace",
+  "emerald-cut-diamond-tennis-bracelet",
+  "blue-diamond-angel-wing-drop-earrings",
+  "snowflake-cluster-diamond-ring",
 ];
 // Pieces shown here in a metal other than their default: grid photo, hover photo and
 // the metal pre-selected on the product page.
-const EDIT_METAL: Record<string, { metal: string; src: string; hoverSrc: string }> = {
-  "yellow-diamond-angel-wing-drop-earrings": {
-    metal: "14k Yellow Gold",
-    src: "/images/catalog/yellow-diamond-angel-wing-drop-earrings/01-main-yellow-gold.webp",
-    hoverSrc: "/images/catalog/yellow-diamond-angel-wing-drop-earrings/05-on-ear-yellow-gold.webp",
-  },
-};
+// (None right now: the yellow angel wing drops default to yellow gold, so their own photos are used
+// and the hover photo follows the product's current on-body image.)
+const EDIT_METAL: Record<string, { metal: string; src: string; hoverSrc: string }> = {};
 
 export function ElanoraEdit() {
   const items = EDIT_SLUGS.map((slug) => catalog.find((p) => p.slug === slug)).filter((p) => p !== undefined);
@@ -317,6 +247,35 @@ export function ElanoraEdit() {
       <div className="mt-10 text-center">
         <TextLink href="/shop">Shop All &rarr;</TextLink>
       </div>
+    </section>
+  );
+}
+
+/* ---------- 05 — THE EDIT: newest videos ---------- */
+
+// Newest four videos from src/data/theEdit.ts; the section hides itself until there is one.
+export function TheEdit() {
+  const videos = editVideosNewestFirst().slice(0, 4);
+  if (!videos.length) return null;
+  return (
+    <section aria-labelledby="the-edit-heading" className="bg-white px-6 py-14 text-[#1d1d1f] sm:py-16 md:px-10 lg:py-20">
+      <div className="text-center">
+        <Label as="h2">
+          <span id="the-edit-heading">The Edit</span>
+        </Label>
+        <Headline>Jewelry, up close.</Headline>
+        <div className="mt-6">
+          <TextLink href="/the-edit">View All &rarr;</TextLink>
+        </div>
+      </div>
+
+      <ul className="mx-auto mt-8 grid max-w-[1280px] grid-cols-2 gap-x-4 gap-y-10 sm:mt-10 sm:gap-x-6 lg:grid-cols-4 lg:gap-x-8">
+        {videos.map((v) => (
+          <li key={v.id}>
+            <EditVideoCard video={v} />
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

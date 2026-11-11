@@ -108,3 +108,9 @@ html {
   outline: 2px solid #8a7358;
   outline-offset: 2px;
 }
+
+/* Homepage hero (phones): progress line for the active slide */
+@keyframes hero-progress {
+  from { width: 0%; }
+  to { width: 100%; }
+}
