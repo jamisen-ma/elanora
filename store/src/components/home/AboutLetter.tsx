@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Cormorant_Garamond } from "next/font/google";
 
-// About Elanora as a sealed envelope. When it scrolls into view (or the wax seal is
-// clicked) the flap folds back and a letter rises out with the brand line and a link to
+// About Elanora as a sealed envelope. When it is clicked (the wax seal or anywhere on the
+// envelope) the flap folds back and a letter rises out with the brand line and a link to
 // the full story. Pure CSS shapes; with reduced motion it simply shows the open letter.
 
 const serif = Cormorant_Garamond({ subsets: ["latin"], weight: ["400"], style: ["normal", "italic"] });
@@ -15,35 +15,35 @@ const PAPER_DARK = "#e9e1d4"; // flap / inside
 const LETTER = "#fffdf9";
 
 export default function AboutLetter() {
-  const root = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    // With reduced motion, show the open letter at once; otherwise it waits for a click.
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- show the open letter at once
       setOpen(true);
-      return;
     }
-    const el = root.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setOpen(true);
-          io.disconnect();
-        }
-      },
-      { threshold: 0.6 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
   }, []);
 
   const ease = "cubic-bezier(.65,0,.35,1)";
 
   return (
-    <section aria-labelledby="about-heading" className="overflow-hidden bg-white px-6 pb-16 pt-[clamp(7rem,22vw,12rem)] text-[#1d1d1f] sm:pb-20">
-      <div ref={root} className="relative mx-auto aspect-[4/3] w-full max-w-[560px] sm:aspect-[16/10]" style={{ perspective: "1400px" }}>
+    <section aria-labelledby="about-heading" className="relative overflow-hidden bg-white px-6 pb-16 pt-[clamp(7rem,22vw,12rem)] text-[#1d1d1f] sm:pb-20">
+      {/* names the section in the space the letter rises into; fades once the letter is out */}
+      <div
+        aria-hidden
+        className={`absolute inset-x-6 top-[clamp(1.75rem,6vw,3.75rem)] text-center transition-opacity duration-500 ${open ? "opacity-0" : "opacity-100"}`}
+      >
+        <p className="text-[12px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/65">About Elanora</p>
+        <p className={`${serif.className} mt-2 text-[1.35rem] italic leading-tight text-[#1d1d1f]/80 sm:text-[1.6rem]`}>
+          A little letter from us
+        </p>
+      </div>
+      <div
+        onClick={() => setOpen(true)}
+        className={`relative mx-auto aspect-[4/3] w-full max-w-[560px] sm:aspect-[16/10] ${open ? "" : "cursor-pointer"}`}
+        style={{ perspective: "1400px" }}
+      >
         {/* inside of the envelope */}
         <div className="absolute inset-0 rounded-[3px]" style={{ background: PAPER_DARK }} />
 
@@ -133,6 +133,12 @@ export default function AboutLetter() {
           E
         </button>
       </div>
+      <p
+        aria-hidden
+        className={`${serif.className} mt-5 text-center text-[1.05rem] italic text-[#1d1d1f]/55 transition-opacity duration-300 ${open ? "opacity-0" : "opacity-100"}`}
+      >
+        Tap the seal to open
+      </p>
     </section>
   );
 }

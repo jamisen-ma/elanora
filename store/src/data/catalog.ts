@@ -457,6 +457,19 @@ const sharedOnBody = (images: GalleryImage[], src: string): GalleryImage[] =>
 const sharedOnBodyMetals = (sets: Record<string, GalleryImage[]>, src: string): Record<string, GalleryImage[]> =>
   Object.fromEntries(Object.entries(sets).map(([metal, images]) => [metal, sharedOnBody(images, src)]));
 
+// Emerald-cut three-stone necklaces (054 yellow, 055 blue): 1.5 ct colored emerald-cut centre
+// between a 1 ct white pear and a 1 ct white round; white gold, 14K or 18K.
+const THREE_STONE_NECKLACE_PRICES = { "14k White Gold": 1499, "18k White Gold": 1699 };
+const threeStoneNecklaceStone = (color: string) =>
+  `A ${color} emerald-cut lab-grown diamond of approx. 1.5 ct, set on a diagonal between a white pear diamond and a white round diamond of approx. 1 ct each, on a cable chain.`;
+const threeStoneNecklaceDetails = (color: string) => [
+  `Centre stone: ${color} emerald-cut lab-grown diamond, approx. 1.5 ct`,
+  "Side stones: one white pear and one white round lab-grown diamond, approx. 1 ct each",
+  "Claw settings, cable chain",
+  "14K or 18K white gold",
+  "Price may vary slightly with the current gold price",
+];
+
 export const catalog: CatalogItem[] = [
   {
     // PRODUCT 01
@@ -2081,22 +2094,23 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 54 — three stones side by side: white pear, yellow emerald-cut centre set on a diagonal, white round (054 and 055 share the design)
     slug: "yellow-emerald-three-stone-diamond-necklace",
     name: "Yellow Emerald Three-Stone Diamond Necklace",
-    price: null,
+    price: THREE_STONE_NECKLACE_PRICES["14k White Gold"], // 14K — shown as "From $1,499"
     type: "Necklaces",
     shape: "Emerald",
-    stone: "Yellow emerald-cut diamond between a white pear diamond and a white round diamond, on a cable chain. [Carat, color, clarity — to be provided]",
+    stone: threeStoneNecklaceStone("yellow"),
     stoneGroup: "Diamond",
-    metals: ["14k White Gold", "Platinum"], // white metal only
-    defaultMetal: "Platinum",
+    metals: ["14k White Gold", "18k White Gold"], // white gold as shown; 14K or 18K
+    metalPrices: THREE_STONE_NECKLACE_PRICES,
+    defaultMetal: "14k White Gold",
     sizes: NECKLACE_LENGTHS,
     images: [
       { src: "/images/catalog/yellow-emerald-three-stone-diamond-necklace/01-main.webp", kind: "sku" },
       { src: "/images/catalog/yellow-emerald-three-stone-diamond-necklace/01-main-page.webp", kind: "detail" },
       { src: "/images/catalog/yellow-emerald-three-stone-diamond-necklace/02-detail.webp", kind: "detail" },
-      { src: "/images/catalog/yellow-emerald-three-stone-diamond-necklace/05-on-body-v3.webp", kind: "on-body" },
+      { src: "/images/catalog/yellow-emerald-three-stone-diamond-necklace/05-on-body-v4.webp", kind: "on-body" },
     ],
-    details: ["[DETAILS — to be provided]"],
-    materials: ["[MATERIALS — to be provided]"],
+    details: threeStoneNecklaceDetails("yellow"),
+    materials: ["14K or 18K white gold", "Lab-grown diamonds"],
     rank: 54,
     addedRank: -51,
   },
@@ -2104,22 +2118,23 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 55 — three stones side by side: white pear, blue emerald-cut centre set on a diagonal, white round (054 and 055 share the design)
     slug: "blue-emerald-three-stone-diamond-necklace",
     name: "Blue Emerald Three-Stone Diamond Necklace",
-    price: null,
+    price: THREE_STONE_NECKLACE_PRICES["14k White Gold"], // 14K — shown as "From $1,499"
     type: "Necklaces",
     shape: "Emerald",
-    stone: "Blue emerald-cut diamond between a white pear diamond and a white round diamond, on a cable chain. [Carat, color, clarity — to be provided]",
+    stone: threeStoneNecklaceStone("blue"),
     stoneGroup: "Diamond",
-    metals: ["14k White Gold", "Platinum"], // white metal only
-    defaultMetal: "Platinum",
+    metals: ["14k White Gold", "18k White Gold"], // white gold as shown; 14K or 18K
+    metalPrices: THREE_STONE_NECKLACE_PRICES,
+    defaultMetal: "14k White Gold",
     sizes: NECKLACE_LENGTHS,
     images: [
       { src: "/images/catalog/blue-emerald-three-stone-diamond-necklace/01-main.webp", kind: "sku" },
       { src: "/images/catalog/blue-emerald-three-stone-diamond-necklace/01-main-page.webp", kind: "detail" },
       { src: "/images/catalog/blue-emerald-three-stone-diamond-necklace/02-detail.webp", kind: "detail" },
-      { src: "/images/catalog/blue-emerald-three-stone-diamond-necklace/05-on-body-v3.webp", kind: "on-body" },
+      { src: "/images/catalog/blue-emerald-three-stone-diamond-necklace/05-on-body-v4.webp", kind: "on-body" },
     ],
-    details: ["[DETAILS — to be provided]"],
-    materials: ["[MATERIALS — to be provided]"],
+    details: threeStoneNecklaceDetails("blue"),
+    materials: ["14K or 18K white gold", "Lab-grown diamonds"],
     rank: 55,
     addedRank: -52,
   },
@@ -2164,7 +2179,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 57 — two stones in the chain: a sideways canary yellow pear (point to the left) and a small white round in a bezel; 14k yellow gold only
     slug: "yellow-pear-two-stone-diamond-necklace",
     name: "Yellow Pear Two-Stone Diamond Necklace",
-    price: 1199,
+    price: 1099,
     type: "Necklaces",
     shape: "Pear",
     stone: "A pear-shaped yellow lab-grown diamond of approx. 1.50 ct in three claws, linked to a 0.25 ct round white lab-grown diamond in a bezel, set in a fine 14K yellow gold cable chain.",
@@ -2665,7 +2680,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 75 — snowflake cluster ring: round centre diamond ringed by eight outward-pointing pear diamonds, split pavé band
     slug: "snowflake-cluster-diamond-ring",
     name: "Snowflake Cluster Diamond Ring",
-    price: 1299, // 14K — shown as "From $1,299"
+    price: 1299, // 14K — shown as "From $1,499"
     type: "Rings",
     ringStyle: "Statement",
     band: "Split Shank",

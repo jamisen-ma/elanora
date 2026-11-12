@@ -15,6 +15,9 @@ const input =
 // What we make — the form offers only these, so every request is something we can quote.
 // [Ranges to confirm with the owner: sizes and budgets.]
 const NOT_SURE = "Not sure yet";
+// "Where to start" options. Changing an existing design only needs a photo, the changes and an email.
+const START_CHANGE = "Change one of your designs";
+const START_NEW = "Something completely new";
 // Diamond colors and the fill of their little diamond icon ("Other" gets a rainbow).
 const DIAMOND_COLORS: Record<string, string> = {
   White: "#f4f6f9",
@@ -44,6 +47,8 @@ export default function CustomRequest() {
   const [error, setError] = useState("");
   const [fileName, setFileName] = useState("");
   const [diamondColor, setDiamondColor] = useState("");
+  const [start, setStart] = useState("");
+  const isChange = start === START_CHANGE;
   const formRef = useRef<HTMLFormElement>(null);
   const ideaRef = useRef<HTMLTextAreaElement>(null);
   const doneRef = useRef<HTMLParagraphElement>(null);
@@ -78,6 +83,11 @@ export default function CustomRequest() {
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (status === "sending") return;
+    if (isChange && !fileName) {
+      setError("Please upload a photo of the design you’d like to change.");
+      setStatus("error");
+      return;
+    }
     setStatus("sending");
     setError("");
     try {
@@ -123,11 +133,76 @@ export default function CustomRequest() {
         <form ref={formRef} onSubmit={submit} className="mx-auto max-w-xl scroll-mt-28 text-left">
           <h2 className="text-center text-[13px] font-medium uppercase tracking-[0.32em]">Tell us your idea</h2>
           <p className="mx-auto mt-4 max-w-md text-center text-[15px] leading-[1.7] text-[#1d1d1f]/65">
-            Pick what you already know &mdash; we&rsquo;ll help with the rest. Only budget, a few words and your email are required.
+            {isChange
+              ? "Upload a photo of the design and tell us what you’d like to change. We’ll email you a quote."
+              : start === START_NEW
+                ? "Pick what you already know — we’ll help with the rest. Only budget, a few words and your email are required."
+                : "How would you like to begin?"}
           </p>
 
-          <div className="mt-12 grid gap-9">
-            <Choice label="Where to start" name="startingPoint" options={["Change one of your designs", "Something completely new"]} />
+          <div className="mt-10">
+            <StartCards
+              value={start}
+              onChange={(v) => {
+                // the two forms have their own file inputs, so start each with no file shown
+                setStart(v);
+                setFileName("");
+                setError("");
+              }}
+            />
+          </div>
+
+          {isChange ? (
+            /* Changing one of our designs: photo + the changes + contact details, then a quote */
+            <>
+              <div className="mt-9 grid gap-9">
+                <Field label="Photo of the design" htmlFor="cr-ref" required>
+                  <label
+                    htmlFor="cr-ref"
+                    className="flex cursor-pointer items-center justify-between gap-4 border-b border-[#1d1d1f]/25 py-2.5 text-[16px] focus-within:border-[#1d1d1f]"
+                  >
+                    <span className={fileName ? "truncate text-[#1d1d1f]" : "text-[#86868b]"}>
+                      {fileName || "A screenshot or photo — JPG, PNG or HEIC, up to 10 MB"}
+                    </span>
+                    <span className="shrink-0 text-[13px] font-medium uppercase tracking-[0.2em]">Choose file</span>
+                    <input
+                      id="cr-ref"
+                      name="reference"
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+                      className="sr-only"
+                      onChange={(e) => setFileName(e.target.files?.[0]?.name ?? "")}
+                    />
+                  </label>
+                </Field>
+                <Field label="What would you like to change?" htmlFor="cr-idea" required>
+                  <textarea
+                    id="cr-idea"
+                    ref={ideaRef}
+                    name="idea"
+                    required
+                    rows={4}
+                    placeholder="e.g. a pink center stone instead of white, 18K yellow gold, a thinner band."
+                    className={`${input} resize-none`}
+                  />
+                </Field>
+              </div>
+
+              <div className="mt-9 grid gap-9 sm:grid-cols-2 sm:gap-x-10">
+                <Field label="Name" htmlFor="cr-name">
+                  <input id="cr-name" name="name" autoComplete="name" className={input} />
+                </Field>
+                <Field label="Email" htmlFor="cr-email" required>
+                  <input id="cr-email" name="email" type="email" required autoComplete="email" className={input} />
+                </Field>
+                <Field label="Phone (optional)" htmlFor="cr-phone">
+                  <input id="cr-phone" name="phone" type="tel" autoComplete="tel" className={input} />
+                </Field>
+              </div>
+            </>
+          ) : start === START_NEW ? (
+            <>
+          <div className="mt-9 grid gap-9">
             <Field label="Type of piece" htmlFor="cr-type">
               <select id="cr-type" name="itemType" defaultValue="" className={`${input} appearance-none`}>
                 <option value="">Choose a piece</option>
@@ -255,7 +330,12 @@ export default function CustomRequest() {
               />
             </Field>
           </div>
+            </>
+          ) : null}
 
+          {/* Nothing below "Where to start" until one of the two is chosen */}
+          {start && (
+            <>
           {error && (
             <p role="alert" className="mt-8 text-center text-[15px] text-[#b42318]">
               {error}
@@ -268,15 +348,97 @@ export default function CustomRequest() {
               disabled={status === "sending"}
               className="bg-[#1d1d1f] px-10 py-4 text-[13px] font-medium uppercase tracking-[0.22em] text-white transition-opacity hover:opacity-85 disabled:opacity-50"
             >
-              {status === "sending" ? "Sending…" : "Send"}
+              {status === "sending" ? "Sending…" : isChange ? "Request a Quote" : "Send"}
             </button>
             <p className="mx-auto mt-5 max-w-xl text-[14px] leading-[1.7] text-[#86868b]">
               {CUSTOM_POLICY.inquiry}
             </p>
           </div>
+            </>
+          )}
         </form>
       )}
     </section>
+  );
+}
+
+// The two ways to start, as cards: an icon, a title and one line each.
+const START_CARDS = [
+  {
+    value: START_CHANGE,
+    title: "Change one of our designs",
+    text: "Send a photo of a piece you like and tell us what to change.",
+    icon: (
+      // photo with a pencil
+      <svg width="26" height="26" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden>
+        <rect x="3" y="6" width="17" height="15" rx="1" />
+        <path d="M3 17.5l4.5-4.5 4 4 2.5-2.5 6 6" strokeLinejoin="round" />
+        <path d="M18.5 4.5l5 5L16 17l-5.5 1 1-5.5z" fill="#faf9f7" strokeLinejoin="round" />
+      </svg>
+    ),
+  },
+  {
+    value: START_NEW,
+    title: "Something completely new",
+    text: "Share your idea and we’ll design the piece with you from scratch.",
+    icon: (
+      // sparkle
+      <svg width="26" height="26" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.2" aria-hidden>
+        <path d="M14 3c.6 5.4 2.6 7.4 8 8-5.4.6-7.4 2.6-8 8-.6-5.4-2.6-7.4-8-8 5.4-.6 7.4-2.6 8-8z" strokeLinejoin="round" />
+        <path d="M22 18c.3 2.2 1.1 3 3.3 3.3-2.2.3-3 1.1-3.3 3.3-.3-2.2-1.1-3-3.3-3.3 2.2-.3 3-1.1 3.3-3.3z" strokeLinejoin="round" />
+      </svg>
+    ),
+  },
+];
+
+function StartCards({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <fieldset>
+      <legend className="sr-only">Where to start</legend>
+      <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
+        {START_CARDS.map((c) => {
+          const on = value === c.value;
+          return (
+            <label key={c.value} className="cursor-pointer">
+              <input
+                type="radio"
+                name="startingPoint"
+                value={c.value}
+                checked={on}
+                onChange={() => onChange(c.value)}
+                className="peer sr-only"
+              />
+              <span
+                className={`relative flex h-full items-start gap-4 border px-5 py-5 text-left transition-[border-color,background-color,box-shadow] duration-200 peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2 sm:flex-col sm:gap-3 sm:px-6 sm:py-6 ${
+                  on
+                    ? "border-[#1d1d1f] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.06)]"
+                    : "border-[#1d1d1f]/15 bg-white/60 hover:border-[#1d1d1f]/50 hover:bg-white"
+                }`}
+              >
+                <span className={`shrink-0 ${on ? "text-[#1d1d1f]" : "text-[#8a7358]"}`}>{c.icon}</span>
+                <span className="min-w-0 pr-6">
+                  <span className="block text-[17px] leading-snug text-[#1d1d1f]">{c.title}</span>
+                  <span className="mt-1 block text-[14px] leading-[1.6] text-[#1d1d1f]/60">{c.text}</span>
+                </span>
+                {/* selection circle */}
+                <span
+                  aria-hidden
+                  className={`absolute right-4 top-4 flex h-5 w-5 items-center justify-center rounded-full border transition-colors ${
+                    on ? "border-[#1d1d1f] bg-[#1d1d1f]" : "border-[#1d1d1f]/30"
+                  }`}
+                >
+                  {on && (
+                    <svg width="10" height="8" viewBox="0 0 10 8" fill="none" stroke="white" strokeWidth="1.6">
+                      <path d="M1 4l2.6 2.6L9 1" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  )}
+                </span>
+              </span>
+            </label>
+          );
+        })}
+      </div>
+    </fieldset>
   );
 }
 

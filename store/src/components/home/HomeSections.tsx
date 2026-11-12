@@ -54,9 +54,9 @@ function TextLink({ href, children }: { href: string; children: ReactNode }) {
 // One card per jewelry category, each with a representative piece's photo (on-body photo on
 // hover) and a link to the category page. Change `slug` to show a different piece.
 const CATEGORY_CARDS = [
-  { label: "Necklaces", href: "/necklaces", slug: "pink-round-halo-diamond-necklace" },
-  { label: "Rings", href: "/rings", slug: "yellow-pear-halo-diamond-ring" },
-  { label: "Earrings", href: "/earrings", slug: "heart-halo-diamond-stud-earrings" },
+  { label: "Necklaces", href: "/necklaces", slug: "pink-perfume-bottle-diamond-necklace" },
+  { label: "Rings", href: "/rings", slug: "snowflake-cluster-diamond-ring" },
+  { label: "Earrings", href: "/earrings", slug: "blue-diamond-angel-wing-drop-earrings" },
   { label: "Bracelets", href: "/bracelets", slug: "round-diamond-tennis-bracelet" },
 ];
 
@@ -64,7 +64,7 @@ export function PopularStyles() {
   const cards = CATEGORY_CARDS.map((c) => ({ ...c, item: catalog.find((p) => p.slug === c.slug) }));
 
   return (
-    <section id="popular-styles" aria-labelledby="popular-styles-heading" className="bg-white px-6 py-10 text-[#1d1d1f] sm:py-12 lg:py-14">
+    <section id="popular-styles" aria-labelledby="popular-styles-heading" className="bg-white px-6 pb-16 pt-10 text-[#1d1d1f] sm:pb-20 sm:pt-12 lg:pb-24 lg:pt-14">
       <div className="mx-auto max-w-[1280px]">
         <div className="text-center">
           <Label as="h2"><span id="popular-styles-heading">Shop by Category</span></Label>
@@ -202,9 +202,9 @@ export function Gemstones() {
 // Hand-picked, in this order.
 const EDIT_SLUGS = [
   "pink-perfume-bottle-diamond-necklace",
-  "emerald-cut-diamond-tennis-bracelet",
-  "blue-diamond-angel-wing-drop-earrings",
   "snowflake-cluster-diamond-ring",
+  "blue-diamond-angel-wing-drop-earrings",
+  "emerald-cut-diamond-tennis-bracelet",
 ];
 // Pieces shown here in a metal other than their default: grid photo, hover photo and
 // the metal pre-selected on the product page.
@@ -270,8 +270,9 @@ export function TheEdit() {
       </div>
 
       <ul className="mx-auto mt-8 grid max-w-[1280px] grid-cols-2 gap-x-4 gap-y-10 sm:mt-10 sm:gap-x-6 lg:grid-cols-4 lg:gap-x-8">
-        {videos.map((v) => (
-          <li key={v.id}>
+        {/* phones: the newest two only; four from tablet up */}
+        {videos.map((v, i) => (
+          <li key={v.id} className={i >= 2 ? "hidden md:block" : undefined}>
             <EditVideoCard video={v} />
           </li>
         ))}

@@ -2,11 +2,10 @@ import Link from "next/link";
 import { HeroCopyFade } from "@/components/ScrollEffects";
 import { didone } from "@/lib/fonts";
 import HeroSlides from "@/components/home/HeroSlides";
-import WingsShowcase from "@/components/home/WingsShowcase";
+import SeriesEntry from "@/components/home/SeriesEntry";
 import {
   AboutElanora,
   CustomIdea,
-  ElanoraEdit,
   PopularStyles,
   TheEdit,
 } from "@/components/home/HomeSections";
@@ -78,24 +77,22 @@ export default function HomePage() {
       </section>
 
       {/* ============================================ */}
-      {/* 02 — FEATURED PRODUCTS ("Our favorite pieces"), right after the hero */}
-      {/* ============================================ */}
-      <ElanoraEdit />
-
-      {/* ============================================ */}
-      {/* 03 — CUSTOM DESIGN ("Design your jewelry")   */}
-      {/* ============================================ */}
-      <CustomIdea />
-
-      {/* ============================================ */}
-      {/* 04 — POPULAR CUSTOMIZABLE STYLES             */}
+      {/* 02 — SHOP BY CATEGORY, right after the hero  */}
       {/* ============================================ */}
       <PopularStyles />
 
       {/* ============================================ */}
-      {/* WINGS OF LIGHT — Angel Wing theme window     */}
+      {/* 03 — WINGS OF LIGHT — Angel Wing theme window */}
       {/* ============================================ */}
-      <WingsShowcase />
+      <SeriesEntry />
+
+      {/* ============================================ */}
+      {/* 04 — CUSTOM DESIGN ("Design your jewelry")   */}
+      {/* ============================================ */}
+      <CustomIdea />
+
+      {/* "Our favorite pieces" (ElanoraEdit) removed from the homepage on 2026-11-12; the
+          component is kept in HomeSections in case it comes back. */}
 
       {/* ============================================ */}
       {/* 05 — GEMSTONES                               */}

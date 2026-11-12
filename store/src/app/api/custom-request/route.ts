@@ -77,7 +77,9 @@ export async function POST(req: Request) {
   // The custom form asks for a budget range; Design Your Ring requests (with a ring summary)
   // and product-page quote requests (e.g. the Custom Name Necklace, sent with `product`) don't.
   const productQuote = String(form.get("product") ?? "").trim();
-  if (!ring && !productQuote && !data.budget) {
+  // "Change one of your designs" only asks for a photo, the changes and an email (no budget).
+  const changeRequest = data.startingPoint === "Change one of your designs";
+  if (!ring && !productQuote && !changeRequest && !data.budget) {
     return NextResponse.json({ error: "Please choose a budget range." }, { status: 400 });
   }
 
@@ -95,6 +97,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Please upload an image under 10 MB." }, { status: 400 });
     }
     image = { name: path.basename(file.name) || "reference", type: file.type, buffer: Buffer.from(await file.arrayBuffer()) };
+  }
+  if (changeRequest && !image) {
+    return NextResponse.json({ error: "Please upload a photo of the design you’d like to change." }, { status: 400 });
   }
 
   const id = `${new Date().toISOString().replace(/[:.]/g, "-")}-${Math.random().toString(36).slice(2, 7)}`;

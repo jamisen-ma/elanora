@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Link from "next/link";
-import { catalog, productHref } from "@/data/catalog";
+import { catalog } from "@/data/catalog";
 import { productSerif } from "@/lib/fonts";
 import type { EditVideo } from "@/data/theEdit";
 import EditQuote from "./EditQuote";
@@ -10,7 +9,7 @@ import FocusVideo from "@/components/shop/FocusVideo";
 
 // One THE EDIT video: plays muted and looping on its own while on screen (cover shown until it
 // starts); tapping the video pauses or resumes it. Every video has a
-// "Request a Quote" form (EditQuote) for the piece in it.
+// "Request a Quote" form (EditQuote) for the piece in it; there is no "Shop" link.
 
 const formatDate = (iso: string) =>
   new Date(`${iso}T12:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
@@ -69,15 +68,6 @@ export default function EditVideoCard({ video }: { video: EditVideo }) {
           {video.title}
         </h3>
         {video.description && <p className="mt-1.5 text-[14px] leading-[1.6] text-[#6e6e73]">{video.description}</p>}
-        {products.map((p) => (
-          <Link
-            key={p.slug}
-            href={productHref(p)}
-            className="mt-3 inline-block border-b border-[#1d1d1f]/25 pb-0.5 text-[12px] font-medium uppercase tracking-[0.18em] text-[#1d1d1f] transition-colors hover:border-[#1d1d1f]"
-          >
-            Shop the {p.name} &rarr;
-          </Link>
-        ))}
         <EditQuote video={video} products={products} />
       </div>
     </article>
