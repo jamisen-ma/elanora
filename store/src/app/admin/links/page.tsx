@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const BASE_URL = "https://elanora-beta.vercel.app";
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://elanorajewelry.com";
 
 const PRESETS = [
   {

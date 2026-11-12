@@ -4,6 +4,7 @@ import path from "path";
 import { cookies, headers } from "next/headers";
 import { ensureSchema, getSql } from "@/lib/db";
 import { ADMIN_COOKIE, isValidSession } from "@/lib/adminAuth";
+import { RANGES, getDashboard, type RangeKey } from "@/lib/analyticsQueries";
 
 interface AnalyticsEvent {
   event: string;
@@ -157,162 +158,50 @@ export async function POST(req: Request) {
 }
 
 // GET: analytics for the admin dashboard (signed-in only — see src/proxy.ts)
-export async function GET() {
+// ?range=today|7d|30d|90d|12m|custom (&from=YYYY-MM-DD&to=YYYY-MM-DD) &tz=<IANA zone>
+export async function GET(req: Request) {
+  const params = new URL(req.url).searchParams;
+  const range = (RANGES as readonly string[]).includes(params.get("range") ?? "")
+    ? (params.get("range") as RangeKey)
+    : "7d";
+  const tzParam = params.get("tz") ?? "";
+  const tz = /^[A-Za-z]+(?:[/_+-][A-Za-z0-9]+)*$/.test(tzParam) && validTimeZone(tzParam) ? tzParam : "UTC";
+  const from = params.get("from") ?? "";
+  const to = params.get("to") ?? "";
+  const isDate = (d: string) => /^\d{4}-\d{2}-\d{2}$/.test(d) && !Number.isNaN(Date.parse(d));
+  if (range === "custom") {
+    const days = (Date.parse(to) - Date.parse(from)) / 86400000;
+    if (!isDate(from) || !isDate(to) || days < 0 || days > 400) {
+      return NextResponse.json({ error: "Pick a start and end date up to 400 days apart." }, { status: 400 });
+    }
+  }
+
   const sql = getSql();
-
-  if (sql) {
-    try {
-      await ensureSchema();
-      await sql`DELETE FROM analytics_events WHERE ts < now() - ${RETENTION}::interval`;
-      const rows = await sql`
-        SELECT event, page, visitor_id, country, region, city, device, referrer, referrer_source,
-               utm_source, utm_medium, utm_campaign, props,
-               (extract(epoch FROM ts) * 1000)::bigint AS ms
-        FROM analytics_events
-        WHERE ts > now() - interval '30 days'
-        ORDER BY ts
-        LIMIT 200000`;
-      const events: AnalyticsEvent[] = rows.map((r) => {
-        const { props, ms, ...cols } = r as Record<string, unknown>;
-        const clean = Object.fromEntries(Object.entries(cols).filter(([, v]) => v !== null));
-        return { ...(props as object), ...clean, timestamp: Number(ms) } as AnalyticsEvent;
-      });
-      return NextResponse.json(aggregateEvents(events));
-    } catch (err) {
-      console.error("Analytics read error:", err);
-      return NextResponse.json({ error: "Could not read analytics" }, { status: 500 });
-    }
+  if (!sql) {
+    return NextResponse.json(
+      { error: "No database connected. Create one in Vercel → Storage to start saving analytics." },
+      { status: 503 }
+    );
   }
 
-  // On your own computer without a database, read the local file
-  if (process.env.NODE_ENV === "development") {
-    try {
-      const filePath = path.join(process.cwd(), "data", "analytics.json");
-      const data = await fs.readFile(filePath, "utf-8");
-      const events = JSON.parse(data);
-      return NextResponse.json(aggregateEvents(events));
-    } catch {
-      return NextResponse.json({
-        totalPageViews: 0,
-        uniqueVisitors: 0,
-        events: [],
-      });
-    }
+  try {
+    await ensureSchema();
+    await sql`DELETE FROM analytics_events WHERE ts < now() - ${RETENTION}::interval`;
+    const run = (text: string, values: unknown[]) =>
+      sql.query(text, values) as Promise<Record<string, unknown>[]>;
+    const data = await getDashboard(run, { range, from, to, tz });
+    return NextResponse.json(data, { headers: { "Cache-Control": "no-store" } });
+  } catch (err) {
+    console.error("Analytics read error:", err);
+    return NextResponse.json({ error: "Could not read analytics." }, { status: 500 });
   }
-
-  return NextResponse.json({
-    message: "No database connected. Create one in Vercel → Storage to start saving analytics.",
-  });
 }
 
-function aggregateEvents(events: AnalyticsEvent[]) {
-  const now = Date.now();
-  const oneDayAgo = now - 24 * 60 * 60 * 1000;
-  const sevenDaysAgo = now - 7 * 24 * 60 * 60 * 1000;
-  const thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
-
-  const recentEvents = events.filter(
-    (e) => e.timestamp && e.timestamp > thirtyDaysAgo
-  );
-
-  // Page views
-  const pageViews = recentEvents.filter((e) => e.event === "page_view");
-  const pageViews24h = pageViews.filter(
-    (e) => e.timestamp && e.timestamp > oneDayAgo
-  );
-  const pageViews7d = pageViews.filter(
-    (e) => e.timestamp && e.timestamp > sevenDaysAgo
-  );
-
-  // Unique visitors
-  const uniqueVisitors = new Set(pageViews.map((e) => e.visitor_id)).size;
-  const uniqueVisitors24h = new Set(pageViews24h.map((e) => e.visitor_id))
-    .size;
-  const uniqueVisitors7d = new Set(pageViews7d.map((e) => e.visitor_id)).size;
-
-  // Top pages
-  const pageCounts: Record<string, number> = {};
-  for (const e of pageViews) {
-    if (e.page) pageCounts[e.page] = (pageCounts[e.page] || 0) + 1;
+function validTimeZone(tz: string) {
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: tz });
+    return true;
+  } catch {
+    return false;
   }
-  const topPages = Object.entries(pageCounts)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 10)
-    .map(([page, views]) => ({ page, views }));
-
-  // Traffic sources
-  const sourceCounts: Record<string, number> = {};
-  for (const e of pageViews) {
-    const source =
-      (e.utm_source as string) ||
-      (e.referrer_source as string) ||
-      (e.referrer as string) ||
-      "direct";
-    sourceCounts[source] = (sourceCounts[source] || 0) + 1;
-  }
-  const trafficSources = Object.entries(sourceCounts)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 10)
-    .map(([source, visits]) => ({ source, visits }));
-
-  // Devices
-  const deviceCounts: Record<string, number> = {};
-  for (const e of pageViews) {
-    const device = (e.device as string) || "unknown";
-    deviceCounts[device] = (deviceCounts[device] || 0) + 1;
-  }
-  const devices = Object.entries(deviceCounts)
-    .sort((a, b) => b[1] - a[1])
-    .map(([device, count]) => ({ device, count }));
-
-  // Countries
-  const countryCounts: Record<string, number> = {};
-  for (const e of pageViews) {
-    const country = (e.country as string) || "unknown";
-    countryCounts[country] = (countryCounts[country] || 0) + 1;
-  }
-  const countries = Object.entries(countryCounts)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 10)
-    .map(([country, count]) => ({ country, count }));
-
-  // Waitlist signups
-  const signups = recentEvents.filter((e) => e.event === "waitlist_signup");
-
-  // Scroll depth
-  const scrollEvents = recentEvents.filter((e) => e.event === "scroll_depth");
-  const scrollDepths: Record<number, number> = {};
-  for (const e of scrollEvents) {
-    const depth = e.depth as number;
-    if (depth) scrollDepths[depth] = (scrollDepths[depth] || 0) + 1;
-  }
-
-  // Daily page views for chart (last 30 days)
-  const dailyViews: Record<string, number> = {};
-  for (const e of pageViews) {
-    if (e.timestamp) {
-      const day = new Date(e.timestamp).toISOString().slice(0, 10);
-      dailyViews[day] = (dailyViews[day] || 0) + 1;
-    }
-  }
-
-  return {
-    overview: {
-      totalPageViews: pageViews.length,
-      pageViews24h: pageViews24h.length,
-      pageViews7d: pageViews7d.length,
-      uniqueVisitors,
-      uniqueVisitors24h,
-      uniqueVisitors7d,
-      totalSignups: signups.length,
-    },
-    topPages,
-    trafficSources,
-    devices,
-    countries,
-    scrollDepths,
-    dailyViews,
-    recentSignups: signups.slice(-20).reverse(),
-    recentEvents: recentEvents.slice(-50).reverse(),
-  };
 }
