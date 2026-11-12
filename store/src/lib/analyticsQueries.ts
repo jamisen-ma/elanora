@@ -52,7 +52,8 @@ export async function getDashboard(run: Run, q: DashboardQuery) {
      SELECT start_ts, end_ts, start_ts - (end_ts - start_ts) AS prev_start,
             extract(epoch FROM end_ts - start_ts) AS seconds
      FROM b`,
-    [q.range, tz, q.from ?? null, q.to ?? null]
+    // Dates only matter for a custom range; anything else must reach Postgres as NULL, not "".
+    [q.range, tz, q.range === "custom" && q.from ? q.from : null, q.range === "custom" && q.to ? q.to : null]
   );
   const start = bounds.start_ts;
   const end = bounds.end_ts;
