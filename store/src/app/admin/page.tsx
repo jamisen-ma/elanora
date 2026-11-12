@@ -224,6 +224,11 @@ export default function AdminDashboard() {
               >
                 &larr; Back to site
               </a>
+              <form method="post" action="/api/admin/logout">
+                <button type="submit" className="text-xs text-gray-500 hover:text-gray-700">
+                  Sign out
+                </button>
+              </form>
             </div>
           </div>
 

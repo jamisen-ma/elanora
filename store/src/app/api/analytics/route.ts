@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { promises as fs } from "fs";
 import path from "path";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
+import { ensureSchema, getSql } from "@/lib/db";
+import { ADMIN_COOKIE, isValidSession } from "@/lib/adminAuth";
 
 interface AnalyticsEvent {
   event: string;
@@ -23,24 +25,60 @@ interface AnalyticsEvent {
   [key: string]: string | number | boolean | undefined;
 }
 
+const BOT_UA = /bot|crawl|spider|slurp|preview|facebookexternalhit|embedly|quora|pinterest\/|headless|lighthouse|pingdom|uptime|monitor|curl|wget|python|axios|node-fetch|go-http/i;
+const RETENTION = "13 months";
+const MAX_BODY = 4096;
+
+const text = (v: unknown, max = 512) =>
+  typeof v === "string" && v.length > 0 ? v.slice(0, max) : null;
+
+// Vercel sends the city URL-encoded (e.g. "San%20Francisco").
+const decode = (v: string | null) => {
+  if (!v) return undefined;
+  try {
+    return decodeURIComponent(v);
+  } catch {
+    return v;
+  }
+};
+
 export async function POST(req: Request) {
   try {
-    const body: AnalyticsEvent = await req.json();
+    const raw = await req.text();
+    if (raw.length > MAX_BODY) return new NextResponse(null, { status: 204 });
+    const body = JSON.parse(raw) as AnalyticsEvent;
 
-    if (!body.event) {
+    if (!body.event || typeof body.event !== "string") {
       return NextResponse.json({ error: "Event required" }, { status: 400 });
     }
 
-    // Get IP-based geo info from headers (Vercel provides these)
     const headersList = await headers();
+
+    // Not counted: preview builds, bots and link previews, the admin pages, and your own
+    // visits (anyone signed in to the dashboard).
+    if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production") {
+      return new NextResponse(null, { status: 204 });
+    }
+    if (BOT_UA.test(headersList.get("user-agent") || "")) {
+      return new NextResponse(null, { status: 204 });
+    }
+    if (typeof body.page === "string" && body.page.startsWith("/admin")) {
+      return new NextResponse(null, { status: 204 });
+    }
+    if (isValidSession((await cookies()).get(ADMIN_COOKIE)?.value)) {
+      return new NextResponse(null, { status: 204 });
+    }
+
+    // Location from Vercel's edge headers
     const geo = {
       country: headersList.get("x-vercel-ip-country") || undefined,
       region: headersList.get("x-vercel-ip-country-region") || undefined,
-      city: headersList.get("x-vercel-ip-city") || undefined,
+      city: decode(headersList.get("x-vercel-ip-city")),
     };
     const ip = headersList.get("x-forwarded-for")?.split(",")[0]?.trim();
 
-    // Hash IP for privacy (don't store raw IPs)
+    // Anonymous visitor id: a hash of the IP and today's date, so the same person is one
+    // visitor for the day but can't be followed from day to day. Raw IPs are never stored.
     let visitorId: string | undefined;
     if (ip) {
       const encoder = new TextEncoder();
@@ -60,11 +98,30 @@ export async function POST(req: Request) {
       server_timestamp: new Date().toISOString(),
     };
 
-    // Log to Vercel Function Logs (always available)
-    console.log(`[ANALYTICS] ${JSON.stringify(event)}`);
+    const sql = getSql();
+    if (sql) {
+      await ensureSchema();
+      const {
+        event: name, page, device, referrer, referrer_source, utm_source, utm_medium, utm_campaign,
+        timestamp: _t, ...props
+      } = body;
+      void _t;
+      await sql`
+        INSERT INTO analytics_events
+          (event, page, visitor_id, country, region, city, device, referrer, referrer_source,
+           utm_source, utm_medium, utm_campaign, props)
+        VALUES
+          (${text(name, 64)}, ${text(page)}, ${visitorId ?? null}, ${geo.country ?? null},
+           ${geo.region ?? null}, ${geo.city ?? null}, ${text(device, 32)}, ${text(referrer)},
+           ${text(referrer_source, 64)}, ${text(utm_source, 128)}, ${text(utm_medium, 128)},
+           ${text(utm_campaign, 128)}, ${JSON.stringify(props)})`;
+    } else {
+      // No database connected yet: keep the event in Vercel's function logs.
+      console.log(`[ANALYTICS] ${JSON.stringify(event)}`);
+    }
 
-    // In development, save to local file
-    if (process.env.NODE_ENV === "development") {
+    // On your own computer without a database, also save to a local file
+    if (!sql && process.env.NODE_ENV === "development") {
       try {
         const dataDir = path.join(process.cwd(), "data");
         const filePath = path.join(dataDir, "analytics.json");
@@ -93,31 +150,47 @@ export async function POST(req: Request) {
     }
 
     return new NextResponse(null, { status: 204 });
-  } catch {
+  } catch (err) {
+    console.error("Analytics error:", err);
     return new NextResponse(null, { status: 204 }); // Never fail on analytics
   }
 }
 
-// GET: Return analytics data for admin dashboard
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const key = searchParams.get("key");
+// GET: analytics for the admin dashboard (signed-in only — see src/proxy.ts)
+export async function GET() {
+  const sql = getSql();
 
-  // Simple auth check — use admin key from env
-  if (process.env.ADMIN_KEY && key !== process.env.ADMIN_KEY) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (sql) {
+    try {
+      await ensureSchema();
+      await sql`DELETE FROM analytics_events WHERE ts < now() - ${RETENTION}::interval`;
+      const rows = await sql`
+        SELECT event, page, visitor_id, country, region, city, device, referrer, referrer_source,
+               utm_source, utm_medium, utm_campaign, props,
+               (extract(epoch FROM ts) * 1000)::bigint AS ms
+        FROM analytics_events
+        WHERE ts > now() - interval '30 days'
+        ORDER BY ts
+        LIMIT 200000`;
+      const events: AnalyticsEvent[] = rows.map((r) => {
+        const { props, ms, ...cols } = r as Record<string, unknown>;
+        const clean = Object.fromEntries(Object.entries(cols).filter(([, v]) => v !== null));
+        return { ...(props as object), ...clean, timestamp: Number(ms) } as AnalyticsEvent;
+      });
+      return NextResponse.json(aggregateEvents(events));
+    } catch (err) {
+      console.error("Analytics read error:", err);
+      return NextResponse.json({ error: "Could not read analytics" }, { status: 500 });
+    }
   }
 
-  // In development, read from file
+  // On your own computer without a database, read the local file
   if (process.env.NODE_ENV === "development") {
     try {
       const filePath = path.join(process.cwd(), "data", "analytics.json");
       const data = await fs.readFile(filePath, "utf-8");
       const events = JSON.parse(data);
-
-      // Aggregate the data
-      const summary = aggregateEvents(events);
-      return NextResponse.json(summary);
+      return NextResponse.json(aggregateEvents(events));
     } catch {
       return NextResponse.json({
         totalPageViews: 0,
@@ -127,11 +200,8 @@ export async function GET(req: Request) {
     }
   }
 
-  // In production, read from Vercel Logs API or return instructions
   return NextResponse.json({
-    message:
-      "Analytics data is available in the Vercel dashboard under Function Logs, or connect a database for persistent storage.",
-    tip: "Search for [ANALYTICS] in your Vercel Function Logs to see all events.",
+    message: "No database connected. Create one in Vercel → Storage to start saving analytics.",
   });
 }
 
