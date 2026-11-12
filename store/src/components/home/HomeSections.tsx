@@ -70,20 +70,20 @@ export function PopularStyles() {
           <Label as="h2"><span id="popular-styles-heading">Shop by Category</span></Label>
         </div>
 
-        {/* phones: one full card plus most of the next, a hint that the row scrolls */}
-        <ul className="mx-auto mt-8 flex max-w-[1200px] snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [scrollbar-width:none] sm:gap-6 md:grid md:grid-cols-4 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden">
+        {/* phones and tablets: a 2 × 2 grid; desktop: one row of four */}
+        <ul className="mx-auto mt-8 grid max-w-[1200px] grid-cols-2 gap-x-3 gap-y-7 sm:gap-x-6 md:grid-cols-4 md:gap-y-0">
           {cards.map((c) => (
-            <li key={c.href} className="w-[60%] shrink-0 snap-start sm:w-[40%] md:w-auto">
+            <li key={c.href}>
               <Link href={c.href} className="group block">
                 <ProductFrame
                   src={c.item?.images[0]?.src}
                   alt={c.label}
                   hoverSrc={c.item ? onBodyImage(c.item) : undefined}
-                  sizes="(max-width: 767px) 60vw, 25vw"
+                  sizes="(max-width: 767px) 50vw, 25vw"
                 />
-                <div className="mt-5 text-center">
-                  <h3 className={`${productSerif.className} text-[18px] font-normal leading-snug tracking-[-0.01em] sm:text-[20px]`}>{c.label}</h3>
-                  <p className="mt-1.5 text-[12px] font-medium uppercase tracking-[0.2em] text-[#6e6e73] transition-colors group-hover:text-[#1d1d1f]">
+                <div className="mt-3 text-center sm:mt-5">
+                  <h3 className={`${productSerif.className} text-[17px] font-normal leading-snug tracking-[-0.01em] sm:text-[20px]`}>{c.label}</h3>
+                  <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.16em] text-[#6e6e73] transition-colors group-hover:text-[#1d1d1f] sm:mt-1.5 sm:text-[12px] sm:tracking-[0.2em]">
                     Shop {c.label} &rarr;
                   </p>
                 </div>
