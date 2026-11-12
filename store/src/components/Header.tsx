@@ -57,9 +57,13 @@ export default function Header() {
   }, [overlays]);
 
   const transparent = overlays && overHero && !mobileMenuOpen;
+  // Home on phones/tablets: the logo and icons turn white over the hero photo (a soft dark fade
+  // at the top of the photo keeps them readable); from lg up they stay dark on the light wall.
+  const onPhoto = transparent && isHome;
   const background = !transparent
     ? "bg-white/90 backdrop-blur-md"
-    : isHome
+    : // Home: the logo and icons sit straight on the hero photo at every size.
+      isHome
       ? "bg-transparent"
       : "bg-white/90 backdrop-blur-md lg:bg-transparent lg:backdrop-blur-none";
 
@@ -73,7 +77,7 @@ export default function Header() {
         <div className="relative mx-auto flex h-14 max-w-[1440px] items-center justify-between px-5 md:px-8 lg:h-16 lg:px-10">
           {/* Mobile: Menu */}
           <button
-            className="-ml-1 p-1 text-[#1d1d1f] lg:hidden"
+            className={`-ml-1 p-1 lg:hidden ${onPhoto ? "text-white" : "text-[#1d1d1f]"}`}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileMenuOpen}
@@ -102,7 +106,7 @@ export default function Header() {
           <Link
             href="/"
             scroll={false}
-            className={`${didone.className} absolute left-1/2 -translate-x-1/2 pl-[0.38em] text-[18px] font-normal tracking-[0.38em] text-[#1d1d1f] lg:text-[21px]`}
+            className={`${didone.className} absolute left-1/2 -translate-x-1/2 pl-[0.38em] text-[18px] font-normal tracking-[0.38em] lg:text-[21px] ${onPhoto ? "text-white lg:text-[#1d1d1f]" : "text-[#1d1d1f]"}`}
             onClick={() => {
               setMobileMenuOpen(false);
               toTop();
@@ -128,7 +132,7 @@ export default function Header() {
             </Link>
             <button
               onClick={() => setIsOpen(true)}
-              className="relative -mr-1 p-1 text-[#1d1d1f]/80 transition-colors hover:text-[#1d1d1f]"
+              className={`relative -mr-1 p-1 transition-colors ${onPhoto ? "text-white lg:text-[#1d1d1f]/80 lg:hover:text-[#1d1d1f]" : "text-[#1d1d1f]/80 hover:text-[#1d1d1f]"}`}
               aria-label={totalItems > 0 ? `Open bag, ${totalItems} items` : "Open bag"}
             >
               <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.2" viewBox="0 0 20 20">
@@ -136,7 +140,7 @@ export default function Header() {
                 <path strokeLinecap="round" d="M7 7V5.5a3 3 0 016 0V7" />
               </svg>
               {totalItems > 0 && (
-                <span className="absolute -right-1 -top-0.5 text-[12px] leading-none text-[#1d1d1f]">
+                <span className={`absolute -right-1 -top-0.5 text-[12px] leading-none ${onPhoto ? "text-white lg:text-[#1d1d1f]" : "text-[#1d1d1f]"}`}>
                   {totalItems}
                 </span>
               )}

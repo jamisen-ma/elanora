@@ -46,7 +46,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${bodySans.variable} h-full antialiased`}>
+    // data-scroll-behavior: Next 16 turns off the CSS smooth scroll during page changes, so a new page opens at the top
+    <html lang="en" data-scroll-behavior="smooth" className={`${bodySans.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <CartProvider>
           <SiteChrome banner={<PromoBanner />} header={<Header />} footer={<Footer />}>

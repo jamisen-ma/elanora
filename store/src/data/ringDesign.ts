@@ -54,7 +54,6 @@ export const SETTINGS = [
     name: "Split Pavé",
     note: "A band that splits in two, set with small diamonds.",
     photos: {
-      Round: "round-split-pave-diamond-ring",
       Emerald: "emerald-split-pave-diamond-ring",
       Pear: "pear-split-pave-diamond-ring",
     },
@@ -68,6 +67,12 @@ export const SETTINGS = [
       Round: "round-halo-diamond-ring",
       Emerald: "yellow-emerald-halo-diamond-ring",
       Pear: "yellow-pear-halo-diamond-ring",
+      Marquise: "marquise-halo-diamond-ring",
+      Radiant: "radiant-halo-diamond-ring",
+      Cushion: "cushion-halo-diamond-ring",
+      Asscher: "asscher-halo-diamond-ring",
+      Princess: "princess-halo-diamond-ring",
+      Heart: "heart-halo-diamond-ring",
     },
   },
   {
@@ -145,7 +150,7 @@ export const QUALITY_CLARITIES = ["FL–IF", "VVS", "VS", "Any"] as const;
 export const QUALITY_CUTS = ["Ideal", "Excellent", "Any"] as const;
 
 /** US ring sizes 3–9 in quarter sizes. */
-export const RING_SIZES_QUARTER = Array.from({ length: 25 }, (_, i) => (3 + i * 0.25).toFixed(2));
+export const RING_SIZES_QUARTER = Array.from({ length: 29 }, (_, i) => (3 + i * 0.25).toFixed(2)); // US 3 to 10
 export const SIZE_NOT_SURE = "not-sure";
 export const sizeLabel = (s?: string | null) => (!s ? "" : s === SIZE_NOT_SURE ? "Not sure yet" : `US ${s}`);
 

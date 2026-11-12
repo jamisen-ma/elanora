@@ -23,6 +23,7 @@ export default function ProductFrame({
   className = "aspect-[4/5]",
   bg = FRAME_BG,
   hoverSrc,
+  insetClass = "inset-[8%]",
 }: {
   src?: string;
   alt: string;
@@ -32,11 +33,12 @@ export default function ProductFrame({
   className?: string;
   bg?: string; // canvas colour class; white photo backgrounds multiply into it
   hoverSrc?: string; // shown on hover of the parent `group` (e.g. the on-hand photo)
+  insetClass?: string; // margin around a product still (larger = smaller piece); on-body photos fill the frame
 }) {
   return (
     <div className={`relative overflow-hidden ${bg} ${className}`}>
       {src ? (
-        <div className={`absolute ${fill ? "inset-0" : "inset-[8%]"}`}>
+        <div className={`absolute ${fill ? "inset-0" : insetClass}`}>
           <Image
             src={src}
             alt={alt}

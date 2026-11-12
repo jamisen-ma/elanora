@@ -15,7 +15,7 @@ export default function PromoBanner() {
       root.style.setProperty("--promo-h", "0px");
       return;
     }
-    const update = () => root.style.setProperty("--promo-h", `${el.offsetHeight}px`);
+    const update = () => root.style.setProperty("--promo-h", `${el.getBoundingClientRect().height}px`);
     update();
     const ro = new ResizeObserver(update);
     ro.observe(el);

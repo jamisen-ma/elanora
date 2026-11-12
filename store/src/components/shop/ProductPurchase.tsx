@@ -20,8 +20,8 @@ const metalLabel = (m: string) => m.replace(/^(\d+)k\b/i, (_, n) => `${n}K`);
 
 const swatchFor = (name: string) => {
   const n = name.toLowerCase();
+  if (n.includes("rose")) return "#ecc6ae"; // incl. rose gold over sterling silver
   if (n.includes("yellow") || n.includes("gold over")) return "#e3cb6e"; // gold over sterling silver reads as yellow gold
-  if (n.includes("rose")) return "#ecc6ae";
   if (n.includes("platinum")) return "#cfd1d4";
   if (n.includes("white")) return "#dcdcdc";
   if (n.includes("silver")) return "#c9ccd1";
@@ -109,14 +109,17 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
   };
 
   // Engagement settings are not sold from the product page: the diamond, carat and size
-  // are chosen in Design Your Ring, which ends in a quote request.
-  const setting = settingForSlug(item.slug);
+  // are chosen in Design Your Ring, which ends in a quote request. Settings that have their own
+  // metal + carat prices (the solitaires) are sold here directly instead.
+  const setting = item.metalCaratPrices ? undefined : settingForSlug(item.slug);
   const hasCarats = !setting && !!item.carats?.length;
   const caratPriced = !!(item.caratPrices || item.metalCaratPrices);
   const sizeLabel =
     item.sizeLabel ??
     (item.type === "Bracelets" ? "Bracelet Length" : item.type === "Necklaces" ? "Chain Length" : "Ring Size");
   // Necklaces show an on-body length comparison inside the open Chain Length menu.
+  // Longer carat labels (e.g. "Average Carat Weight") get full-width selectors, one above the other.
+  const stacked = !!item.caratLabel;
   const hasLengthGuide = item.type === "Necklaces" && needsSize && !item.sizeLabel;
 
   return (
@@ -202,20 +205,20 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
       {(hasCarats || needsSize) && (
         <div className="grid grid-cols-2 gap-3 border-b border-[#1d1d1f]/15 py-3">
           {hasCarats && (
-            <div className={needsSize ? "" : "col-span-2"}>
-              <p className="mb-1.5 text-[15px] leading-tight">{caratPriced ? "Center Diamond" : "Carat Weight"}</p>
+            <div className={needsSize && !stacked ? "" : "col-span-2"}>
+              <p className="mb-1.5 text-[15px] leading-tight">{item.caratLabel ?? (caratPriced ? "Center Diamond" : "Carat Weight")}</p>
               <Listbox
-                label={caratPriced ? "Center diamond carat weight" : "Carat weight"}
+                label={item.caratLabel ?? (caratPriced ? "Center diamond carat weight" : "Carat weight")}
                 value={carat}
                 options={item.carats!}
                 note={caratPriced ? (o) => formatUSD(optionPrice(item, metal, o, size) ?? 0) : CARAT_LEAD_TIME}
-                full={!needsSize}
+                full={!needsSize || stacked}
                 onChange={setCarat}
               />
             </div>
           )}
           {needsSize && (
-            <div className={hasCarats ? "" : "col-span-2"}>
+            <div className={hasCarats && !stacked ? "" : "col-span-2"}>
               <p className="mb-1.5 text-[15px] leading-tight">{sizeLabel}</p>
               {hasLengthGuide ? (
                 <LengthListbox label={sizeLabel} value={size} options={item.sizes!} prices={item.sizePrices} onChange={setSize} />
@@ -231,7 +234,11 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
                     <option value="">Select</option>
                     {item.sizes!.map((s) => (
                       <option key={s} value={s}>
-                        {item.sizePrices?.[s] !== undefined ? `${s} — ${formatUSD(item.sizePrices[s])}` : s}
+                        {item.sizeSurcharges || item.caratSizeSurcharges
+                          ? `${s} — ${formatUSD(optionPrice(item, metal, carat, s) ?? 0)}`
+                          : item.sizePrices?.[s] !== undefined
+                            ? `${s} — ${formatUSD(item.sizePrices[s])}`
+                            : s}
                       </option>
                     ))}
                   </select>
@@ -240,6 +247,7 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
               )}
             </div>
           )}
+          {item.optionsNote && <p className="col-span-2 text-[13px] leading-[1.5] text-[#1d1d1f]/60">{item.optionsNote}</p>}
         </div>
       )}
 
@@ -247,6 +255,38 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
         <NameQuote item={item} metal={metal} size={size} />
       ) : (
         <>
+      {item.caratLabel && (item.sizeSurcharges || item.caratSizeSurcharges) && (
+        // Selection summary for pieces priced by metal, carat weight and length together.
+        <dl className="border-b border-[#1d1d1f]/15 py-3 text-[15px] leading-[1.5]" aria-live="polite">
+          <div className="flex justify-between gap-4">
+            <dt className="text-[#1d1d1f]/70">Metal</dt>
+            <dd>{metalLabel(metal)}</dd>
+          </div>
+          <div className="flex justify-between gap-4">
+            <dt className="text-[#1d1d1f]/70">{item.caratLabel}</dt>
+            <dd>{carat}</dd>
+          </div>
+          {needsSize && (
+            <div className="flex justify-between gap-4">
+              <dt className="text-[#1d1d1f]/70">{sizeLabel}</dt>
+              <dd>{size || "Select a length"}</dd>
+            </div>
+          )}
+          {!item.hideCaratTotal && (
+            <div className="flex justify-between gap-4">
+              <dt className="text-[#1d1d1f]/70">Est. Total Carat Weight</dt>
+              <dd className="text-right">{(size && item.caratWeights?.[carat]?.[size]) || carat}</dd>
+            </div>
+          )}
+          <div className="mt-1 flex justify-between gap-4 font-medium">
+            <dt>Price</dt>
+            <dd>{unitPrice !== null ? formatUSD(unitPrice) : "—"}</dd>
+          </div>
+          {!item.hideCaratTotal && !(size && item.caratWeights?.[carat]?.[size]) && (
+            <p className="mt-1.5 text-[13px] text-[#1d1d1f]/60">Total carat weight varies with bracelet length.</p>
+          )}
+        </dl>
+      )}
       {chain && (
         <div className="border-b border-[#1d1d1f]/15 py-3">
           <label className="flex cursor-pointer items-center justify-between gap-3 text-[15px] leading-tight">

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { galleryFor, type CatalogItem, type GalleryImage } from "@/data/catalog";
 import { useMetal } from "./MetalContext";
 import ProductFrame, { PAGE_BG } from "./ProductFrame";
+import FocusVideo from "./FocusVideo";
 
 // Product page gallery: a wide strip showing two panels side by side on desktop (one on
 // mobile), paged with thin chevrons, swipe or the ← → keys. Shows only the images
@@ -65,15 +66,33 @@ export default function ProductGallery({ item }: { item: CatalogItem }) {
             aria-roledescription="slide"
             aria-label={`${i + 1} of ${images.length}`}
           >
-            <ProductFrame
-              src={img?.src}
-              alt={img ? altFor(img) : name}
-              fill={img?.kind === "on-body"}
-              priority // few images; load all so slides never flash blank
-              sizes="(max-width: 1024px) 100vw, 32vw"
-              className="aspect-[4/5] lg:aspect-[1/1.02]"
-              bg={PAGE_BG}
-            />
+            {img?.kind === "video" ? (
+              <div className={`relative aspect-square overflow-hidden lg:aspect-[1/1.02] ${PAGE_BG}`}>
+                <FocusVideo
+                  src={img.src}
+                  poster={img.poster}
+                  focus={img.focus}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  aria-label={`${name}, video`}
+                />
+              </div>
+            ) : (
+              <ProductFrame
+                src={img?.src}
+                alt={img ? altFor(img) : name}
+                fill={img?.kind === "on-body"}
+                priority // few images; load all so slides never flash blank
+                sizes="(max-width: 1024px) 100vw, 32vw"
+                // mobile: square slides (less empty canvas above and below), piece at catalogue scale like Graff
+                className="aspect-square lg:aspect-[1/1.02]"
+                insetClass="inset-[17%] lg:inset-[8%]"
+                bg={PAGE_BG}
+              />
+            )}
           </li>
         ))}
       </ul>

@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Cormorant_Garamond } from "next/font/google";
-import { SHAPE_ORDER, fromPrice, jewelryTypes, onBodyImage, productHref, type CatalogItem } from "@/data/catalog";
+import { RING_BANDS, RING_STYLES, RING_STYLE_IMAGES, SHAPE_ORDER, fromPrice, jewelryTypes, onBodyImage, productHref, type CatalogItem } from "@/data/catalog";
 import ProductFrame from "./ProductFrame";
 import CollectionHero, { type CollectionHeroProps } from "./CollectionHero";
 import { productSerif } from "@/lib/fonts";
@@ -16,9 +17,9 @@ import { productSerif } from "@/lib/fonts";
 
 const serif = Cormorant_Garamond({ subsets: ["latin"], weight: ["400"], style: ["normal", "italic"] });
 
-type GroupKey = "type" | "shape" | "stone" | "metal" | "price";
+type GroupKey = "type" | "color" | "style" | "band" | "shape" | "stone" | "metal" | "price";
 type Selected = Record<GroupKey, string[]>;
-const EMPTY: Selected = { type: [], shape: [], stone: [], metal: [], price: [] };
+const EMPTY: Selected = { type: [], color: [], style: [], band: [], shape: [], stone: [], metal: [], price: [] };
 
 
 const PRICE_RANGES = [
@@ -40,16 +41,27 @@ type SortId = (typeof SORTS)[number]["id"];
 
 export default function CategoryCollection({
   label,
-  items,
+  items: allItems,
   showTypeFilter = false,
+  showStyleTiles = false,
   hero,
+  intro,
+  colorBySlug,
 }: {
   label: string;
   items: CatalogItem[];
   showTypeFilter?: boolean;
+  /** Rings page: a row of ring-style tiles (Solitaire, Halo, Pavé…) at the top that filter the grid. */
+  showStyleTiles?: boolean;
   /** Optional editorial hero shown in place of the title. */
   hero?: CollectionHeroProps;
+  /** Optional block between the intro (hero or title) and the filters / grid, e.g. the Design Your Ring steps. */
+  intro?: React.ReactNode;
+  /** Optional "Stone Color" filter, keyed by product slug (e.g. Wings of Light: Pink / Blue / Yellow). */
+  colorBySlug?: Record<string, string>;
 }) {
+  // Pieces marked hideInShop stay off every listing; their pages stay reachable (e.g. via the Shape selector).
+  const items = useMemo(() => allItems.filter((i) => !i.hideInShop), [allItems]);
   const [selected, setSelected] = useState<Selected>(EMPTY);
   const [sort, setSort] = useState<SortId>("featured");
   const [sortOpen, setSortOpen] = useState(false);
@@ -73,17 +85,31 @@ export default function CategoryCollection({
         label: "Jewelry Type",
         options: jewelryTypes.filter((t) => items.some((i) => i.type === t)).map((v) => ({ value: v, label: v })),
       });
+    if (colorBySlug) {
+      const order = Array.from(new Set(Object.values(colorBySlug)));
+      const colors = present((i) => colorBySlug[i.slug] ?? "")
+        .filter(Boolean)
+        .sort((x, y) => order.indexOf(x) - order.indexOf(y));
+      out.push({ key: "color", label: "Stone Color", options: colors.map((v) => ({ value: v, label: v })) });
+    }
+    const styles = RING_STYLES.filter((v) => items.some((i) => i.ringStyle === v));
+    out.push({ key: "style", label: "Ring Style", options: styles.map((v) => ({ value: v, label: v })) });
+    const bands = RING_BANDS.filter((b) => items.some((i) => i.band === b));
+    out.push({ key: "band", label: "Band Style", options: bands.map((v) => ({ value: v, label: v })) });
     out.push({ key: "shape", label: "Diamond Shape", options: shapes.map((v) => ({ value: v, label: v })) });
     out.push({ key: "stone", label: "Stone", options: stones.map((v) => ({ value: v, label: v })) });
     out.push({ key: "metal", label: "Metal", options: metals.map((v) => ({ value: v, label: v })) });
     out.push({ key: "price", label: "Price", options: prices.map((r) => ({ value: r.id, label: r.label })) });
     return out.filter((g) => g.options.length > 0);
-  }, [items, showTypeFilter]);
+  }, [items, showTypeFilter, colorBySlug]);
 
   const results = useMemo(() => {
     const s = selected;
     const list = items.filter((i) => {
       if (s.type.length && !s.type.includes(i.type)) return false;
+      if (s.color.length && !s.color.includes(colorBySlug?.[i.slug] ?? "")) return false;
+      if (s.style.length && !(i.ringStyle && s.style.includes(i.ringStyle))) return false;
+      if (s.band.length && !(i.band && s.band.includes(i.band))) return false;
       if (s.shape.length && !(i.shape && s.shape.includes(i.shape))) return false;
       if (s.stone.length && !s.stone.includes(i.stoneGroup)) return false;
       if (s.metal.length && !(i.metal && s.metal.includes(i.metal))) return false;
@@ -101,7 +127,7 @@ export default function CategoryCollection({
     if (sort === "price-asc") list.sort((a, b) => (a.price ?? Infinity) - (b.price ?? Infinity));
     if (sort === "price-desc") list.sort((a, b) => (b.price ?? -Infinity) - (a.price ?? -Infinity));
     return list;
-  }, [items, selected, sort]);
+  }, [items, selected, sort, colorBySlug]);
 
   const optionLabel = (key: GroupKey, value: string) =>
     groups.find((g) => g.key === key)?.options.find((o) => o.value === value)?.label ?? value;
@@ -142,6 +168,16 @@ export default function CategoryCollection({
             {label}
           </h1>
         </header>
+      )}
+
+      {intro}
+
+      {showStyleTiles && (
+        <StyleTiles
+          items={items}
+          active={selected.style}
+          onPick={(style) => setSelected((s) => ({ ...s, style: s.style.length === 1 && s.style[0] === style ? [] : [style] }))}
+        />
       )}
 
       {/* Breadcrumb + filter / sort */}
@@ -384,5 +420,58 @@ function Tile({ item, priority }: { item: CatalogItem; priority?: boolean }) {
         <p className="mt-1.5 text-[15px] text-[#6e6e73]">{fromPrice(item)}</p>
       </div>
     </Link>
+  );
+}
+
+// Ring-style tiles (Rings page): one per style present, each with its prepared tile image
+// (RING_STYLE_IMAGES: every ring the same size). Picking one filters the grid to it; picking it again shows every ring.
+function StyleTiles({
+  items,
+  active,
+  onPick,
+}: {
+  items: CatalogItem[];
+  active: string[];
+  onPick: (band: string) => void;
+}) {
+  const tiles = RING_STYLES.map((style) => {
+    const rings = items.filter((i) => i.ringStyle === style).sort((a, b) => a.addedRank - b.addedRank);
+    return { style, count: rings.length, image: RING_STYLE_IMAGES[style] };
+  }).filter((t) => t.count > 0);
+  if (!tiles.length) return null;
+  return (
+    <section aria-label="Shop rings by style" className="px-6 pb-10 md:px-10 sm:pb-12">
+      <ul className="-mx-6 flex snap-x gap-3 overflow-x-auto px-6 pb-1 sm:mx-auto sm:grid sm:max-w-[1200px] sm:grid-cols-5 sm:gap-4 sm:overflow-visible sm:px-0 [scrollbar-width:none]">
+        {tiles.map((t) => {
+          const on = active.includes(t.style);
+          return (
+            <li key={t.style} className="w-[38%] shrink-0 snap-start sm:w-auto">
+              <button
+                type="button"
+                onClick={() => onPick(t.style)}
+                aria-pressed={on}
+                className="group block w-full text-center"
+              >
+                <span
+                  className={`block overflow-hidden border transition-colors ${
+                    on ? "border-[#8a7358]" : "border-transparent group-hover:border-[#1d1d1f]/15"
+                  }`}
+                >
+                  <span className="relative block aspect-[4/3] overflow-hidden bg-white">
+                    <Image src={t.image} alt="" fill unoptimized loading="eager" sizes="(max-width: 640px) 38vw, 20vw" className="object-contain" />
+                  </span>
+                </span>
+                <span className="mt-2.5 block text-[12px] uppercase tracking-[0.16em] sm:text-[14px] sm:tracking-[0.22em]">
+                  {t.style}
+                </span>
+                <span className="mt-0.5 block text-[12px] text-[#6e6e73] sm:text-[13px]">
+                  {t.count} {t.count === 1 ? "ring" : "rings"}
+                </span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }
