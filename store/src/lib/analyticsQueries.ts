@@ -15,6 +15,7 @@ export interface DashboardQuery {
   from?: string; // YYYY-MM-DD, custom range only
   to?: string;
   tz: string;
+  orders?: "live" | "test"; // which Stripe orders to show; default: live once there are any
 }
 
 const num = (v: unknown) => (v === null || v === undefined ? 0 : Number(v));
@@ -60,6 +61,8 @@ export async function getDashboard(run: Run, q: DashboardQuery) {
   const prevStart = bounds.prev_start;
   const spanDays = num(bounds.seconds) / 86400;
   const bucket = spanDays <= 2 ? "hour" : spanDays <= 120 ? "day" : "week";
+
+  const sales = await getSales(run, { start, end, prevStart, bucket, tz, mode: q.orders });
 
   const totals = (from: unknown, to: unknown) =>
     run(
@@ -237,7 +240,10 @@ export async function getDashboard(run: Run, q: DashboardQuery) {
       views: num(r.views),
       visitors: num(r.visitors),
       leads: num(r.leads),
+      orders: sales.bySlot.get(String(r.slot))?.orders ?? 0,
+      revenue: sales.bySlot.get(String(r.slot))?.revenue ?? 0,
     })),
+    sales: { ...sales.summary, funnel: { ...sales.summary.funnel, visitors: current.visitors } },
     pages: pageRows.slice(0, 50),
     products: products.slice(0, 50),
     categories,
@@ -289,3 +295,122 @@ export async function getDashboard(run: Run, q: DashboardQuery) {
 }
 
 export type Dashboard = Awaited<ReturnType<typeof getDashboard>>;
+
+// ---------- Sales (paid Stripe orders) ----------
+
+// Net revenue = what was paid minus refunds, in cents.
+const NET = `(o.amount_total - o.amount_refunded)`;
+
+async function getSales(
+  run: Run,
+  r: { start: unknown; end: unknown; prevStart: unknown; bucket: string; tz: string; mode?: "live" | "test" }
+) {
+  const [{ has_live, has_test }] = await run(
+    `SELECT bool_or(livemode) AS has_live, bool_or(NOT livemode) AS has_test FROM orders`,
+    []
+  );
+  // Until the first real order, show Stripe test-mode orders so checkout can be tried out.
+  const mode = r.mode ?? (has_live ? "live" : "test");
+  const live = mode === "live";
+
+  const totals = (from: unknown, to: unknown) =>
+    run(
+      `SELECT count(*) AS orders, coalesce(sum(${NET}), 0) AS revenue,
+              coalesce(sum(o.amount_refunded), 0) AS refunded,
+              coalesce((SELECT sum(i.quantity) FROM order_items i JOIN orders o2 USING (session_id)
+                        WHERE o2.ts >= $1 AND o2.ts < $2 AND o2.livemode = $3), 0) AS items
+       FROM orders o WHERE o.ts >= $1 AND o.ts < $2 AND o.livemode = $3`,
+      [from, to, live]
+    ).then(([x]) => ({ orders: num(x.orders), revenue: num(x.revenue), refunded: num(x.refunded), items: num(x.items) }));
+
+  const [current, previous, series, best, bySource, recent, [funnel]] = await Promise.all([
+    totals(r.start, r.end),
+    totals(r.prevStart, r.start),
+    run(
+      `SELECT to_char(date_trunc('${r.bucket}', o.ts AT TIME ZONE $3), 'YYYY-MM-DD"T"HH24:MI') AS slot,
+              count(*) AS orders, sum(${NET}) AS revenue
+       FROM orders o WHERE o.ts >= $1 AND o.ts < $2 AND o.livemode = $4
+       GROUP BY 1`,
+      [r.start, r.end, r.tz, live]
+    ),
+    run(
+      `SELECT coalesce(i.slug, i.name) AS key, min(i.name) AS name, min(i.slug) AS slug,
+              sum(i.quantity) AS quantity, sum(i.amount_total) AS revenue, count(DISTINCT o.session_id) AS orders
+       FROM order_items i JOIN orders o USING (session_id)
+       WHERE o.ts >= $1 AND o.ts < $2 AND o.livemode = $3
+       GROUP BY 1 ORDER BY revenue DESC LIMIT 25`,
+      [r.start, r.end, live]
+    ),
+    run(
+      `SELECT coalesce(nullif(o.source, ''), 'direct') AS source, count(*) AS orders, sum(${NET}) AS revenue
+       FROM orders o WHERE o.ts >= $1 AND o.ts < $2 AND o.livemode = $3
+       GROUP BY 1 ORDER BY revenue DESC`,
+      [r.start, r.end, live]
+    ),
+    run(
+      `SELECT o.session_id, o.ts, o.amount_total, o.amount_refunded, o.currency, o.payment_intent,
+              o.country, o.region, o.city, coalesce(nullif(o.source, ''), 'direct') AS source,
+              (SELECT json_agg(json_build_object('name', i.name, 'quantity', i.quantity, 'slug', i.slug))
+               FROM order_items i WHERE i.session_id = o.session_id) AS items
+       FROM orders o WHERE o.ts >= $1 AND o.ts < $2 AND o.livemode = $3
+       ORDER BY o.ts DESC LIMIT 25`,
+      [r.start, r.end, live]
+    ),
+    // How many visitors reached each step (visitors themselves come from the overview).
+    run(
+      `SELECT count(DISTINCT visitor_id) FILTER (WHERE event = 'page_view' AND page LIKE '/shop/%') AS product_viewers,
+              count(DISTINCT visitor_id) FILTER (WHERE event = 'add_to_bag') AS added_to_bag,
+              count(DISTINCT visitor_id) FILTER (WHERE event = 'checkout_started') AS started_checkout
+       FROM analytics_events WHERE ts >= $1 AND ts < $2`,
+      [r.start, r.end]
+    ),
+  ]);
+
+  const bySlot = new Map(series.map((x) => [String(x.slot), { orders: num(x.orders), revenue: num(x.revenue) }]));
+
+  return {
+    bySlot,
+    summary: {
+      mode,
+      hasLive: Boolean(has_live),
+      hasTest: Boolean(has_test),
+      ...current,
+      previous,
+      bestSellers: best.map((b) => {
+        const item = b.slug ? getCatalogItem(String(b.slug)) : undefined;
+        return {
+          slug: str(b.slug),
+          name: item?.name ?? String(b.name).split(" — ")[0],
+          type: item?.type ?? null,
+          quantity: num(b.quantity),
+          orders: num(b.orders),
+          revenue: num(b.revenue),
+        };
+      }),
+      bySource: bySource.map((x) => ({ source: String(x.source), orders: num(x.orders), revenue: num(x.revenue) })),
+      recent: recent.map((o) => ({
+        sessionId: String(o.session_id),
+        ts: iso(o.ts),
+        amount: num(o.amount_total),
+        refunded: num(o.amount_refunded),
+        currency: String(o.currency),
+        paymentIntent: str(o.payment_intent),
+        country: str(o.country),
+        region: str(o.region),
+        city: str(o.city),
+        source: String(o.source),
+        items: ((o.items as { name: string; quantity: number; slug: string | null }[] | null) ?? []).map((i) => ({
+          name: i.name,
+          quantity: Number(i.quantity),
+        })),
+      })),
+      funnel: {
+        visitors: 0, // filled in from the overview
+        productViewers: num(funnel?.product_viewers),
+        addedToBag: num(funnel?.added_to_bag),
+        startedCheckout: num(funnel?.started_checkout),
+        orders: current.orders,
+      },
+    },
+  };
+}

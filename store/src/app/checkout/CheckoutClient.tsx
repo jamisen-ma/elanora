@@ -5,6 +5,18 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/data/products";
 import { useEffect, useState } from "react";
+import { trackEvent } from "@/components/Analytics";
+
+// How this visitor found the shop (saved by the tracker), sent along so orders can be credited
+// to Instagram, Google, a campaign link, etc.
+function attribution() {
+  try {
+    const utm = JSON.parse(sessionStorage.getItem("elanora_utm") || "{}");
+    return { ...utm, referrer: sessionStorage.getItem("elanora_referrer") || undefined };
+  } catch {
+    return {};
+  }
+}
 
 export default function CheckoutClient({ status }: { status: "success" | "canceled" | null }) {
   const { items, subtotal, removeItem, updateQuantity, clearCart } = useCart();
@@ -18,6 +30,10 @@ export default function CheckoutClient({ status }: { status: "success" | "cancel
   const handleCheckout = async () => {
     setLoading(true);
     setError("");
+    trackEvent("checkout_started", {
+      items: items.reduce((n, i) => n + i.quantity, 0),
+      value: subtotal / 100,
+    });
 
     try {
       const res = await fetch("/api/checkout", {
@@ -28,6 +44,7 @@ export default function CheckoutClient({ status }: { status: "success" | "cancel
             id: item.product.id,
             quantity: item.quantity,
           })),
+          attribution: attribution(),
         }),
       });
 

@@ -2,15 +2,16 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import TrendChart from "@/components/admin/TrendChart";
+import TrendChart, { money } from "@/components/admin/TrendChart";
 import type { Dashboard, RangeKey } from "@/lib/analyticsQueries";
 
 // Elanora analytics dashboard. Reads /api/analytics (signed-in only) for the chosen date range,
 // in the viewer's own timezone, and refreshes every minute.
 
-type Tab = "overview" | "products" | "traffic" | "locations" | "leads";
+type Tab = "overview" | "sales" | "products" | "traffic" | "locations" | "leads";
 const TABS: { id: Tab; label: string }[] = [
   { id: "overview", label: "Overview" },
+  { id: "sales", label: "Sales" },
   { id: "products", label: "Products" },
   { id: "traffic", label: "Traffic" },
   { id: "locations", label: "Locations & devices" },
@@ -91,6 +92,8 @@ export default function AdminDashboard() {
   const [view, setView] = useState<View>({ range: "7d", from: "", to: "", tab: "overview" });
   const [tick, setTick] = useState(0);
   const [result, setResult] = useState<{ key: string; data?: Dashboard; error?: string } | null>(null);
+  // Live or Stripe test-mode orders; until chosen, the server picks (live once any exist).
+  const [orderMode, setOrderMode] = useState<"live" | "test" | null>(null);
 
   // Restore the last range and tab used on this device.
   useEffect(() => {
@@ -113,8 +116,9 @@ export default function AdminDashboard() {
       p.set("from", view.from);
       p.set("to", view.to);
     }
+    if (orderMode) p.set("orders", orderMode);
     return p.toString();
-  }, [view.range, view.from, view.to, tz]);
+  }, [view.range, view.from, view.to, tz, orderMode]);
 
   useEffect(() => {
     if (!customReady) return;
@@ -268,6 +272,7 @@ export default function AdminDashboard() {
         ) : (
           <>
             {view.tab === "overview" && <Overview d={data} />}
+            {view.tab === "sales" && <Sales d={data} onMode={setOrderMode} />}
             {view.tab === "products" && <Products d={data} />}
             {view.tab === "traffic" && <Traffic d={data} />}
             {view.tab === "locations" && <Locations d={data} />}
@@ -287,12 +292,19 @@ function Overview({ d }: { d: Dashboard }) {
   const prevPerVisitor = o.previous.visitors ? o.previous.views / o.previous.visitors : 0;
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+        <Stat
+          label={d.sales.mode === "test" ? "Revenue (test)" : "Revenue"}
+          value={money(d.sales.revenue)}
+          now={d.sales.revenue}
+          before={d.sales.previous.revenue}
+          accent
+        />
         <Stat label="Visitors" value={fmt(o.visitors)} now={o.visitors} before={o.previous.visitors} />
         <Stat label="Page views" value={fmt(o.views)} now={o.views} before={o.previous.views} />
         <Stat label="Pages per visitor" value={perVisitor ? perVisitor.toFixed(1) : "—"} now={perVisitor} before={prevPerVisitor} />
         <Stat label="Avg. time on page" value={duration(o.avgSeconds)} now={o.avgSeconds} before={o.previous.avgSeconds} />
-        <Stat label="Leads" value={fmt(o.leads)} now={o.leads} before={o.previous.leads} accent />
+        <Stat label="Leads" value={fmt(o.leads)} now={o.leads} before={o.previous.leads} />
       </div>
 
       <Card title="Visitors over time">
@@ -347,6 +359,156 @@ function Overview({ d }: { d: Dashboard }) {
                   <span className="text-gray-400">
                     {e.city ? ` · ${e.city}` : ""} · {sourceLabel(e.source)}
                   </span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
+    </div>
+  );
+}
+
+function Sales({ d, onMode }: { d: Dashboard; onMode: (m: "live" | "test") => void }) {
+  const s = d.sales;
+  const aov = s.orders ? s.revenue / s.orders : 0;
+  const prevAov = s.previous.orders ? s.previous.revenue / s.previous.orders : 0;
+  const conversion = d.overview.visitors ? (s.orders / d.overview.visitors) * 100 : 0;
+  const prevConversion = d.overview.previous.visitors ? (s.previous.orders / d.overview.previous.visitors) * 100 : 0;
+  const stripeBase = `https://dashboard.stripe.com/${s.mode === "test" ? "test/" : ""}payments/`;
+  const f = s.funnel;
+  const steps = [
+    { label: "Visited the shop", value: f.visitors },
+    { label: "Viewed a piece", value: f.productViewers },
+    { label: "Added to bag", value: f.addedToBag },
+    { label: "Started checkout", value: f.startedCheckout },
+    { label: "Paid", value: f.orders },
+  ];
+
+  return (
+    <div className="space-y-6">
+      {(s.hasTest || s.mode === "test") && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          <span>
+            {s.mode === "test"
+              ? "Showing Stripe test orders (paid with test cards). Real orders will show here once you take live payments."
+              : "Showing real orders."}
+          </span>
+          <div className="flex rounded-md bg-white p-0.5 text-xs">
+            {(["live", "test"] as const).map((m) => (
+              <button
+                key={m}
+                onClick={() => onMode(m)}
+                className={`rounded px-2.5 py-1 ${s.mode === m ? "bg-amber-100 font-medium" : "text-amber-800 hover:text-amber-950"}`}
+              >
+                {m === "live" ? "Real orders" : "Test orders"}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
+        <Stat label="Revenue" value={money(s.revenue)} now={s.revenue} before={s.previous.revenue} accent />
+        <Stat label="Orders" value={fmt(s.orders)} now={s.orders} before={s.previous.orders} />
+        <Stat label="Avg. order" value={aov ? money(Math.round(aov)) : "—"} now={aov} before={prevAov} />
+        <Stat label="Pieces sold" value={fmt(s.items)} now={s.items} before={s.previous.items} />
+        <Stat
+          label="Visitors who bought"
+          value={d.overview.visitors ? `${conversion.toFixed(1)}%` : "—"}
+          now={conversion}
+          before={prevConversion}
+        />
+      </div>
+      {s.refunded > 0 && (
+        <p className="-mt-3 text-xs text-gray-500">Revenue is after {money(s.refunded)} in refunds.</p>
+      )}
+
+      <Card title="Revenue over time">
+        {s.orders === 0 && s.previous.orders === 0 ? (
+          <Empty>No orders in this period yet.</Empty>
+        ) : (
+          <TrendChart points={d.series} bucket={d.range.bucket} mode="revenue" />
+        )}
+      </Card>
+
+      <Card title="Where people drop off" note="Visitors reaching each step · % of the step before">
+        <ol className="space-y-2">
+          {steps.map((step, i) => {
+            const prev = i > 0 ? steps[i - 1].value : 0;
+            const pct = f.visitors ? (step.value / f.visitors) * 100 : 0;
+            return (
+              <li key={step.label} className="flex items-center gap-3 text-sm">
+                <span className="w-28 shrink-0 text-gray-700 sm:w-36">{step.label}</span>
+                <span className="relative h-7 flex-1 overflow-hidden rounded bg-gray-50">
+                  <span
+                    className={`absolute inset-y-0 left-0 rounded ${i === steps.length - 1 ? "bg-emerald-200" : "bg-[#e7dccb]"}`}
+                    style={{ width: `${Math.max(pct, step.value ? 1 : 0)}%` }}
+                  />
+                  <span className="relative flex h-full items-center px-2 tabular-nums">{fmt(step.value)}</span>
+                </span>
+                <span className="w-12 shrink-0 text-right text-xs tabular-nums text-gray-400" title="Share of the step before">
+                  {i === 0 ? "" : prev ? `${Math.round((step.value / prev) * 100)}%` : "—"}
+                </span>
+              </li>
+            );
+          })}
+        </ol>
+      </Card>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card title="Best sellers" note="Chains count with their pendant · before shipping and refunds">
+          <Table
+            head={["Piece", "Sold", "Sales"]}
+            empty="No orders in this period yet."
+            rows={s.bestSellers.map((b) => [
+              b.slug ? (
+                <a key="n" href={`/shop/${b.slug}`} target="_blank" rel="noreferrer" className="hover:underline">
+                  {b.name}
+                </a>
+              ) : (
+                b.name
+              ),
+              fmt(b.quantity),
+              money(b.revenue),
+            ])}
+          />
+        </Card>
+        <Card title="Sales by source" note="How buyers first found the shop">
+          <Table
+            head={["Source", "Orders", "Revenue"]}
+            empty="No orders in this period yet."
+            rows={s.bySource.map((x) => [sourceLabel(x.source), fmt(x.orders), money(x.revenue)])}
+          />
+        </Card>
+      </div>
+
+      <Card title="Recent orders" note="Customer details are in Stripe">
+        {s.recent.length === 0 ? (
+          <Empty>No orders in this period yet.</Empty>
+        ) : (
+          <ul className="divide-y divide-gray-100">
+            {s.recent.map((o) => (
+              <li key={o.sessionId} className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 py-2.5 text-sm">
+                <span className="font-medium tabular-nums">{money(o.amount)}</span>
+                {o.refunded > 0 && (
+                  <span className="rounded bg-rose-50 px-1.5 py-0.5 text-[11px] text-rose-700">
+                    {o.refunded >= o.amount ? "Refunded" : `${money(o.refunded)} refunded`}
+                  </span>
+                )}
+                <span className="min-w-0 text-gray-700">
+                  {o.items.map((i) => `${i.quantity > 1 ? `${i.quantity} × ` : ""}${i.name}`).join(", ")}
+                </span>
+                <span className="text-gray-400">
+                  {flag(o.country)} {o.city ?? countryName(o.country)} · via {sourceLabel(o.source)}
+                </span>
+                <span className="ml-auto flex items-center gap-3 text-xs text-gray-400">
+                  {new Date(o.ts).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
+                  {o.paymentIntent && (
+                    <a href={stripeBase + o.paymentIntent} target="_blank" rel="noreferrer" className="text-gray-500 underline hover:text-gray-900">
+                      Stripe
+                    </a>
+                  )}
                 </span>
               </li>
             ))}
@@ -584,7 +746,7 @@ function Table({ head, rows, empty }: { head: string[]; rows: React.ReactNode[][
   if (rows.length === 0) return <Empty>{empty ?? "No data in this period."}</Empty>;
   return (
     <div className="-mx-5 overflow-x-auto">
-      <table className="w-full min-w-[480px] text-sm">
+      <table className={`w-full text-sm ${head.length > 3 ? "min-w-[480px]" : ""}`}>
         <thead>
           <tr className="text-left text-[11px] uppercase tracking-wider text-gray-500">
             {head.map((h, i) => (

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getCatalogItem, optionPrice } from "@/data/catalog";
 import { getAllProducts } from "@/data/products";
 import { settingForSlug } from "@/data/ringDesign";
+import { sourceOf, visitorIdFrom } from "@/lib/visitor";
 
 // Stripe Checkout. The browser sends only bag line ids and quantities; every price is worked out
 // here from the catalogue, so a tampered bag can never change what the customer is charged.
@@ -77,7 +78,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const { items } = (await request.json()) as { items?: CheckoutItem[] };
+    const { items, attribution } = (await request.json()) as {
+      items?: CheckoutItem[];
+      attribution?: Record<string, unknown>;
+    };
     if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ error: "Your bag is empty." }, { status: 400 });
     }
@@ -110,9 +114,20 @@ export async function POST(request: Request) {
     const origin = process.env.NEXT_PUBLIC_SITE_URL || request.headers.get("origin") || "http://localhost:3000";
     const publicOrigin = origin.startsWith("https://") ? origin : null; // Stripe can only show images it can reach
 
+    // Kept on the Stripe session so the order can be credited to how the buyer found the shop.
+    const a = attribution && typeof attribution === "object" ? attribution : {};
+    const s = (k: string) => (typeof a[k] === "string" ? (a[k] as string).slice(0, 100) : "");
+    const metadata: Record<string, string> = {
+      source: sourceOf(s("utm_source"), s("referrer")),
+      utm_campaign: s("utm_campaign"),
+      utm_medium: s("utm_medium"),
+      visitor_id: (await visitorIdFrom(request.headers)) ?? "",
+    };
+
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
+      metadata,
       line_items: lines.map(({ line, quantity }) => ({
         quantity,
         price_data: {

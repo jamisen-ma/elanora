@@ -9,6 +9,8 @@ export interface Point {
   views: number;
   visitors: number;
   leads: number;
+  orders: number;
+  revenue: number; // cents
 }
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -25,6 +27,21 @@ export function slotLabel(slot: string, bucket: string, long = false) {
   if (bucket === "week") return long ? `Week of ${day}, ${y}` : day;
   return long ? `${day}, ${y}` : day;
 }
+
+// Cents -> "$1,234" or "$12.50" (short: "$1.2k").
+export function money(cents: number, short = false) {
+  const d = cents / 100;
+  if (short && d >= 1000) return `$${(d / 1000).toFixed(d >= 10000 ? 0 : 1)}k`;
+  const digits = Number.isInteger(d) ? 0 : 2;
+  return `$${d.toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits })}`;
+}
+
+// Bar colour [normal, hovered] per chart.
+const BAR = {
+  traffic: ["#e7dccb", "#b8976b"],
+  leads: ["#a7f3d0", "#047857"],
+  revenue: ["#cbd5e1", "#1f2937"],
+} as const;
 
 const W = 720;
 const H = 220;
@@ -44,13 +61,13 @@ export default function TrendChart({
 }: {
   points: Point[];
   bucket: string;
-  mode?: "traffic" | "leads";
+  mode?: "traffic" | "leads" | "revenue";
 }) {
   const [hover, setHover] = useState<number | null>(null);
   const n = points.length;
   if (n === 0) return null;
 
-  const barKey = mode === "traffic" ? "views" : "leads";
+  const barKey = mode === "traffic" ? "views" : mode === "revenue" ? "revenue" : "leads";
   const max = niceMax(Math.max(1, ...points.map((p) => Math.max(p[barKey], mode === "traffic" ? p.visitors : 0))));
   const iw = W - PAD.left - PAD.right;
   const ih = H - PAD.top - PAD.bottom;
@@ -76,7 +93,7 @@ export default function TrendChart({
           <g key={t}>
             <line x1={PAD.left} x2={W - PAD.right} y1={y(t)} y2={y(t)} stroke="#f0f0f0" />
             <text x={PAD.left - 6} y={y(t) + 3} textAnchor="end" fontSize="10" fill="#9ca3af">
-              {t >= 1000 ? `${t / 1000}k` : t}
+              {mode === "revenue" ? money(t, true) : t >= 1000 ? `${t / 1000}k` : t}
             </text>
           </g>
         ))}
@@ -88,7 +105,7 @@ export default function TrendChart({
               width={barW}
               height={Math.max(0, PAD.top + ih - y(p[barKey]))}
               rx={Math.min(3, barW / 3)}
-              fill={mode === "traffic" ? (hover === i ? "#b8976b" : "#e7dccb") : hover === i ? "#047857" : "#a7f3d0"}
+              fill={BAR[mode][hover === i ? 1 : 0]}
             />
             {i % labelEvery === 0 && (
               <text x={x(i)} y={H - 8} textAnchor="middle" fontSize="10" fill="#9ca3af">
@@ -130,6 +147,13 @@ export default function TrendChart({
               <div>{h.views.toLocaleString()} page views</div>
               {h.leads > 0 && <div>{h.leads} leads</div>}
             </>
+          ) : mode === "revenue" ? (
+            <>
+              <div>{money(h.revenue)}</div>
+              <div>
+                {h.orders} order{h.orders === 1 ? "" : "s"}
+              </div>
+            </>
           ) : (
             <div>{h.leads} leads</div>
           )}
@@ -146,6 +170,10 @@ export default function TrendChart({
               <span className="inline-block h-0.5 w-3 bg-gray-800" /> Visitors
             </span>
           </>
+        ) : mode === "revenue" ? (
+          <span className="flex items-center gap-1.5">
+            <span className="inline-block h-2.5 w-2.5 rounded-sm bg-gray-400" /> Revenue
+          </span>
         ) : (
           <span className="flex items-center gap-1.5">
             <span className="inline-block h-2.5 w-2.5 rounded-sm bg-emerald-200" /> Leads

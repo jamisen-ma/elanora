@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import type { Product } from "@/data/products";
+import { trackEvent } from "@/components/Analytics";
 
 export default function AddToCartButton({ product }: { product: Product }) {
   const { addItem } = useCart();
@@ -22,6 +23,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
 
   const handleAdd = () => {
     addItem(product, quantity);
+    trackEvent("add_to_bag", { product: product.slug, value: (product.price / 100) * quantity });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };

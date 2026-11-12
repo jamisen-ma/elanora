@@ -3,6 +3,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { cookies, headers } from "next/headers";
 import { ensureSchema, getSql } from "@/lib/db";
+import { visitorIdFrom } from "@/lib/visitor";
 import { ADMIN_COOKIE, isValidSession } from "@/lib/adminAuth";
 import { RANGES, getDashboard, type RangeKey } from "@/lib/analyticsQueries";
 
@@ -76,21 +77,7 @@ export async function POST(req: Request) {
       region: headersList.get("x-vercel-ip-country-region") || undefined,
       city: decode(headersList.get("x-vercel-ip-city")),
     };
-    const ip = headersList.get("x-forwarded-for")?.split(",")[0]?.trim();
-
-    // Anonymous visitor id: a hash of the IP and today's date, so the same person is one
-    // visitor for the day but can't be followed from day to day. Raw IPs are never stored.
-    let visitorId: string | undefined;
-    if (ip) {
-      const encoder = new TextEncoder();
-      const data = encoder.encode(ip + new Date().toISOString().slice(0, 10));
-      const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      visitorId = hashArray
-        .slice(0, 8)
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("");
-    }
+    const visitorId = await visitorIdFrom(headersList);
 
     const event = {
       ...body,
@@ -189,7 +176,14 @@ export async function GET(req: Request) {
     await sql`DELETE FROM analytics_events WHERE ts < now() - ${RETENTION}::interval`;
     const run = (text: string, values: unknown[]) =>
       sql.query(text, values) as Promise<Record<string, unknown>[]>;
-    const data = await getDashboard(run, { range, from, to, tz });
+    const orders = params.get("orders");
+    const data = await getDashboard(run, {
+      range,
+      from,
+      to,
+      tz,
+      orders: orders === "live" || orders === "test" ? orders : undefined,
+    });
     return NextResponse.json(data, { headers: { "Cache-Control": "no-store" } });
   } catch (err) {
     console.error("Analytics read error:", err);

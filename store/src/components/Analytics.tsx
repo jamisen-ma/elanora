@@ -94,8 +94,9 @@ export function trackEvent(
     // Vercel Analytics might not be available in dev
   }
 
-  // Send to our own API
+  // Send to our own API, with the page it happened on
   logEvent(name, {
+    page: typeof window !== "undefined" ? window.location.pathname : undefined,
     ...data,
     ...getReferrerInfo(),
     ...getDeviceInfo(),

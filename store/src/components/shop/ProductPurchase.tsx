@@ -9,6 +9,7 @@ import Link from "next/link";
 import { designHref, settingForSlug, SHAPES, type Shape } from "@/data/ringDesign";
 import NecklaceLengthGuide from "./NecklaceLengthGuide";
 import NameQuote from "./NameQuote";
+import { trackEvent } from "@/components/Analytics";
 
 // Piece configurator: Shape (for pieces made in several stone shapes), Metal swatches, Carat Weight (lab-grown, every size made to
 // order), Ring Size, Bracelet Length or Chain Length, then ADD TO BAG. The bag line is one color / carat / size
@@ -65,6 +66,7 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
           featured: false,
           stripePriceId: "",
         });
+      trackEvent("add_to_bag", { product: item.slug, value: pieces.reduce((s, p) => s + p.price, 0), option: size });
       setAdded(true);
       setTimeout(() => setAdded(false), 2000);
       return;
@@ -97,6 +99,11 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
         featured: false,
         stripePriceId: "",
       });
+    trackEvent("add_to_bag", {
+      product: item.slug,
+      value: unitPrice + (chain && withChain && chainLength ? chain.price : 0),
+      ...(chain && withChain && chainLength ? { with_chain: true } : {}),
+    });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
