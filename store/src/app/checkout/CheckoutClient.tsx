@@ -20,10 +20,16 @@ function attribution() {
   }
 }
 
+const MEMBER_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function CheckoutClient({ status }: { status: "success" | "canceled" | null }) {
   const { items, subtotal, discount, total, removeItem, updateQuantity, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  // Membership: joining with an email gives free shipping. The email is added to the mailing
+  // list and passed to Stripe so the receipt goes to the same address.
+  const [memberEmail, setMemberEmail] = useState("");
+  const isMember = MEMBER_EMAIL.test(memberEmail.trim());
   // After a paid order Stripe sends the customer back with ?success=true: empty the bag.
   useEffect(() => {
     if (status === "success") clearCart();
@@ -38,6 +44,14 @@ export default function CheckoutClient({ status }: { status: "success" | "cancel
     });
 
     try {
+      if (isMember) {
+        // Join the mailing list (welcome email); checkout goes ahead even if this fails.
+        await fetch("/api/waitlist", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: memberEmail.trim() }),
+        }).catch(() => {});
+      }
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -47,6 +61,7 @@ export default function CheckoutClient({ status }: { status: "success" | "cancel
             quantity: item.quantity,
           })),
           attribution: attribution(),
+          memberEmail: isMember ? memberEmail.trim() : null,
         }),
       });
 
@@ -188,9 +203,22 @@ export default function CheckoutClient({ status }: { status: "success" | "cancel
               <SaleDiscountLine />
               <div className="flex justify-between text-sm">
                 <span className="text-warm-gray">Shipping</span>
-                <span className="text-warm-gray-light">
-                  {total >= 7500 ? "Free" : "$9.99"}
-                </span>
+                <span className="text-warm-gray-light">{isMember ? "Free" : "$9.99"}</span>
+              </div>
+              <div className="pt-2">
+                <label htmlFor="member-email" className="text-[13px] text-warm-gray">
+                  Join Elanora with your email for <span className="text-foreground">free US shipping</span>
+                </label>
+                <input
+                  id="member-email"
+                  type="email"
+                  autoComplete="email"
+                  value={memberEmail}
+                  onChange={(e) => setMemberEmail(e.target.value)}
+                  placeholder="Your email address"
+                  className="mt-1.5 h-10 w-full rounded-sm border border-cream-dark bg-white px-3 text-sm placeholder:text-warm-gray-light focus:border-foreground focus:outline-none"
+                />
+                {isMember && <p className="mt-1.5 text-[12px] text-warm-gray">You&apos;re in — shipping is free.</p>}
               </div>
             </div>
             <div className="border-t border-cream-dark pt-4 mb-6">

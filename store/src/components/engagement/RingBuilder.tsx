@@ -49,7 +49,7 @@ export default function RingBuilder() {
     ["Ring size", size],
   ];
 
-  const requestLink = `mailto:hello@elanora.com?subject=${encodeURIComponent(
+  const requestLink = `mailto:elanorajewelry2024@gmail.com?subject=${encodeURIComponent(
     `Ring Studio request — ${settingChoice?.name ?? "Custom ring"}`,
   )}&body=${encodeURIComponent(
     `Hello ELANORA,\n\nI’d like to discuss this engagement ring: \n\n${ringDetails
@@ -244,7 +244,7 @@ export default function RingBuilder() {
                     <span className="font-medium">Confirmed with your diamond</span>
                   </div>
                   <p className="mt-4 text-[14px] leading-relaxed text-[#86868b]">
-                    Once you approve the stone and quote, your ring is made to order. Current production estimate: 8–10 weeks.
+                    Once you approve the stone and quote, your ring is made to order. Current production estimate: 2–8 weeks.
                   </p>
                   <div className="mt-7 flex flex-col gap-4 sm:flex-row sm:items-center">
                     <a href={requestLink} className="inline-flex min-h-12 flex-1 items-center justify-center bg-[#1d1d1f] px-6 text-center text-[13px] font-medium uppercase tracking-[0.16em] text-white transition-opacity hover:opacity-85">

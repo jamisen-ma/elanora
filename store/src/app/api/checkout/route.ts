@@ -11,8 +11,8 @@ import { sourceOf, visitorIdFrom } from "@/lib/visitor";
 // The limited-time launch sale (10% off, or a series' own discount; no code) is applied to every line here.
 // Line items use inline `price_data`, so no products or prices need to be created in Stripe.
 
-const FREE_SHIPPING_FROM = 7500; // cents — "free on orders over $75"
-const SHIPPING_RATE = 999; // cents — "$9.99"
+const SHIPPING_RATE = 999; // cents — "$9.99"; free for members (customers who join with their email)
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_QTY = 10;
 
 interface CheckoutItem {
@@ -80,9 +80,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const { items, attribution } = (await request.json()) as {
+    const { items, attribution, memberEmail } = (await request.json()) as {
       items?: CheckoutItem[];
       attribution?: Record<string, unknown>;
+      memberEmail?: string | null;
     };
     if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ error: "Your bag is empty." }, { status: 400 });
@@ -112,7 +113,8 @@ export async function POST(request: Request) {
       }
     }
 
-    const subtotal = lines.reduce((s, l) => s + l.line.unitAmount * l.quantity, 0);
+    // Members (customers who join with their email at checkout) ship free.
+    const member = typeof memberEmail === "string" && EMAIL.test(memberEmail.trim()) ? memberEmail.trim().toLowerCase() : null;
     const origin = process.env.NEXT_PUBLIC_SITE_URL || request.headers.get("origin") || "http://localhost:3000";
     const publicOrigin = origin.startsWith("https://") ? origin : null; // Stripe can only show images it can reach
 
@@ -124,11 +126,13 @@ export async function POST(request: Request) {
       utm_campaign: s("utm_campaign"),
       utm_medium: s("utm_medium"),
       visitor_id: (await visitorIdFrom(request.headers)) ?? "",
+      member: member ? "yes" : "",
     };
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
+      ...(member ? { customer_email: member } : {}),
       metadata,
       line_items: lines.map(({ line, quantity }) => ({
         quantity,
@@ -147,8 +151,8 @@ export async function POST(request: Request) {
         {
           shipping_rate_data: {
             type: "fixed_amount",
-            display_name: subtotal >= FREE_SHIPPING_FROM ? "Free shipping" : "Standard shipping",
-            fixed_amount: { amount: subtotal >= FREE_SHIPPING_FROM ? 0 : SHIPPING_RATE, currency: "usd" },
+            display_name: member ? "Free shipping (member)" : "Standard shipping",
+            fixed_amount: { amount: member ? 0 : SHIPPING_RATE, currency: "usd" },
           },
         },
       ],

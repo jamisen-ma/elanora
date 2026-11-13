@@ -64,7 +64,6 @@ export default function SizeGuidePage() {
             </p>
             <p>
               <span className="text-foreground font-medium">Tip:</span>{" "}
-              Our adjustable rings are designed to fit sizes 5 &ndash; 9.
               Measure at the end of the day when fingers are slightly larger for the most accurate fit.
             </p>
           </div>
@@ -108,10 +107,6 @@ export default function SizeGuidePage() {
             </table>
           </div>
 
-          <p className="mt-5 text-sm text-warm-gray leading-relaxed">
-            Most of our necklaces include a 2-inch extender chain so you can
-            adjust the length to suit your style and neckline.
-          </p>
         </section>
 
         <hr className="border-cream-dark" />
@@ -154,7 +149,7 @@ export default function SizeGuidePage() {
             Our team is happy to help you find the perfect fit.
           </p>
           <a
-            href="mailto:hello@elanora.com"
+            href="mailto:elanorajewelry2024@gmail.com"
             className="inline-block border border-foreground text-foreground text-sm tracking-[0.2em] uppercase px-8 py-3 rounded-sm hover:bg-foreground hover:text-white transition-colors"
           >
             Contact Us

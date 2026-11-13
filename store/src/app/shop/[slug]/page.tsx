@@ -9,7 +9,7 @@ import { MetalProvider } from "@/components/shop/MetalContext";
 import { PAGE_BG } from "@/components/shop/ProductFrame";
 import { productSerif } from "@/lib/fonts";
 import { settingForSlug } from "@/data/ringDesign";
-import { CUSTOM_POLICY, CUSTOM_TERMS } from "@/data/customOrderPolicy";
+import { CUSTOM_POLICY, CUSTOM_TERMS, SALE_POLICY } from "@/data/customOrderPolicy";
 
 // Product page: gallery left, name / price / stone / metal / size / ADD TO BAG right,
 // then short information sections. Text in [BRACKETS] is still to be provided.
@@ -48,13 +48,14 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     {
       title: "Made to Order",
       // Shared by every product page (current and future).
-      body: <p>We make this piece after you order. Production time: 2–6 weeks.</p>,
+      body: <p>Every Elanora piece is made to order: we start making it after you order. {SALE_POLICY.production} {SALE_POLICY.certificate} {SALE_POLICY.preview}</p>,
     },
     {
       title: "Shipping",
       body: (
         <p>
-          [Shipping information — to be provided.]{" "}
+          Ships with tracking once your piece is made (production time: 2–8 weeks), to the US, Canada, the UK and Australia.
+          Free in the US when you join Elanora with your email at checkout; other countries are priced by destination.{" "}
           <Link href="/shipping-returns" className="underline underline-offset-4 hover:text-[#1d1d1f]">
             Shipping
           </Link>
@@ -76,7 +77,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         </div>
       ) : (
         <p>
-          [Returns and order policy for this piece — to be provided.]{" "}
+          {SALE_POLICY.noCancel} {SALE_POLICY.noReturns}{" "}
           <Link href="/shipping-returns" className="underline underline-offset-4 hover:text-[#1d1d1f]">
             Returns &amp; Order Policy
           </Link>

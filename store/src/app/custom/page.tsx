@@ -16,7 +16,7 @@ const serif = Cormorant_Garamond({ subsets: ["latin"], weight: ["400"] });
 const STEPS = [
   { number: "01", title: "Tell us your idea", text: "Free. It’s not an order." },
   { number: "02", title: "Get your price", text: "We send the design and total price." },
-  { number: "03", title: "Pay to start", text: "We make your piece in about 4–8 weeks." },
+  { number: "03", title: "Pay to start", text: "We make your piece in about 2–8 weeks." },
   { number: "04", title: "We ship it", text: "Nothing more to pay — it’s on its way." },
 ];
 

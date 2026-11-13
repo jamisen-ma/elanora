@@ -328,7 +328,7 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
             : "Add to Bag"}
       </button>
       <p className="mt-2 text-[14px] text-[#1d1d1f]/70">
-        Made to order. Production time: 2–6 weeks.
+        Made to order. Production time: 2–8 weeks.
         {item.price === null && <span className="ml-2 text-[#86868b]">[Add to bag turns on once the price is set.]</span>}
       </p>
         </>

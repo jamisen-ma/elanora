@@ -9,7 +9,7 @@ import { getCatalogItem } from "./catalog";
 
 export const LAUNCH_SALE = {
   percentOff: 10,
-  banner: "Limited-time offer — 10% off sitewide",
+  banner: "Limited-time offer — up to 25% off sitewide",
 } as const;
 
 type SaleTerms = { salePercentOff?: number; caratSalePercentOff?: Record<string, number> };

@@ -19,10 +19,13 @@ const groups: { title: string; links: { label: string; href: string; external?: 
     title: "Help",
     links: [
       { label: "Shipping", href: "/shipping-returns" },
-      { label: "Returns & Order Policy", href: "/shipping-returns" },
+      { label: "Returns & Order Policy", href: "/shipping-returns#returns" },
+      { label: "Track Your Order", href: "/track-order" },
       { label: "Size Guide", href: "/size-guide" },
       { label: "FAQ", href: "/faq" },
-      { label: "Contact", href: "mailto:hello@elanora.com", external: true },
+      { label: "Contact", href: "mailto:elanorajewelry2024@gmail.com", external: true },
+      { label: "Terms of Sale", href: "/terms" },
+      { label: "Privacy Policy", href: "/privacy" },
     ],
   },
   {
@@ -30,7 +33,7 @@ const groups: { title: string; links: { label: string; href: string; external?: 
     links: [
       { label: "Our Story", href: "/about" },
       { label: "Materials", href: "/care-instructions" },
-      { label: "Made to Order", href: "/faq" },
+      { label: "Made to Order", href: "/terms#made-to-order" },
     ],
   },
   {

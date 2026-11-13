@@ -35,8 +35,8 @@ export default function AboutPage() {
       <section className="mx-auto grid max-w-[1200px] items-center justify-center gap-10 px-6 pb-16 sm:px-10 lg:grid-cols-[400px_30rem] lg:gap-16 lg:px-14 lg:pb-24">
         <div className="relative mx-auto aspect-[4/5] w-full max-w-[400px] overflow-hidden">
           <Image
-            src="/images/story/angel-wing-portrait-v3.webp"
-            alt="A woman with blonde curls wearing the ELANORA pink diamond angel wing necklace and drop earrings"
+            src="/images/story/pear-necklace-portrait.webp"
+            alt="A woman with blonde waves in a cream satin dress wearing an ELANORA graduated pear diamond necklace"
             fill
             unoptimized
             sizes="400px"
