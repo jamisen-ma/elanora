@@ -1,5 +1,6 @@
 import HeroSlides from "@/components/home/HeroSlides";
 import SeriesEntry from "@/components/home/SeriesEntry";
+import LaunchCodeBox from "@/components/home/LaunchCodeBox";
 import {
   AboutElanora,
   CustomIdea,
@@ -57,6 +58,12 @@ export default function HomePage() {
         </div>
 
       </section>
+
+      {/* ============================================ */}
+      {/* LAUNCH OFFER — code box (sale prices show    */}
+      {/* only after the launch code is entered)        */}
+      {/* ============================================ */}
+      <LaunchCodeBox />
 
       {/* ============================================ */}
       {/* 02 — SHOP BY CATEGORY, right after the hero  */}

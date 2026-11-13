@@ -11,9 +11,8 @@ import { designHref, settingForSlug, SHAPES, type Shape } from "@/data/ringDesig
 import NecklaceLengthGuide from "./NecklaceLengthGuide";
 import NameQuote from "./NameQuote";
 import { trackEvent } from "@/components/Analytics";
+import { useLaunchOffer } from "@/context/LaunchOfferContext";
 
-// Option, summary and button prices show the sale price (the catalogue keeps the original).
-const formatSale = (item: CatalogItem, usd: number, carat?: string) => formatUSD(salePrice(usd, percentOffFor(item, carat)));
 
 // Piece configurator: Shape (for pieces made in several stone shapes), Metal swatches, Carat Weight (lab-grown, every size made to
 // order), Ring Size, Bracelet Length or Chain Length, then ADD TO BAG. The bag line is one color / carat / size
@@ -33,6 +32,11 @@ const swatchFor = (name: string) => {
 };
 
 export default function ProductPurchase({ item, shapes = [] }: { item: CatalogItem; shapes?: ShapeOption[] }) {
+  // Option, summary and button prices show the sale price with the launch code (the catalogue
+  // keeps the original), and the regular price without it.
+  const { unlocked } = useLaunchOffer();
+  const offer = (usd: number, percentOff: number) => (unlocked ? salePrice(usd, percentOff) : usd);
+  const formatSale = (item: CatalogItem, usd: number, carat?: string) => formatUSD(offer(usd, percentOffFor(item, carat)));
   const { addItem } = useCart();
   const { metal, setMetal, size, setSize, carat: chosenCarat, setCarat } = useMetal();
   const carat = chosenCarat || item.carats?.[0] || "";
@@ -225,7 +229,7 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
             <div className={hasCarats && !stacked ? "" : "col-span-2"}>
               <p className="mb-1.5 text-[15px] leading-tight">{sizeLabel}</p>
               {hasLengthGuide ? (
-                <LengthListbox label={sizeLabel} value={size} options={item.sizes!} prices={item.sizePrices && Object.fromEntries(Object.entries(item.sizePrices).map(([k, v]) => [k, salePrice(v, percentOffFor(item))]))} onChange={setSize} />
+                <LengthListbox label={sizeLabel} value={size} options={item.sizes!} prices={item.sizePrices && Object.fromEntries(Object.entries(item.sizePrices).map(([k, v]) => [k, offer(v, percentOffFor(item))]))} onChange={setSize} />
               ) : (
                 <div className="relative">
                   <select
@@ -324,7 +328,7 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
         {added
           ? "Added to Bag"
           : chain && withChain && unitPrice !== null
-            ? `Add to Bag — ${formatUSD(salePrice(unitPrice, percentOffFor(item, carat)) + salePrice(chain.price, percentOffFor(item)))}`
+            ? `Add to Bag — ${formatUSD(offer(unitPrice, percentOffFor(item, carat)) + offer(chain.price, percentOffFor(item)))}`
             : "Add to Bag"}
       </button>
       <p className="mt-2 text-[14px] text-[#1d1d1f]/70">

@@ -1,9 +1,15 @@
+"use client";
+
 import { formatUSD, hasSinglePrice, type CatalogItem } from "@/data/catalog";
 import { percentOffFor, salePrice } from "@/data/promo";
+import { useLaunchOffer } from "@/context/LaunchOfferContext";
 
 // A price during the launch sale: the sale price in a warm red, the original price struck through
 // in grey, then a small "10% OFF" tag (or the series' own discount), all in the site sans (Optima).
+// Only for visitors who entered the launch code; everyone else sees the regular price.
 export function SalePrice({ usd, percentOff = percentOffFor() }: { usd: number; percentOff?: number }) {
+  const { unlocked } = useLaunchOffer();
+  if (!unlocked) return <span className="font-sans tracking-normal">{formatUSD(usd)}</span>;
   return (
     <span className="inline-flex flex-wrap items-center gap-x-2 gap-y-1 font-sans tracking-normal">
       <span className="text-[1.1em] font-normal text-[#9a4a2b]">

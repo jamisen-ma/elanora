@@ -3,6 +3,7 @@ import { Alegreya_Sans } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { CartProvider } from "@/context/CartContext";
+import { LaunchOfferProvider } from "@/context/LaunchOfferContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PromoBanner from "@/components/PromoBanner";
@@ -49,11 +50,13 @@ export default function RootLayout({
     // data-scroll-behavior: Next 16 turns off the CSS smooth scroll during page changes, so a new page opens at the top
     <html lang="en" data-scroll-behavior="smooth" className={`${bodySans.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <CartProvider>
-          <SiteChrome banner={<PromoBanner />} header={<Header />} footer={<Footer />}>
-            {children}
-          </SiteChrome>
-        </CartProvider>
+        <LaunchOfferProvider>
+          <CartProvider>
+            <SiteChrome banner={<PromoBanner />} header={<Header />} footer={<Footer />}>
+              {children}
+            </SiteChrome>
+          </CartProvider>
+        </LaunchOfferProvider>
         <Analytics />
         <SpeedInsights />
         <CustomAnalytics />

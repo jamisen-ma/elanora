@@ -9,7 +9,7 @@ export default function SaleDiscountLine({ className = "" }: { className?: strin
   if (discount <= 0) return null;
   return (
     <div className={`flex items-baseline justify-between gap-4 text-sm ${className}`}>
-      <span className="text-warm-gray">Limited-time discount</span>
+      <span className="text-warm-gray">Launch offer discount</span>
       <span className="whitespace-nowrap">&minus;{formatPrice(discount)}</span>
     </div>
   );

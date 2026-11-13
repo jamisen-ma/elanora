@@ -6,9 +6,11 @@ import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/data/products";
 import SaleDiscountLine from "@/components/SaleDiscountLine";
 import { percentOffForLine, salePriceCents } from "@/data/promo";
+import { useLaunchOffer } from "@/context/LaunchOfferContext";
 
 export default function CartDrawer() {
   const { items, removeItem, updateQuantity, subtotal, discount, total, totalItems, isOpen, setIsOpen } = useCart();
+  const { unlocked } = useLaunchOffer();
 
   return (
     <>
@@ -84,8 +86,14 @@ export default function CartDrawer() {
                       {item.product.name}
                     </Link>
                     <p className="text-sm text-warm-gray mt-0.5">
-                      <s className="mr-2 opacity-60">{formatPrice(item.product.price)}</s>
-                      {formatPrice(salePriceCents(item.product.price, percentOffForLine(item.product.id)))}
+                      {unlocked ? (
+                        <>
+                          <s className="mr-2 opacity-60">{formatPrice(item.product.price)}</s>
+                          {formatPrice(salePriceCents(item.product.price, percentOffForLine(item.product.id)))}
+                        </>
+                      ) : (
+                        formatPrice(item.product.price)
+                      )}
                     </p>
                     <div className="flex items-center justify-between mt-2">
                       <div className="flex items-center border border-cream-dark rounded-sm">

@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { trackEvent } from "@/components/Analytics";
 import SaleDiscountLine from "@/components/SaleDiscountLine";
 import { percentOffForLine, salePriceCents } from "@/data/promo";
+import { useLaunchOffer } from "@/context/LaunchOfferContext";
 
 // How this visitor found the shop (saved by the tracker), sent along so orders can be credited
 // to Instagram, Google, a campaign link, etc.
@@ -30,6 +31,10 @@ export default function CheckoutClient({ status }: { status: "success" | "cancel
   // list and passed to Stripe so the receipt goes to the same address.
   const [memberEmail, setMemberEmail] = useState("");
   const isMember = MEMBER_EMAIL.test(memberEmail.trim());
+  // Launch sale prices only with the launch code (entered on the home page).
+  const { unlocked, code: launchCode } = useLaunchOffer();
+  const linePrice = (p: { price: number; id: string }) =>
+    unlocked ? salePriceCents(p.price, percentOffForLine(p.id)) : p.price;
   // After a paid order Stripe sends the customer back with ?success=true: empty the bag.
   useEffect(() => {
     if (status === "success") clearCart();
@@ -62,6 +67,7 @@ export default function CheckoutClient({ status }: { status: "success" | "cancel
           })),
           attribution: attribution(),
           memberEmail: isMember ? memberEmail.trim() : null,
+          launchCode,
         }),
       });
 
@@ -151,8 +157,14 @@ export default function CheckoutClient({ status }: { status: "success" | "cancel
                     {item.product.name}
                   </Link>
                   <p className="text-sm text-warm-gray mt-1">
-                    <s className="mr-2 opacity-60">{formatPrice(item.product.price)}</s>
-                    {formatPrice(salePriceCents(item.product.price, percentOffForLine(item.product.id)))}
+                    {unlocked ? (
+                      <>
+                        <s className="mr-2 opacity-60">{formatPrice(item.product.price)}</s>
+                        {formatPrice(linePrice(item.product))}
+                      </>
+                    ) : (
+                      formatPrice(item.product.price)
+                    )}
                   </p>
                   <div className="flex items-center justify-between mt-3">
                     <div className="flex items-center border border-cream-dark rounded-sm">
@@ -182,7 +194,7 @@ export default function CheckoutClient({ status }: { status: "success" | "cancel
                   </div>
                 </div>
                 <p className="text-sm font-medium hidden sm:block whitespace-nowrap">
-                  {formatPrice(salePriceCents(item.product.price, percentOffForLine(item.product.id)) * item.quantity)}
+                  {formatPrice(linePrice(item.product) * item.quantity)}
                 </p>
               </li>
             ))}

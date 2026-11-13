@@ -5,10 +5,12 @@ import { getAllProducts } from "@/data/products";
 import { settingForSlug } from "@/data/ringDesign";
 import { percentOffForLine, salePriceCents } from "@/data/promo";
 import { sourceOf, visitorIdFrom } from "@/lib/visitor";
+import { isLaunchCode } from "@/lib/launchCode";
 
 // Stripe Checkout. The browser sends only bag line ids and quantities; every price is worked out
 // here from the catalogue, so a tampered bag can never change what the customer is charged.
-// The limited-time launch sale (10% off, or a series' own discount; no code) is applied to every line here.
+// The launch sale (10% off, or a series' own discount) is applied to every line here, but only when
+// the request carries the launch code (entered on the home page); otherwise regular prices.
 // Line items use inline `price_data`, so no products or prices need to be created in Stripe.
 
 const SHIPPING_RATE = 999; // cents — "$9.99"; free for members (customers who join with their email)
@@ -80,11 +82,13 @@ export async function POST(request: Request) {
       );
     }
 
-    const { items, attribution, memberEmail } = (await request.json()) as {
+    const { items, attribution, memberEmail, launchCode } = (await request.json()) as {
       items?: CheckoutItem[];
       attribution?: Record<string, unknown>;
       memberEmail?: string | null;
+      launchCode?: string | null;
     };
+    const launchOffer = isLaunchCode(launchCode);
     if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ error: "Your bag is empty." }, { status: 400 });
     }
@@ -99,7 +103,8 @@ export async function POST(request: Request) {
           { status: 400 }
         );
       }
-      lines.push({ line: { ...line, unitAmount: salePriceCents(line.unitAmount, percentOffForLine(line.id)) }, quantity });
+      const unitAmount = launchOffer ? salePriceCents(line.unitAmount, percentOffForLine(line.id)) : line.unitAmount;
+      lines.push({ line: { ...line, unitAmount }, quantity });
     }
 
     // A chain add-on is sold only with its pendant: never more chains than pendants of that piece.
@@ -127,6 +132,7 @@ export async function POST(request: Request) {
       utm_medium: s("utm_medium"),
       visitor_id: (await visitorIdFrom(request.headers)) ?? "",
       member: member ? "yes" : "",
+      launch_offer: launchOffer ? "yes" : "",
     };
 
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -138,7 +144,7 @@ export async function POST(request: Request) {
         quantity,
         price_data: {
           currency: "usd",
-          unit_amount: line.unitAmount, // sale price
+          unit_amount: line.unitAmount, // sale price with the launch code, else regular price
           product_data: {
             name: line.name,
             metadata: { line_id: line.id },

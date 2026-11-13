@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { LAUNCH_SALE } from "@/data/promo";
 
 export default function PromoBanner() {
@@ -28,7 +29,10 @@ export default function PromoBanner() {
   return (
     <div ref={ref} className="bg-foreground text-white text-center py-2 pl-4 pr-9 relative">
       <p className="text-[12px] sm:text-xs tracking-[0.15em] uppercase">
-        {LAUNCH_SALE.banner}
+        {/* Leads to the launch-code box under the home page hero. */}
+        <Link href="/#launch-code" className="hover:underline underline-offset-4">
+          {LAUNCH_SALE.banner}
+        </Link>
       </p>
       <button
         onClick={() => setDismissed(true)}

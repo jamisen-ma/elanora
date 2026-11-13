@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useCallback, useEffect } from "rea
 import type { ReactNode } from "react";
 import type { Product } from "@/data/products";
 import { percentOffForLine, salePriceCents } from "@/data/promo";
+import { useLaunchOffer } from "@/context/LaunchOfferContext";
 
 export interface CartItem {
   product: Product;
@@ -67,6 +68,7 @@ function limitAddOns(items: CartItem[]): CartItem[] {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const { unlocked } = useLaunchOffer();
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -120,8 +122,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     (sum, item) => sum + item.product.price * item.quantity,
     0
   );
-  // Launch sale: every line at its sale price, with its series' discount (bag items keep their original price).
-  const total = items.reduce((sum, item) => sum + salePriceCents(item.product.price, percentOffForLine(item.product.id)) * item.quantity, 0);
+  // Launch sale (only with the launch code): every line at its sale price, with its series'
+  // discount (bag items keep their original price). Without the code: regular prices.
+  const total = unlocked
+    ? items.reduce((sum, item) => sum + salePriceCents(item.product.price, percentOffForLine(item.product.id)) * item.quantity, 0)
+    : subtotal;
   const discount = subtotal - total;
 
   return (
