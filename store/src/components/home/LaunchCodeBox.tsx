@@ -1,17 +1,48 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { cormorant as serif } from "@/lib/fonts";
 import { useLaunchOffer } from "@/context/LaunchOfferContext";
 import { trackEvent } from "@/components/Analytics";
 
 // Home page band under the hero: enter the launch-offer code to see (and pay) launch sale prices
-// across the shop. The announcement bar links here (#launch-code).
+// across the shop. The hero's Explore buttons and the announcement bar link here (#launch-code),
+// so visitors can enter the code before they browse. On computers the code field is ready to type
+// in on arrival (on phones it isn't focused, so the keyboard doesn't pop up uninvited). Visitors
+// who already entered the code skip this box and go straight to Shop by Category.
 export default function LaunchCodeBox() {
   const { unlocked, code, apply, remove } = useLaunchOffer();
   const [typed, setTyped] = useState("");
   const [checking, setChecking] = useState(false);
   const [error, setError] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const unlockedRef = useRef(unlocked);
+  useEffect(() => {
+    unlockedRef.current = unlocked;
+  }, [unlocked]);
+
+  useEffect(() => {
+    // Ready to type once the page has scrolled here (smooth scroll), computers only.
+    const focusSoon = () => {
+      if (!window.matchMedia("(pointer: fine)").matches) return;
+      window.setTimeout(() => inputRef.current?.focus({ preventScroll: true }), 650);
+    };
+    const onClick = (e: MouseEvent) => {
+      const link = (e.target as Element | null)?.closest?.('a[href$="#launch-code"]');
+      if (!link) return;
+      if (unlockedRef.current) {
+        // Code already entered: skip the box and go straight to the pieces.
+        e.preventDefault();
+        document.getElementById("popular-styles")?.scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+      focusSoon();
+    };
+    document.addEventListener("click", onClick, true);
+    // Arrived from another page via the announcement bar (/#launch-code).
+    if (window.location.hash === "#launch-code") focusSoon();
+    return () => document.removeEventListener("click", onClick, true);
+  }, []);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -75,6 +106,7 @@ export default function LaunchCodeBox() {
                 Launch code
               </label>
               <input
+                ref={inputRef}
                 id="launch-code-input"
                 value={typed}
                 onChange={(e) => {

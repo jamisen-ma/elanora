@@ -65,7 +65,7 @@ export function PopularStyles() {
   const cards = CATEGORY_CARDS.map((c) => ({ ...c, item: catalog.find((p) => p.slug === c.slug) }));
 
   return (
-    <section id="popular-styles" aria-labelledby="popular-styles-heading" className="bg-white px-6 pb-16 pt-10 text-[#1d1d1f] sm:pb-20 sm:pt-12 lg:pb-24 lg:pt-14">
+    <section id="popular-styles" aria-labelledby="popular-styles-heading" className="scroll-mt-16 bg-white px-6 pb-16 pt-10 text-[#1d1d1f] sm:pb-20 sm:pt-12 lg:pb-24 lg:pt-14">
       <div className="mx-auto max-w-[1280px]">
         <div className="text-center">
           <Label as="h2"><span id="popular-styles-heading">Shop by Category</span></Label>

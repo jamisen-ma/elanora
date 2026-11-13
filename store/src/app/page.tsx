@@ -20,7 +20,8 @@ export default function HomePage() {
           Desktop (lg+): copy sits in the empty wall on the left, just below the visual centre
           and clear of the header. Mobile/tablet: each slide's headline sits over the photo
           at the bottom left, with a progress line. Each slide has its own headline and line,
-          cross-fading with its photo, and Explore leads to Shop by Category (HeroSlides). */}
+          cross-fading with its photo, and Explore leads to the launch-code box first, so visitors
+          can enter the code before browsing (once it's entered, straight to Shop by Category). */}
       <section className="relative bg-white">
         <div data-hero-frame className="relative h-[calc(100lvh-var(--promo-h))] overflow-hidden bg-[#8b7460] lg:h-[calc(100svh-var(--promo-h))]">
           {/* Campaign images, cross-fading in a loop (parallax on scroll). Below lg each slide
@@ -34,7 +35,7 @@ export default function HomePage() {
                 desktopPosition: "72% 50%",
                 title: "Modern Jewelry, Made for You",
                 subtitle: "Made-to-order jewelry with lab-grown diamonds in every shade.",
-                href: "#popular-styles",
+                href: "#launch-code",
               },
               {
                 src: "/images/hero/hero-pink-heart-satin.webp",
@@ -43,14 +44,14 @@ export default function HomePage() {
                 desktopPosition: "90% 50%",
                 title: "Choose Your Stone. Make It Yours.",
                 subtitle: "Select a lab-grown diamond and setting. We’ll craft your piece to order.",
-                href: "#popular-styles",
+                href: "#launch-code",
               },
               {
                 src: "/images/hero/hero-hand-v5.webp",
                 alt: "Hand wearing lab-grown diamond rings and tennis bracelets",
                 title: "A Little Vintage. A Lot You.",
                 subtitle: "Discover distinctive designs made for everyday wear and special moments.",
-                href: "#popular-styles",
+                href: "#launch-code",
               },
             ]}
           />
