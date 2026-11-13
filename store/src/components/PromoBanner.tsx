@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { LAUNCH_SALE } from "@/data/promo";
 
 export default function PromoBanner() {
   const [dismissed, setDismissed] = useState(false);
@@ -25,9 +26,9 @@ export default function PromoBanner() {
   if (dismissed) return null;
 
   return (
-    <div ref={ref} className="bg-foreground text-white text-center py-2 px-4 relative">
+    <div ref={ref} className="bg-foreground text-white text-center py-2 pl-4 pr-9 relative">
       <p className="text-[12px] sm:text-xs tracking-[0.15em] uppercase">
-        Custom and made-to-order jewelry <span aria-hidden>·</span> Made with you in mind
+        {LAUNCH_SALE.banner}
       </p>
       <button
         onClick={() => setDismissed(true)}

@@ -3,10 +3,12 @@ import { NextResponse } from "next/server";
 import { getCatalogItem, optionPrice } from "@/data/catalog";
 import { getAllProducts } from "@/data/products";
 import { settingForSlug } from "@/data/ringDesign";
+import { percentOffForLine, salePriceCents } from "@/data/promo";
 import { sourceOf, visitorIdFrom } from "@/lib/visitor";
 
 // Stripe Checkout. The browser sends only bag line ids and quantities; every price is worked out
 // here from the catalogue, so a tampered bag can never change what the customer is charged.
+// The limited-time launch sale (10% off, or a series' own discount; no code) is applied to every line here.
 // Line items use inline `price_data`, so no products or prices need to be created in Stripe.
 
 const FREE_SHIPPING_FROM = 7500; // cents — "free on orders over $75"
@@ -65,7 +67,7 @@ function priceLine(id: string): PricedLine | null {
   if (item.carats?.length ? !item.carats.includes(carat) : carat !== "") return null;
   const price = optionPrice(item, metal, carat, size);
   if (price === null) return null;
-  const variant = [initial && `Initial ${initial}`, metal, carat, size].filter(Boolean).join(" / ");
+  const variant = [initial && `Initial ${initial}`, metal, carat, size, item.priceUnit].filter(Boolean).join(" / ");
   return { id, name: variant ? `${item.name} — ${variant}` : item.name, unitAmount: price * 100, image };
 }
 
@@ -96,7 +98,7 @@ export async function POST(request: Request) {
           { status: 400 }
         );
       }
-      lines.push({ line, quantity });
+      lines.push({ line: { ...line, unitAmount: salePriceCents(line.unitAmount, percentOffForLine(line.id)) }, quantity });
     }
 
     // A chain add-on is sold only with its pendant: never more chains than pendants of that piece.
@@ -132,7 +134,7 @@ export async function POST(request: Request) {
         quantity,
         price_data: {
           currency: "usd",
-          unit_amount: line.unitAmount,
+          unit_amount: line.unitAmount, // sale price
           product_data: {
             name: line.name,
             metadata: { line_id: line.id },
@@ -151,7 +153,7 @@ export async function POST(request: Request) {
         },
       ],
       phone_number_collection: { enabled: true },
-      allow_promotion_codes: true,
+      // No promotion codes during the launch sale: the sale price is the only offer, so offers never stack.
       // Turn on once Stripe Tax is activated in the Dashboard (Settings → Tax).
       automatic_tax: { enabled: process.env.STRIPE_AUTOMATIC_TAX === "true" },
       success_url: `${origin}/checkout?success=true&session_id={CHECKOUT_SESSION_ID}`,

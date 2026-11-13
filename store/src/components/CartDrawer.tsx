@@ -4,9 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/data/products";
+import SaleDiscountLine from "@/components/SaleDiscountLine";
+import { percentOffForLine, salePriceCents } from "@/data/promo";
 
 export default function CartDrawer() {
-  const { items, removeItem, updateQuantity, subtotal, totalItems, isOpen, setIsOpen } = useCart();
+  const { items, removeItem, updateQuantity, subtotal, discount, total, totalItems, isOpen, setIsOpen } = useCart();
 
   return (
     <>
@@ -82,7 +84,8 @@ export default function CartDrawer() {
                       {item.product.name}
                     </Link>
                     <p className="text-sm text-warm-gray mt-0.5">
-                      {formatPrice(item.product.price)}
+                      <s className="mr-2 opacity-60">{formatPrice(item.product.price)}</s>
+                      {formatPrice(salePriceCents(item.product.price, percentOffForLine(item.product.id)))}
                     </p>
                     <div className="flex items-center justify-between mt-2">
                       <div className="flex items-center border border-cream-dark rounded-sm">
@@ -122,9 +125,18 @@ export default function CartDrawer() {
         {/* Footer */}
         {items.length > 0 && (
           <div className="border-t border-cream-dark px-6 py-5 space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm tracking-widest uppercase text-warm-gray">Subtotal</span>
-              <span className="text-sm font-medium">{formatPrice(subtotal)}</span>
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="text-sm tracking-widest uppercase text-warm-gray">Subtotal</span>
+                <span className="text-sm font-medium">{formatPrice(subtotal)}</span>
+              </div>
+              <SaleDiscountLine />
+              {discount > 0 && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm tracking-widest uppercase text-warm-gray">Total after discount</span>
+                  <span className="text-sm font-medium">{formatPrice(total)}</span>
+                </div>
+              )}
             </div>
             <p className="text-xs text-warm-gray-light">
               Shipping and taxes calculated at checkout

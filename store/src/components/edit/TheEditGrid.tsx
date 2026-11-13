@@ -28,7 +28,7 @@ export default function TheEditGrid({ videos }: { videos: EditVideo[] }) {
       </div>
 
       {shown.length ? (
-        <ul className="mx-auto mt-10 grid max-w-[1280px] grid-cols-1 gap-x-6 gap-y-12 sm:mt-12 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-8">
+        <ul className="mx-auto mt-10 grid max-w-[400px] grid-cols-1 gap-y-12 sm:mt-12 sm:max-w-[1280px] sm:grid-cols-2 sm:gap-x-6 lg:grid-cols-3 lg:gap-x-8">
           {shown.map((v) => (
             <li key={v.id}>
               <EditVideoCard video={v} />

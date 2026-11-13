@@ -6,6 +6,8 @@ import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/data/products";
 import { useEffect, useState } from "react";
 import { trackEvent } from "@/components/Analytics";
+import SaleDiscountLine from "@/components/SaleDiscountLine";
+import { percentOffForLine, salePriceCents } from "@/data/promo";
 
 // How this visitor found the shop (saved by the tracker), sent along so orders can be credited
 // to Instagram, Google, a campaign link, etc.
@@ -19,7 +21,7 @@ function attribution() {
 }
 
 export default function CheckoutClient({ status }: { status: "success" | "canceled" | null }) {
-  const { items, subtotal, removeItem, updateQuantity, clearCart } = useCart();
+  const { items, subtotal, discount, total, removeItem, updateQuantity, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   // After a paid order Stripe sends the customer back with ?success=true: empty the bag.
@@ -32,7 +34,7 @@ export default function CheckoutClient({ status }: { status: "success" | "cancel
     setError("");
     trackEvent("checkout_started", {
       items: items.reduce((n, i) => n + i.quantity, 0),
-      value: subtotal / 100,
+      value: total / 100,
     });
 
     try {
@@ -134,7 +136,8 @@ export default function CheckoutClient({ status }: { status: "success" | "cancel
                     {item.product.name}
                   </Link>
                   <p className="text-sm text-warm-gray mt-1">
-                    {formatPrice(item.product.price)}
+                    <s className="mr-2 opacity-60">{formatPrice(item.product.price)}</s>
+                    {formatPrice(salePriceCents(item.product.price, percentOffForLine(item.product.id)))}
                   </p>
                   <div className="flex items-center justify-between mt-3">
                     <div className="flex items-center border border-cream-dark rounded-sm">
@@ -164,7 +167,7 @@ export default function CheckoutClient({ status }: { status: "success" | "cancel
                   </div>
                 </div>
                 <p className="text-sm font-medium hidden sm:block whitespace-nowrap">
-                  {formatPrice(item.product.price * item.quantity)}
+                  {formatPrice(salePriceCents(item.product.price, percentOffForLine(item.product.id)) * item.quantity)}
                 </p>
               </li>
             ))}
@@ -182,17 +185,18 @@ export default function CheckoutClient({ status }: { status: "success" | "cancel
                 <span className="text-warm-gray">Subtotal</span>
                 <span>{formatPrice(subtotal)}</span>
               </div>
+              <SaleDiscountLine />
               <div className="flex justify-between text-sm">
                 <span className="text-warm-gray">Shipping</span>
                 <span className="text-warm-gray-light">
-                  {subtotal >= 7500 ? "Free" : "$9.99"}
+                  {total >= 7500 ? "Free" : "$9.99"}
                 </span>
               </div>
             </div>
             <div className="border-t border-cream-dark pt-4 mb-6">
               <div className="flex justify-between font-medium">
-                <span>Total</span>
-                <span>{formatPrice(subtotal)}</span>
+                <span>{discount > 0 ? "Total after discount" : "Total"}</span>
+                <span>{formatPrice(total)}</span>
               </div>
             </div>
 

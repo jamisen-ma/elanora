@@ -11,7 +11,8 @@ import { didone } from "@/lib/fonts";
 // motion (first slide only) and while the tab is hidden.
 // Phones and tablets (below lg) follow a campaign layout: the photo fills the screen, each
 // slide's headline and line sit over it in white at the bottom left, and a thin progress line
-// runs along the bottom. Desktop keeps its own copy beside the photo (in the page).
+// runs along the bottom. Desktop shows the same headline and line in dark type in the empty
+// wall on the left. Both cross-fade with their photo.
 
 export interface HeroSlide {
   src: string;
@@ -22,7 +23,7 @@ export interface HeroSlide {
   desktopPosition?: string;
   /** soft light fade over the left side (lg+) so the dark headline stays readable on busy photos */
   scrim?: boolean;
-  /** below lg: this slide's headline, line and link, shown over the photo */
+  /** this slide's headline and Explore link (over the photo below lg, beside it from lg); the line under the headline shows from lg only */
   title?: string;
   subtitle?: string;
   href?: string;
@@ -95,29 +96,64 @@ export default function HeroSlides({ slides }: { slides: HeroSlide[] }) {
         className="pointer-events-none absolute inset-x-0 bottom-0 h-[30%] bg-[linear-gradient(0deg,rgba(0,0,0,0.38)_0%,rgba(0,0,0,0.12)_55%,rgba(0,0,0,0)_100%)] lg:hidden"
       />
 
-      {/* Below lg: each slide's headline and line, cross-fading with the photo */}
-      <HeroCopyFade className="absolute inset-x-0 bottom-0 px-6 pb-12 text-white sm:px-10 lg:hidden">
-        <div className="relative min-h-[5.5rem]">
+      {/* lg+: each slide's headline, line and Explore in the empty wall on the left, cross-fading
+          with the photo. All slides share one grid cell so the block never changes height. */}
+      <HeroCopyFade className="absolute inset-y-0 left-[7vw] hidden w-[26vw] min-w-[300px] max-w-[400px] flex-col justify-center pt-[calc(4rem+10vh)] text-[#1d1d1f] lg:flex">
+        <div className="grid">
           {slides.map((s, i) =>
             s.title ? (
               <div
                 key={s.src}
                 aria-hidden={i !== active}
-                className={`absolute inset-x-0 bottom-0 transition-[opacity,transform] duration-[1200ms] ease-out ${
+                className={`[grid-area:1/1] transition-[opacity,transform] duration-[1200ms] ease-out ${
                   i === active ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 translate-y-2"
                 }`}
               >
                 {i === 0 ? (
-                  <h1 className={`${didone.className} max-w-[18ch] text-[2rem] font-normal leading-[1.1] tracking-[-0.01em] sm:text-[2.5rem]`}>
-                    {s.title}
-                  </h1>
+                  <h1 className={`${didone.className} text-[clamp(1.6rem,2.6vw,2.75rem)] font-normal leading-[1.2] tracking-[-0.01em]`}><Lines text={s.title} /></h1>
                 ) : (
-                  <p className={`${didone.className} max-w-[18ch] text-[2rem] font-normal leading-[1.1] tracking-[-0.01em] sm:text-[2.5rem]`}>
-                    {s.title}
-                  </p>
+                  <p className={`${didone.className} text-[clamp(1.6rem,2.6vw,2.75rem)] font-normal leading-[1.2] tracking-[-0.01em]`}><Lines text={s.title} /></p>
                 )}
                 {s.subtitle && (
-                  <p className={`${didone.className} mt-3 max-w-[30ch] text-[17px] leading-snug text-white/90`}>{s.subtitle}</p>
+                  <p className={`${didone.className} mt-3 max-w-[28ch] text-[clamp(16px,1.3vw,19px)] font-normal leading-snug tracking-[-0.01em]`}>{s.subtitle}</p>
+                )}
+                {s.href && (
+                  <div className="mt-7">
+                    <Link
+                      href={s.href}
+                      tabIndex={i === active ? 0 : -1}
+                      className={`${didone.className} inline-flex h-10 items-center bg-[#1d1d1f] px-6 text-[14px] font-medium uppercase tracking-[0.2em] text-white transition-colors hover:bg-black`}
+                    >
+                      Explore
+                    </Link>
+                  </div>
+                )}
+              </div>
+            ) : null,
+          )}
+        </div>
+      </HeroCopyFade>
+
+      {/* Below lg: each slide's headline and line, cross-fading with the photo */}
+      <HeroCopyFade className="absolute inset-x-0 bottom-0 px-6 pb-12 text-white sm:px-10 lg:hidden">
+        <div className="grid items-end">
+          {slides.map((s, i) =>
+            s.title ? (
+              <div
+                key={s.src}
+                aria-hidden={i !== active}
+                className={`[grid-area:1/1] transition-[opacity,transform] duration-[1200ms] ease-out ${
+                  i === active ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 translate-y-2"
+                }`}
+              >
+                {i === 0 ? (
+                  <h1 className={`${didone.className} max-w-[16ch] text-[2rem] font-normal leading-[1.1] tracking-[-0.01em] sm:text-[2.5rem]`}>
+                    <Lines text={s.title} />
+                  </h1>
+                ) : (
+                  <p className={`${didone.className} max-w-[16ch] text-[2rem] font-normal leading-[1.1] tracking-[-0.01em] sm:text-[2.5rem]`}>
+                    <Lines text={s.title} />
+                  </p>
                 )}
                 {s.href && (
                   <Link
@@ -161,4 +197,13 @@ export default function HeroSlides({ slides }: { slides: HeroSlide[] }) {
       )}
     </>
   );
+}
+
+// Headlines break after each sentence or comma ("Choose Your Stone. / Make It Yours.").
+function Lines({ text }: { text: string }) {
+  return text.split(/(?<=[.,])\s+/).map((line) => (
+    <span key={line} className="block">
+      {line}
+    </span>
+  ));
 }

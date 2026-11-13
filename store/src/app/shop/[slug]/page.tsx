@@ -125,12 +125,12 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             {eyebrow}
           </p>
 
-          <div className="mt-4 flex items-baseline justify-between gap-6">
-            <p className={`${serif.className} text-[1.25rem] tracking-[-0.005em]`}><ProductPrice item={item} /></p>
+          <div className="mt-4 flex items-start justify-between gap-4">
+            <p className={`${serif.className} min-w-0 text-[1.2rem] tracking-[-0.005em]`}><ProductPrice item={item} /></p>
             {item.sizes?.length ? (
               <Link
                 href="/size-guide"
-                className="text-[14px] underline underline-offset-[5px] hover:text-[#1d1d1f]/70"
+                className="mt-1 shrink-0 whitespace-nowrap text-[14px] underline underline-offset-[5px] hover:text-[#1d1d1f]/70"
               >
                 Size Guide
               </Link>

@@ -1,8 +1,9 @@
 import { type ReactNode } from "react";
+import { FromSalePrice } from "@/components/SalePrice";
 import Image from "next/image";
 import Link from "next/link";
 import { colorImage, type ICColor } from "@/data/inColor";
-import { catalog, fromPrice, productHref, onBodyImage } from "@/data/catalog";
+import { catalog, productHref, onBodyImage } from "@/data/catalog";
 import ProductFrame from "@/components/shop/ProductFrame";
 import AboutLetter from "./AboutLetter";
 import EditVideoCard from "@/components/edit/EditVideoCard";
@@ -237,7 +238,7 @@ export function ElanoraEdit() {
               />
               <div className="mt-5 text-center">
                 <h3 className={`${productSerif.className} text-[16px] font-normal leading-snug tracking-[-0.01em] sm:text-[18px]`}>{p.name}</h3>
-                <p className="mt-1.5 text-[15px] text-[#6e6e73]">{fromPrice(p)}</p>
+                <p className="mt-1.5 text-[15px] text-[#6e6e73]"><FromSalePrice item={p} /></p>
               </div>
             </Link>
           </li>

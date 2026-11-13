@@ -1,10 +1,11 @@
 "use client";
 
+import { FromSalePrice } from "@/components/SalePrice";
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Cormorant_Garamond } from "next/font/google";
-import { RING_BANDS, RING_STYLES, RING_STYLE_IMAGES, SHAPE_ORDER, fromPrice, jewelryTypes, onBodyImage, productHref, type CatalogItem } from "@/data/catalog";
+import { RING_BANDS, RING_STYLES, RING_STYLE_IMAGES, SHAPE_ORDER, jewelryTypes, onBodyImage, productHref, type CatalogItem } from "@/data/catalog";
 import ProductFrame from "./ProductFrame";
 import CollectionHero, { type CollectionHeroProps } from "./CollectionHero";
 import { productSerif } from "@/lib/fonts";
@@ -417,7 +418,7 @@ function Tile({ item, priority }: { item: CatalogItem; priority?: boolean }) {
       <ProductFrame src={item.images[0]?.src} alt={item.name} priority={priority} hoverSrc={onBodyImage(item)} />
       <div className="mt-5 text-center">
         <h3 className={`${productSerif.className} text-[16px] font-normal leading-snug tracking-[-0.01em] sm:text-[18px]`}>{item.name}</h3>
-        <p className="mt-1.5 text-[15px] text-[#6e6e73]">{fromPrice(item)}</p>
+        <p className="mt-1.5 text-[15px] text-[#6e6e73]"><FromSalePrice item={item} /></p>
       </div>
     </Link>
   );

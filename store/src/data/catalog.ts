@@ -100,6 +100,12 @@ export interface CatalogItem {
   materials: string[];
   rank: number; // default order
   addedRank: number; // "Newest" order
+  /** limited-time discount for this series instead of the sitewide 10% (see data/promo.ts) */
+  salePercentOff?: number;
+  /** limited-time discount for particular carat weights, e.g. { "5 ctw": 15 } (see data/promo.ts) */
+  caratSalePercentOff?: Record<string, number>;
+  /** what one unit of the price buys, shown beside the price and in the bag, e.g. "single earring" */
+  priceUnit?: string;
   hideInShop?: boolean; // left off the shop / category listings; the product page stays reachable via its Shape selector
 }
 
@@ -130,32 +136,35 @@ const RING_SIZES = ["3", "3.5", "4", "4.5", "5", "5.5", "6", "6.5", "7", "7.5", 
 const BRACELET_LENGTHS = ["6 in", "6.5 in", "7 in", "7.5 in"]; // [Lengths offered — to be confirmed]
 
 // Round Diamond Tennis Bracelet (user, 2026-11-07): 14K or 18K gold, approx. 0.05 ct round
-// diamonds. The minimum (approx. 3–4 ct, 5.5 in) is $1,099 in 14K and $1,299 in 18K; each further
-// 1 ct of average carat weight adds $150 (14K) or $250 (18K), each further 0.25 in of length adds $50.
-// Lengths run from 5.5 in through the 7.5 in the bracelets already offered.
+// diamonds. Lengths run from 5.5 in through 7.5 in, in 0.25 in steps.
 const TENNIS_LENGTHS = Array.from({ length: 9 }, (_, i) => `${5.5 + 0.25 * i} in`);
-// Diamond tennis bracelets (user, 2026-11-08): priced by Average Carat Weight (ctw). Prices below are
-// 14K for the 5.5 in (14 cm) bracelet; every further 0.25 in adds that weight's step; 18K adds $200.
+// Diamond tennis bracelets: priced by Average Carat Weight (ctw). Prices below are 14K for the
+// 5.5 / 5.75 in bracelet; longer lengths add $50 per half inch (tennisLengthSurcharge). 18K adds $200.
+// During the limited-time sale, 5 ctw and up are 15% off (the rest 10%). Repriced 2026-11-13 (then all lowered $100
+// the same day): 5 ct = 4 ct + $200, 7 = 5 + $300, 9 = 7 + $400, 10 = 9 + $200, 12 = 10 + $500, 15 = 12 + $300.
 // Supplier reference weights (not shown on the site, not guaranteed): 2.08, 3.06, 4.36, 5.59, 7.33,
 // 8.99, 9.69, 12.09 and 15.36 ctw.
-const ROUND_TENNIS_SIZES: [string, number, number][] = [
-  // [average carat weight, 14K price at 5.5 in, added per 0.25 in]
-  ["2 ctw", 1399, 50],
-  ["3 ctw", 1499, 50],
-  ["4 ctw", 1599, 60],
-  ["5 ctw", 1699, 70],
-  ["7 ctw", 2099, 90],
-  ["9 ctw", 2599, 110],
-  ["10 ctw", 2799, 120],
-  ["12 ctw", 3499, 150],
-  ["15 ctw", 3699, 160],
+const ROUND_TENNIS_SIZES: [string, number][] = [
+  // [average carat weight, 14K price at 5.5 / 5.75 in]
+  ["2 ctw", 1399],
+  ["3 ctw", 1499],
+  ["4 ctw", 1599],
+  ["5 ctw", 1799],
+  ["7 ctw", 2099],
+  ["9 ctw", 2499],
+  ["10 ctw", 2699],
+  ["12 ctw", 3199],
+  ["15 ctw", 3499],
 ];
 const ROUND_TENNIS_CARATS = ROUND_TENNIS_SIZES.map(([c]) => c);
 const ROUND_TENNIS_PRICES: Record<string, Record<string, number>> = Object.fromEntries(
   ["14k White Gold", "14k Yellow Gold", "14k Rose Gold", "18k White Gold", "18k Yellow Gold", "18k Rose Gold"].map((m) => [m, Object.fromEntries(ROUND_TENNIS_SIZES.map(([c, p]) => [c, p + (m.startsWith("18k") ? 200 : 0)]))]),
 );
+// Length surcharge in half-inch pairs (the options keep their 0.25 in steps): 5.5 and 5.75 in are the
+// base price, 6 and 6.25 in add $50, 6.5 and 6.75 in add $100, and so on (2026-11-13).
+const tennisLengthSurcharge = (length: string) => Math.floor((parseFloat(length) - 5.5) / 0.5 + 1e-9) * 50;
 const ROUND_TENNIS_LENGTH_SURCHARGES = Object.fromEntries(
-  ROUND_TENNIS_SIZES.map(([c, , step]) => [c, Object.fromEntries(TENNIS_LENGTHS.map((l, i) => [l, step * i]))]),
+  ROUND_TENNIS_CARATS.map((c) => [c, Object.fromEntries(TENNIS_LENGTHS.map((l) => [l, tennisLengthSurcharge(l)]))]),
 );
 
 // Every diamond tennis bracelet (round, pear, heart, round and emerald-cut) uses the Round Diamond
@@ -171,6 +180,8 @@ const TENNIS_OPTIONS = {
   optionsNote: "Carat weight is approximate and may vary slightly by bracelet length.",
   metalCaratPrices: ROUND_TENNIS_PRICES,
   caratSizeSurcharges: ROUND_TENNIS_LENGTH_SURCHARGES,
+  // 15% off from 5 ctw during the limited-time sale (smaller weights get the sitewide 10%)
+  caratSalePercentOff: Object.fromEntries(["5 ctw", "7 ctw", "9 ctw", "10 ctw", "12 ctw", "15 ctw"].map((c) => [c, 15])),
 };
 // On-body photos of the round tennis bracelet in white gold, from slim to bold (studio, no face). Shown
 // for every metal; the size of each bracelet isn't labelled.
@@ -233,9 +244,13 @@ const paveRingDetails = (shape: string) => [
   "Prices may vary with the current gold price and ring size.",
 ];
 
-// Halo diamond rings (all ten shapes): priced like the pavé rings — 1 ct is $899 in 14K and $1,099
-// in 18K, +$100 per further 0.5 ct of centre stone; approx. 0.40 ct of side diamonds in the halo and band.
-const HALO_RING_PRICES = PAVE_RING_PRICES;
+// Halo diamond rings (all ten shapes): the pavé-ring prices + $100 (2026-11-13) — 1 ct is $999 in 14K
+// and $1,199 in 18K, +$100 per further 0.5 ct of centre stone; approx. 0.40 ct of side diamonds in the
+// halo and band. 15% off during the limited-time sale (HALO_RING_SALE) instead of the sitewide 10%.
+const HALO_RING_PRICES: Record<string, Record<string, number>> = Object.fromEntries(
+  SOLITAIRE_RING_METALS.map((m) => [m, solitaireRingCaratPrices(m.startsWith("18k") ? 1199 : 999)]),
+);
+const HALO_RING_SALE = 15;
 const haloRingDetails = (shape: string, color = "D–E") => [
   "Made in your choice of 14K or 18K gold",
   `One IGI-certified lab-grown center diamond, ${shape.toLowerCase()} shape, from 1 ct`,
@@ -251,10 +266,10 @@ const with18k = (set: Record<string, GalleryImage[]>): Record<string, GalleryIma
 });
 
 // Three-stone diamond rings: 14K or 18K gold, lab-grown centre diamond from 1 ct. Priced at the
-// halo-ring price + $200 for every metal and carat (2026-11-07): 1 ct is $1,099 in 14K and
+// pavé-ring price + $200 for every metal and carat (2026-11-07): 1 ct is $1,099 in 14K and
 // $1,299 in 18K; every further 0.5 ct of centre stone adds $100.
 const THREE_STONE_RING_PRICES: Record<string, Record<string, number>> = Object.fromEntries(
-  Object.entries(HALO_RING_PRICES).map(([metal, prices]) => [
+  Object.entries(PAVE_RING_PRICES).map(([metal, prices]) => [
     metal,
     Object.fromEntries(Object.entries(prices).map(([carat, price]) => [carat, price + 200])),
   ]),
@@ -266,10 +281,10 @@ const threeStoneRingDetails = (shape: string, sides: string) => [
   "Prices may vary with the current gold price and ring size.",
 ];
 
-// Bezel diamond rings: the solitaire ring prices + $200 (1 ct is $999 in 14K and $1,099 in 18K;
-// every further 0.5 ct adds $100). Same stone details as the solitaires.
+// Bezel diamond rings: 1 ct is $899 in 14K and $1,099 in 18K (14K lowered $100 on 2026-11-13;
+// 18K is 14K + $200); every further 0.5 ct adds $100. Same stone details as the solitaires.
 const BEZEL_RING_PRICES: Record<string, Record<string, number>> = Object.fromEntries(
-  SOLITAIRE_RING_METALS.map((m) => [m, solitaireRingCaratPrices(m.startsWith("18k") ? 1099 : 999)]),
+  SOLITAIRE_RING_METALS.map((m) => [m, solitaireRingCaratPrices(m.startsWith("18k") ? 1099 : 899)]),
 );
 
 // Real ring videos (customer clips, 2026-11-07): a gallery item for the metal the video shows.
@@ -290,6 +305,9 @@ const withMetalVideo = (sets: Record<string, GalleryImage[]>, metals: string[], 
 const HALO_PENDANT_CARATS = ["Approx. 0.5 ct", "Approx. 1.0 ct", "Approx. 1.5 ct", "Approx. 2.0 ct", "Approx. 2.5 ct"];
 const HALO_PENDANT_BASE = 799;
 const haloPendantCaratPrices = Object.fromEntries(HALO_PENDANT_CARATS.map((c, i) => [c, HALO_PENDANT_BASE + 100 * i]));
+// Pink round halo necklace (065): the same carat steps as the white halo pendants, $300 over them,
+// sold with its 14K gold chain (16, 18 or 20 in).
+const PINK_HALO_PENDANT_CARAT_PRICES = Object.fromEntries(HALO_PENDANT_CARATS.map((c, i) => [c, HALO_PENDANT_BASE + 300 + 100 * i]));
 const HALO_PENDANT_METALS = ["14k White Gold", "14k Yellow Gold", "14k Rose Gold"];
 const HALO_PENDANT_CHAIN = { price: 239, lengths: ["16 in", "18 in", "20 in"] };
 const haloPendantDetails = (cut: string) => [
@@ -302,16 +320,15 @@ const haloPendantDetails = (cut: string) => [
 const SNOWFLAKE_METAL_PRICES: Record<string, number> = { "14k Yellow Gold": 1499, "925 Sterling Silver": 899 };
 
 // Cocktail Collection necklaces: priced by centre-diamond carat (14K gold, chain included).
-const COCKTAIL_CARAT_PRICES: Record<string, number> = { "2 ct": 1099, "3 ct": 1199 };
-const COSMOPOLITAN_CARAT_PRICES: Record<string, number> = { "Approx. 1.5 ct": 1199 };
+const COCKTAIL_CARAT_PRICES: Record<string, number> = { "2 ct": 1299, "3 ct": 1399 }; // +$200 on 2026-11-13
+const COSMOPOLITAN_CARAT_PRICES: Record<string, number> = { "Approx. 1.5 ct": 1399 }; // +$200 on 2026-11-13
 
 // Perfume bottle pendants: priced by metal and centre-diamond carat.
-const PERFUME_METALS = ["14k White Gold", "14k Yellow Gold", "925 Sterling Silver"];
+const PERFUME_METALS = ["14k White Gold", "14k Yellow Gold"]; // silver dropped on 2026-11-13
 const PERFUME_CARATS = ["2 ct", "3 ct"];
 const PERFUME_PRICES: Record<string, Record<string, number>> = {
-  "14k White Gold": { "2 ct": 899, "3 ct": 1099 },
-  "14k Yellow Gold": { "2 ct": 899, "3 ct": 1099 },
-  "925 Sterling Silver": { "2 ct": 799, "3 ct": 999 },
+  "14k White Gold": { "2 ct": 1099, "3 ct": 1299 }, // +$200 on 2026-11-13
+  "14k Yellow Gold": { "2 ct": 1099, "3 ct": 1299 },
 };
 // Prices are for the pendant only; the optional chain is always 14K gold (white gold with a silver pendant).
 // Yellow gold: own main and on-body shots; the detail close-up stays the white gold one.
@@ -324,9 +341,10 @@ const perfumeYellowGold = (slug: string): Record<string, GalleryImage[]> => ({
 });
 const PERFUME_CHAIN = { ...HALO_PENDANT_CHAIN, metalFor: { "925 Sterling Silver": "14k White Gold" } };
 
-// Pink teardrop pendant: priced by metal and centre-diamond carat; 14K gold is $100 over silver
-// at every size. Pendant only; the optional chain is the 14K gold add-on (white gold with silver).
-const TEARDROP_SILVER_PRICES: Record<string, number> = { "1 ct": 699, "1.5 ct": 799, "2 ct": 899, "3 ct": 1099 };
+// Pink teardrop necklace: priced by metal and centre-diamond carat; 14K gold is $100 over silver
+// at every size. Sold with its chain (in the same metal), 16, 18 or 20 in. Raised $200 on 2026-11-13
+// when the chain was included.
+const TEARDROP_SILVER_PRICES: Record<string, number> = { "1 ct": 899, "1.5 ct": 999, "2 ct": 1099, "3 ct": 1299 };
 const TEARDROP_CARATS = Object.keys(TEARDROP_SILVER_PRICES);
 const TEARDROP_PRICES: Record<string, Record<string, number>> = {
   "925 Sterling Silver": TEARDROP_SILVER_PRICES,
@@ -335,18 +353,18 @@ const TEARDROP_PRICES: Record<string, Record<string, number>> = {
 
 // Solitaire pendants (sold without a chain): the centre diamond is chosen by carat; the 14K gold
 // chain is the same optional add-on as the halo pendants and is never sold on its own.
+// 0.5 ct $539, 1.0 ct $599, then +$100 per half carat (0.3 ct dropped on 2026-11-13).
 const SOLITAIRE_PENDANT_CARAT_PRICES: Record<string, number> = {
-  "Approx. 0.3 ct": 379,
-  "Approx. 0.5 ct": 399,
-  "Approx. 1.0 ct": 469,
-  "Approx. 1.5 ct": 539,
-  "Approx. 2.0 ct": 609,
-  "Approx. 2.5 ct": 679,
+  "Approx. 0.5 ct": 539,
+  "Approx. 1.0 ct": 599,
+  "Approx. 1.5 ct": 699,
+  "Approx. 2.0 ct": 799,
+  "Approx. 2.5 ct": 899,
 };
 const SOLITAIRE_PENDANT_CARATS = Object.keys(SOLITAIRE_PENDANT_CARAT_PRICES);
 const solitairePendantDetails = (cut: string) => [
   "Pendant only, crafted in 14K gold — chain not included",
-  `${cut} lab-grown diamond centre stone, approx. 0.3 ct to 2.5 ct`,
+  `${cut} lab-grown diamond centre stone, approx. 0.5 ct to 2.5 ct`,
   "Optional 14K gold chain (16, 18 or 20 in) for $239, available only with the pendant",
 ];
 
@@ -390,29 +408,32 @@ const whiteEarringMetalImages = (slug: string, v = ""): Record<string, GalleryIm
   return { "14k Yellow Gold": set("yellow-gold"), "14k Rose Gold": set("rose-gold") };
 };
 // Halo stud earrings (round, oval, emerald, pear, heart, yellow pear, yellow heart — user,
-// 2026-11-08): priced per pair by the carat of each stud. 0.5 ct each is $599 in sterling silver,
-// $799 in 14K and $899 in 18K gold; every further 0.5 ct each adds $200.
+// 2026-11-08): priced per pair by the carat of each stud, in 14K or 18K gold (sterling silver dropped
+// 2026-11-13). 0.5 ct each is $1,099 in 14K and $1,299 in 18K (raised $100 on 2026-11-13); 1.0 ct each
+// is $1,199 / $1,399, and every further 0.5 ct each adds $200. 18K is 14K + $200.
+// 15% off during the limited-time sale instead of the sitewide 10%.
 const HALO_STUD_CARATS = ["Approx. 0.5 ct each", "Approx. 1.0 ct each", "Approx. 1.5 ct each", "Approx. 2.0 ct each", "Approx. 2.5 ct each"]; // [Largest size offered — to be confirmed]
 const HALO_STUD_METALS = [
-  "925 Sterling Silver",
   "14k White Gold", "14k Yellow Gold", "14k Rose Gold",
   "18k White Gold", "18k Yellow Gold", "18k Rose Gold",
 ];
 const HALO_STUD_PRICES: Record<string, Record<string, number>> = Object.fromEntries(
   HALO_STUD_METALS.map((m) => {
-    const base = m === "925 Sterling Silver" ? 599 : m.startsWith("18k") ? 899 : 799;
-    return [m, Object.fromEntries(HALO_STUD_CARATS.map((c, i) => [c, base + 200 * i]))];
+    const base = m.startsWith("18k") ? 1199 : 999;
+    // 0.5 ct each (i = 0) is $100 above the base; from 1.0 ct each the $200 steps are unchanged.
+    return [m, Object.fromEntries(HALO_STUD_CARATS.map((c, i) => [c, base + 200 * i + (i === 0 ? 100 : 0)]))];
   }),
 );
 const HALO_STUD_OPTIONS = {
-  price: 599,
+  price: HALO_STUD_PRICES["14k White Gold"][HALO_STUD_CARATS[0]], // lowest option (14K, 0.5 ct each)
   metals: HALO_STUD_METALS,
   defaultMetal: "14k White Gold",
   carats: HALO_STUD_CARATS,
   caratLabel: "Carat Weight",
   metalCaratPrices: HALO_STUD_PRICES,
+  salePercentOff: 15,
 };
-// Silver and 18K white gold use the white images; 18K yellow / rose use the 14K sets.
+// 18K white gold uses the white images; 18K yellow / rose use the 14K sets.
 const haloStudMetalImages = (slug: string, v = ""): Record<string, GalleryImage[]> => {
   const set = whiteEarringMetalImages(slug, v);
   return { ...set, "18k Yellow Gold": set["14k Yellow Gold"], "18k Rose Gold": set["14k Rose Gold"] };
@@ -421,23 +442,21 @@ const haloStudDetails = (shape: string) => [
   `${shape} lab-grown diamond centre stones, each framed by a halo of round lab-grown diamonds`,
   "Sold as a pair",
   "Centre stones from approx. 0.5 ct to 2.5 ct each",
-  "Made in sterling silver, 14K gold or 18K gold",
+  "Made in 14K or 18K gold",
 ];
 
-// Angel wing pieces (necklaces, bracelets, earrings) come in two metals each: pink diamond pieces in
-// 14K rose gold or rose gold over sterling silver, yellow diamond pieces in 14K yellow gold or gold over
-// sterling silver (user, 2026-11-08); the necklaces add 925 sterling silver and 14K white gold.
-// Each has a 2 ct or 3 ct centre pear.
-const GOLD_OVER_SILVER = "Gold over Sterling Silver";
+// Angel wing pieces (necklaces, bracelets, earrings) come in 14K gold only (silver dropped on
+// 2026-11-13): pink pieces in rose gold, yellow pieces in yellow gold, blue pieces in white gold; the
+// pink and yellow necklaces add 14K white gold. Each has a 2 ct or 3 ct centre pear.
 const WING_CARATS = ["2 ct", "3 ct"];
-// Necklaces also come in 925 sterling silver and 14K white gold (white-metal photos).
+// Necklaces also come in 14K white gold (white-metal photos).
 const wingWhiteMetalImages = (slug: string): Record<string, GalleryImage[]> => {
   const white: GalleryImage[] = [
     { src: `/images/catalog/${slug}/01-main-page-white.webp`, kind: "detail" },
     { src: `/images/catalog/${slug}/02-detail-white.webp`, kind: "detail" },
     { src: `/images/catalog/${slug}/05-on-body-v2-white.webp`, kind: "on-body" },
   ];
-  return { "14k White Gold": white, "925 Sterling Silver": white };
+  return { "14k White Gold": white };
 };
 const wingDetails = (color: string) => [
   `Center stone: 2 ct or 3 ct pear-shaped ${color} lab-grown diamond`,
@@ -504,7 +523,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 02
     slug: "yellow-oval-halo-diamond-ring",
     name: "Yellow Oval Halo Diamond Ring",
-    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $899"
+    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $999"
     type: "Rings",
     ringStyle: "Halo",
     band: "Pavé Band",
@@ -515,6 +534,7 @@ export const catalog: CatalogItem[] = [
     stoneGroup: "Diamond",
     metals: SOLITAIRE_RING_METALS,
     metalCaratPrices: HALO_RING_PRICES,
+    salePercentOff: HALO_RING_SALE,
     defaultMetal: "14k White Gold",
     sizes: RING_SIZES,
     carats: CARATS,
@@ -636,7 +656,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 07
     slug: "round-halo-diamond-ring",
     name: "Yellow Round Halo Diamond Ring",
-    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $899"
+    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $999"
     type: "Rings",
     ringStyle: "Halo",
     band: "Pavé Band",
@@ -647,6 +667,7 @@ export const catalog: CatalogItem[] = [
     stoneGroup: "Diamond",
     metals: SOLITAIRE_RING_METALS,
     metalCaratPrices: HALO_RING_PRICES,
+    salePercentOff: HALO_RING_SALE,
     defaultMetal: "14k White Gold",
     sizes: RING_SIZES,
     carats: CARATS,
@@ -696,7 +717,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 09
     slug: "yellow-emerald-halo-diamond-ring",
     name: "Yellow Emerald-Cut Halo Diamond Ring",
-    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $899"
+    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $999"
     type: "Rings",
     ringStyle: "Halo",
     band: "Pavé Band",
@@ -707,6 +728,7 @@ export const catalog: CatalogItem[] = [
     stoneGroup: "Diamond",
     metals: SOLITAIRE_RING_METALS,
     metalCaratPrices: HALO_RING_PRICES,
+    salePercentOff: HALO_RING_SALE,
     defaultMetal: "14k White Gold",
     sizes: RING_SIZES,
     carats: CARATS,
@@ -757,7 +779,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 11
     slug: "emerald-bezel-diamond-ring",
     name: "Emerald-Cut Bezel Diamond Ring",
-    price: BEZEL_RING_PRICES["14k Yellow Gold"]["1ct"], // lowest option — shown as "From $999"
+    price: BEZEL_RING_PRICES["14k Yellow Gold"]["1ct"], // lowest option — shown as "From $899"
     type: "Rings",
     ringStyle: "Solitaire",
     band: "Plain Band",
@@ -820,7 +842,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 13
     slug: "yellow-pear-halo-diamond-ring",
     name: "Yellow Pear Halo Diamond Ring",
-    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $899"
+    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $999"
     type: "Rings",
     ringStyle: "Halo",
     band: "Pavé Band",
@@ -831,6 +853,7 @@ export const catalog: CatalogItem[] = [
     stoneGroup: "Diamond",
     metals: SOLITAIRE_RING_METALS,
     metalCaratPrices: HALO_RING_PRICES,
+    salePercentOff: HALO_RING_SALE,
     defaultMetal: "14k White Gold",
     sizes: RING_SIZES,
     carats: CARATS,
@@ -881,7 +904,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 15
     slug: "pear-split-pave-diamond-ring",
     name: "Pear Split Pavé Diamond Ring",
-    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // same pricing as the Yellow Pear Halo ring — shown as "From $899"
+    price: PAVE_RING_PRICES["14k White Gold"]["1ct"], // pavé-ring pricing (halo rings were raised $100 on 2026-11-13) — shown as "From $899"
     type: "Rings",
     ringStyle: "Pavé",
     band: "Split Shank",
@@ -890,7 +913,7 @@ export const catalog: CatalogItem[] = [
     stone: "Pear-shaped diamond in three claws on a split band set with pavé diamonds. Lab-grown, center stone from 1 ct (D–E, VVS2, IGI), approx. 0.40 ct pavé side stones.",
     stoneGroup: "Diamond",
     metals: SOLITAIRE_RING_METALS,
-    metalCaratPrices: HALO_RING_PRICES,
+    metalCaratPrices: PAVE_RING_PRICES,
     defaultMetal: "14k White Gold",
     sizes: RING_SIZES,
     carats: CARATS,
@@ -998,7 +1021,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 19 — first necklace. Necklaces have three images: main, detail, worn.
     slug: "emerald-solitaire-diamond-necklace",
     name: "Emerald-Cut Solitaire Diamond Necklace",
-    price: SOLITAIRE_PENDANT_CARAT_PRICES["Approx. 0.3 ct"], // lowest carat option — shown as "From $379"
+    price: SOLITAIRE_PENDANT_CARAT_PRICES["Approx. 0.5 ct"], // lowest carat option — shown as "From $539"
     type: "Necklaces",
     shapeGroup: "solitaire-diamond-necklace",
     shape: "Emerald",
@@ -1008,6 +1031,7 @@ export const catalog: CatalogItem[] = [
     defaultMetal: "14k White Gold",
     carats: SOLITAIRE_PENDANT_CARATS,
     caratPrices: SOLITAIRE_PENDANT_CARAT_PRICES,
+    salePercentOff: 15, // 15% off during the limited-time sale instead of the sitewide 10%
     chainAddOn: HALO_PENDANT_CHAIN, // the chain is never sold on its own
     images: [
       { src: "/images/catalog/emerald-solitaire-diamond-necklace/01-main.webp", kind: "sku" },
@@ -1035,7 +1059,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 20 — same pendant as 019, round stone
     slug: "round-solitaire-diamond-necklace",
     name: "Round Solitaire Diamond Necklace",
-    price: SOLITAIRE_PENDANT_CARAT_PRICES["Approx. 0.3 ct"], // lowest carat option — shown as "From $379"
+    price: SOLITAIRE_PENDANT_CARAT_PRICES["Approx. 0.5 ct"], // lowest carat option — shown as "From $539"
     type: "Necklaces",
     shapeGroup: "solitaire-diamond-necklace",
     shape: "Round",
@@ -1045,6 +1069,7 @@ export const catalog: CatalogItem[] = [
     defaultMetal: "14k White Gold",
     carats: SOLITAIRE_PENDANT_CARATS,
     caratPrices: SOLITAIRE_PENDANT_CARAT_PRICES,
+    salePercentOff: 15, // 15% off during the limited-time sale instead of the sitewide 10%
     chainAddOn: HALO_PENDANT_CHAIN, // the chain is never sold on its own
     // on-body re-shot (-v2): winter Y2K snapshot
     images: [
@@ -1072,7 +1097,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 21 — same pendant as 019, oval stone
     slug: "oval-solitaire-diamond-necklace",
     name: "Oval Solitaire Diamond Necklace",
-    price: SOLITAIRE_PENDANT_CARAT_PRICES["Approx. 0.3 ct"], // lowest carat option — shown as "From $379"
+    price: SOLITAIRE_PENDANT_CARAT_PRICES["Approx. 0.5 ct"], // lowest carat option — shown as "From $539"
     type: "Necklaces",
     shapeGroup: "solitaire-diamond-necklace",
     shape: "Oval",
@@ -1082,8 +1107,11 @@ export const catalog: CatalogItem[] = [
     defaultMetal: "14k White Gold",
     carats: SOLITAIRE_PENDANT_CARATS,
     caratPrices: SOLITAIRE_PENDANT_CARAT_PRICES,
+    salePercentOff: 15, // 15% off during the limited-time sale instead of the sitewide 10%
     chainAddOn: HALO_PENDANT_CHAIN, // the chain is never sold on its own
-    images: necklaceImages("oval-solitaire-diamond-necklace"),
+    images: necklaceImages("oval-solitaire-diamond-necklace").map((i) =>
+      i.kind === "on-body" ? { ...i, src: "/images/catalog/oval-solitaire-diamond-necklace/05-on-body-v2.webp" } : i,
+    ), // white-background on-body shot (2026-11-13)
     metalImages: necklaceMetalImages("oval-solitaire-diamond-necklace"),
     details: solitairePendantDetails("Oval"),
     materials: ["14K gold", "Lab-grown diamond"],
@@ -1094,7 +1122,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 22 — same pendant as 019, pear stone
     slug: "pear-solitaire-diamond-necklace",
     name: "Pear-Shaped Solitaire Diamond Necklace",
-    price: SOLITAIRE_PENDANT_CARAT_PRICES["Approx. 0.3 ct"], // lowest carat option — shown as "From $379"
+    price: SOLITAIRE_PENDANT_CARAT_PRICES["Approx. 0.5 ct"], // lowest carat option — shown as "From $539"
     type: "Necklaces",
     shapeGroup: "solitaire-diamond-necklace",
     shape: "Pear",
@@ -1104,6 +1132,7 @@ export const catalog: CatalogItem[] = [
     defaultMetal: "14k White Gold",
     carats: SOLITAIRE_PENDANT_CARATS,
     caratPrices: SOLITAIRE_PENDANT_CARAT_PRICES,
+    salePercentOff: 15, // 15% off during the limited-time sale instead of the sitewide 10%
     chainAddOn: HALO_PENDANT_CHAIN, // the chain is never sold on its own
     images: sharedOnBody(necklaceImages("pear-solitaire-diamond-necklace"), "/images/catalog/pear-solitaire-diamond-necklace/05-on-body-v2.webp"),
     metalImages: sharedOnBodyMetals(necklaceMetalImages("pear-solitaire-diamond-necklace"), "/images/catalog/pear-solitaire-diamond-necklace/05-on-body-v2.webp"),
@@ -1116,7 +1145,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 23 — same pendant as 019, heart stone
     slug: "heart-solitaire-diamond-necklace",
     name: "Heart-Shaped Solitaire Diamond Necklace",
-    price: SOLITAIRE_PENDANT_CARAT_PRICES["Approx. 0.3 ct"], // lowest carat option — shown as "From $379"
+    price: SOLITAIRE_PENDANT_CARAT_PRICES["Approx. 0.5 ct"], // lowest carat option — shown as "From $539"
     type: "Necklaces",
     shapeGroup: "solitaire-diamond-necklace",
     shape: "Heart",
@@ -1126,6 +1155,7 @@ export const catalog: CatalogItem[] = [
     defaultMetal: "14k White Gold",
     carats: SOLITAIRE_PENDANT_CARATS,
     caratPrices: SOLITAIRE_PENDANT_CARAT_PRICES,
+    salePercentOff: 15, // 15% off during the limited-time sale instead of the sitewide 10%
     chainAddOn: HALO_PENDANT_CHAIN, // the chain is never sold on its own
     images: sharedOnBody(necklaceImages("heart-solitaire-diamond-necklace"), "/images/catalog/heart-solitaire-diamond-necklace/05-on-body-v2.webp"),
     metalImages: sharedOnBodyMetals(necklaceMetalImages("heart-solitaire-diamond-necklace"), "/images/catalog/heart-solitaire-diamond-necklace/05-on-body-v2.webp"),
@@ -1138,20 +1168,21 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 24 — angel wings in pavé with a pink pear drop (024 and 025 share the design)
     slug: "pink-diamond-angel-wing-necklace",
     name: "Pink Diamond Angel Wing Necklace",
-    price: 1099, // lowest option (rose gold over silver, 2 ct) — shown as "From $1,099"
+    price: 1699, // 14K gold, 2 ct — shown as "From $1,699" (silver dropped, +$200 on 2026-11-13)
     type: "Necklaces",
     shape: "Pear",
     stone: "Pavé-set angel wings in white lab-grown diamonds, with a 2 ct or 3 ct pink pear-shaped lab-grown diamond drop.",
     stoneGroup: "Diamond",
-    metals: ["14k Rose Gold", "Rose Gold over Sterling Silver", "14k White Gold", "925 Sterling Silver"],
+    metals: ["14k Rose Gold", "14k White Gold"], // 14K gold only (silver dropped 2026-11-13)
     defaultMetal: "14k Rose Gold",
     sizes: NECKLACE_LENGTHS,
     carats: WING_CARATS,
-    metalCaratPrices: wingCaratPrices({ "14k Rose Gold": 1399, "Rose Gold over Sterling Silver": 1099, "14k White Gold": 1399, "925 Sterling Silver": 1099 }),
+    metalCaratPrices: wingCaratPrices({ "14k Rose Gold": 1699, "14k White Gold": 1699 }),
+    salePercentOff: 25, // 25% off during the limited-time sale instead of the sitewide 10%
     images: onBodyV2(necklaceImages("pink-diamond-angel-wing-necklace")),
     metalImages: wingWhiteMetalImages("pink-diamond-angel-wing-necklace"),
     details: wingDetails("pink"),
-    materials: ["14K rose or white gold, rose gold over sterling silver, or 925 sterling silver", "Lab-grown diamonds"],
+    materials: ["14K rose or white gold", "Lab-grown diamonds"],
     rank: 24,
     addedRank: -21,
   },
@@ -1159,17 +1190,18 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 25 — angel wings in pavé with a canary yellow pear drop (024 and 025 share the design)
     slug: "yellow-diamond-angel-wing-necklace",
     name: "Yellow Diamond Angel Wing Necklace",
-    price: 1099, // lowest option (gold over silver, 2 ct) — shown as "From $1,099"
+    price: 1699, // 14K gold, 2 ct — shown as "From $1,699" (silver dropped, +$200 on 2026-11-13)
     type: "Necklaces",
     shape: "Pear",
     stone: "Pavé-set angel wings in white lab-grown diamonds, with a 2 ct or 3 ct yellow pear-shaped lab-grown diamond drop.",
     stoneGroup: "Diamond",
-    metals: ["14k Yellow Gold", GOLD_OVER_SILVER, "14k White Gold", "925 Sterling Silver"],
+    metals: ["14k Yellow Gold", "14k White Gold"], // 14K gold only (silver dropped 2026-11-13)
     // Main image is yellow gold.
     defaultMetal: "14k Yellow Gold",
     sizes: NECKLACE_LENGTHS,
     carats: WING_CARATS,
-    metalCaratPrices: wingCaratPrices({ "14k Yellow Gold": 1399, [GOLD_OVER_SILVER]: 1099, "14k White Gold": 1399, "925 Sterling Silver": 1099 }),
+    metalCaratPrices: wingCaratPrices({ "14k Yellow Gold": 1699, "14k White Gold": 1699 }),
+    salePercentOff: 25, // 25% off during the limited-time sale instead of the sitewide 10%
     images: [
       { src: "/images/catalog/yellow-diamond-angel-wing-necklace/01-main-yellow-gold.webp", kind: "sku" },
       { src: "/images/catalog/yellow-diamond-angel-wing-necklace/01-main-page-yellow-gold.webp", kind: "detail" },
@@ -1178,7 +1210,7 @@ export const catalog: CatalogItem[] = [
     ],
     metalImages: wingWhiteMetalImages("yellow-diamond-angel-wing-necklace"),
     details: wingDetails("yellow"),
-    materials: ["14K yellow or white gold, gold over sterling silver, or 925 sterling silver", "Lab-grown diamonds"],
+    materials: ["14K yellow or white gold", "Lab-grown diamonds"],
     rank: 25,
     addedRank: -22,
   },
@@ -1215,8 +1247,8 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 28 — first earring. Earrings have two images: main (the pair) and worn on the ear.
     slug: "marquise-diamond-ear-climber",
     name: "Marquise Diamond Ear Climber",
-    // Priced by total diamond weight (user, 2026-11-08): 4 ct is $1,399 in 14K and $1,499 in 18K;
-    // each further 1 ct adds $200.
+    // Priced by total diamond weight (user, 2026-11-08): 4 ct is $1,399 in 14K and $1,599 in 18K
+    // (18K is 14K + $200, 2026-11-13); each further 1 ct adds $200.
     price: 1399,
     type: "Earrings",
     shape: "Marquise",
@@ -1224,11 +1256,11 @@ export const catalog: CatalogItem[] = [
     stoneGroup: "Diamond",
     metals: ["14k White Gold", "18k White Gold"],
     defaultMetal: "14k White Gold",
-    carats: ["4 ct", "5 ct", "6 ct"],
+    carats: ["4 ct (2 ct each)", "5 ct (2.5 ct each)", "6 ct (3 ct each)"],
     caratLabel: "Total Diamond Weight",
     metalCaratPrices: {
-      "14k White Gold": { "4 ct": 1399, "5 ct": 1599, "6 ct": 1799 },
-      "18k White Gold": { "4 ct": 1499, "5 ct": 1699, "6 ct": 1899 },
+      "14k White Gold": { "4 ct (2 ct each)": 1399, "5 ct (2.5 ct each)": 1599, "6 ct (3 ct each)": 1799 },
+      "18k White Gold": { "4 ct (2 ct each)": 1599, "5 ct (2.5 ct each)": 1799, "6 ct (3 ct each)": 1999 },
     },
     images: [
       { src: "/images/catalog/marquise-diamond-ear-climber/01-sku.webp", kind: "sku" },
@@ -1249,22 +1281,24 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 29 — angel wing stud earrings, pink pear drop (matches necklaces 024/025)
     slug: "pink-diamond-angel-wing-stud-earrings",
     name: "Pink Diamond Angel Wing Stud Earrings",
-    price: 899, // silver — shown as "From $899" (angel wing bracelet price, $100 less)
+    price: 1499, // 14K gold, 2 ct — shown as "From $1,499" (silver dropped, +$100 on 2026-11-13)
     type: "Earrings",
     shape: "Pear",
-    stone: "Pavé-set angel wings in white lab-grown diamonds with a round diamond at the centre and a 2 ct or 3 ct pink pear-shaped lab-grown diamond drop on each earring. Sold as a pair.",
+    stone: "Pavé-set angel wings in white lab-grown diamonds with a round diamond at the centre and a 2 ct or 3 ct pink pear-shaped lab-grown diamond drop on each earring. The price is for a single earring; add two for a pair.",
     stoneGroup: "Diamond",
-    metals: ["14k Rose Gold", "Rose Gold over Sterling Silver"], // pink pieces: rose tones only
+    metals: ["14k Rose Gold"], // 14K gold only (silver dropped 2026-11-13)
     carats: WING_CARATS,
-    metalCaratPrices: wingCaratPrices({ "Rose Gold over Sterling Silver": 899, "14k Rose Gold": 1099 }),
+    metalCaratPrices: wingCaratPrices({ "14k Rose Gold": 1499 }),
+    priceUnit: "single earring", // priced per earring, not per pair
+    salePercentOff: 25, // 25% off during the limited-time sale instead of the sitewide 10%
     defaultMetal: "14k Rose Gold",
     images: onEarV3(earringImages("pink-diamond-angel-wing-stud-earrings")),
     details: [
       "Center stone: 2 ct or 3 ct pear-shaped pink lab-grown diamond on each earring",
       "Angel wings pavé-set with white lab-grown diamonds",
-      "Sold as a pair",
+      "Price is for a single earring (add 2 for a pair)",
     ],
-    materials: ["14K rose gold or rose gold over sterling silver", "Lab-grown diamonds"],
+    materials: ["14K rose gold", "Lab-grown diamonds"],
     rank: 29,
     addedRank: -26,
   },
@@ -1272,23 +1306,25 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 30 — angel wing drop earrings, pink pear drop (matches necklaces 024/025)
     slug: "pink-diamond-angel-wing-drop-earrings",
     name: "Pink Diamond Angel Wing Drop Earrings",
-    price: 1099, // silver — shown as "From $1,099" (angel wing bracelet price, $100 more)
+    price: 1599, // 14K gold, 2 ct — shown as "From $1,599" (silver dropped 2026-11-13)
     type: "Earrings",
     shape: "Pear",
-    stone: "A round lab-grown diamond stud and a bezel-set diamond on a fine chain, leading to pavé-set angel wings in white lab-grown diamonds with a 2 ct or 3 ct pink pear-shaped lab-grown diamond drop on each earring. Sold as a pair.",
+    stone: "A round lab-grown diamond stud and a bezel-set diamond on a fine chain, leading to pavé-set angel wings in white lab-grown diamonds with a 2 ct or 3 ct pink pear-shaped lab-grown diamond drop on each earring. The price is for a single earring; add two for a pair.",
     stoneGroup: "Diamond",
-    metals: ["14k Rose Gold", "Rose Gold over Sterling Silver"], // pink pieces: rose tones only
+    metals: ["14k Rose Gold"], // 14K gold only (silver dropped 2026-11-13)
     carats: WING_CARATS,
-    metalCaratPrices: wingCaratPrices({ "Rose Gold over Sterling Silver": 1099, "14k Rose Gold": 1299 }),
+    metalCaratPrices: wingCaratPrices({ "14k Rose Gold": 1599 }),
+    priceUnit: "single earring", // priced per earring, not per pair
+    salePercentOff: 25, // 25% off during the limited-time sale instead of the sitewide 10%
     defaultMetal: "14k Rose Gold",
     images: onEarV3(earringImages("pink-diamond-angel-wing-drop-earrings")),
     details: [
       "Center stone: 2 ct or 3 ct pear-shaped pink lab-grown diamond on each earring",
       "Angel wings pavé-set with white lab-grown diamonds",
       "Round diamond stud with a bezel-set diamond on a fine chain",
-      "Sold as a pair",
+      "Price is for a single earring (add 2 for a pair)",
     ],
-    materials: ["14K rose gold or rose gold over sterling silver", "Lab-grown diamonds"],
+    materials: ["14K rose gold", "Lab-grown diamonds"],
     rank: 30,
     addedRank: -27,
   },
@@ -1296,14 +1332,16 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 31 — angel wing stud earrings, canary yellow pear drop (matches necklaces 024/025)
     slug: "yellow-diamond-angel-wing-stud-earrings",
     name: "Yellow Diamond Angel Wing Stud Earrings",
-    price: 899, // silver — shown as "From $899" (angel wing bracelet price, $100 less)
+    price: 1499, // 14K gold, 2 ct — shown as "From $1,499" (silver dropped, +$100 on 2026-11-13)
     type: "Earrings",
     shape: "Pear",
-    stone: "Pavé-set angel wings in white lab-grown diamonds with a round diamond at the centre and a 2 ct or 3 ct yellow pear-shaped lab-grown diamond drop on each earring. Sold as a pair.",
+    stone: "Pavé-set angel wings in white lab-grown diamonds with a round diamond at the centre and a 2 ct or 3 ct yellow pear-shaped lab-grown diamond drop on each earring. The price is for a single earring; add two for a pair.",
     stoneGroup: "Diamond",
-    metals: ["14k Yellow Gold", GOLD_OVER_SILVER], // yellow pieces: yellow tones only
+    metals: ["14k Yellow Gold"], // 14K gold only (silver dropped 2026-11-13)
     carats: WING_CARATS,
-    metalCaratPrices: wingCaratPrices({ [GOLD_OVER_SILVER]: 899, "14k Yellow Gold": 1099 }),
+    metalCaratPrices: wingCaratPrices({ "14k Yellow Gold": 1499 }),
+    priceUnit: "single earring", // priced per earring, not per pair
+    salePercentOff: 25, // 25% off during the limited-time sale instead of the sitewide 10%
     defaultMetal: "14k Yellow Gold",
     images: [
       { src: "/images/catalog/yellow-diamond-angel-wing-stud-earrings/01-main-yellow-gold.webp", kind: "sku" },
@@ -1313,9 +1351,9 @@ export const catalog: CatalogItem[] = [
     details: [
       "Center stone: 2 ct or 3 ct pear-shaped yellow lab-grown diamond on each earring",
       "Angel wings pavé-set with white lab-grown diamonds",
-      "Sold as a pair",
+      "Price is for a single earring (add 2 for a pair)",
     ],
-    materials: ["14K yellow gold or gold over sterling silver", "Lab-grown diamonds"],
+    materials: ["14K yellow gold", "Lab-grown diamonds"],
     rank: 31,
     addedRank: -28,
   },
@@ -1323,14 +1361,16 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 32 — angel wing drop earrings, canary yellow pear drop (matches necklaces 024/025)
     slug: "yellow-diamond-angel-wing-drop-earrings",
     name: "Yellow Diamond Angel Wing Drop Earrings",
-    price: 1099, // silver — shown as "From $1,099" (angel wing bracelet price, $100 more)
+    price: 1599, // 14K gold, 2 ct — shown as "From $1,599" (silver dropped 2026-11-13)
     type: "Earrings",
     shape: "Pear",
-    stone: "A round lab-grown diamond stud and a bezel-set diamond on a fine chain, leading to pavé-set angel wings in white lab-grown diamonds with a 2 ct or 3 ct yellow pear-shaped lab-grown diamond drop on each earring. Sold as a pair.",
+    stone: "A round lab-grown diamond stud and a bezel-set diamond on a fine chain, leading to pavé-set angel wings in white lab-grown diamonds with a 2 ct or 3 ct yellow pear-shaped lab-grown diamond drop on each earring. The price is for a single earring; add two for a pair.",
     stoneGroup: "Diamond",
-    metals: ["14k Yellow Gold", GOLD_OVER_SILVER], // yellow pieces: yellow tones only
+    metals: ["14k Yellow Gold"], // 14K gold only (silver dropped 2026-11-13)
     carats: WING_CARATS,
-    metalCaratPrices: wingCaratPrices({ [GOLD_OVER_SILVER]: 1099, "14k Yellow Gold": 1299 }),
+    metalCaratPrices: wingCaratPrices({ "14k Yellow Gold": 1599 }),
+    priceUnit: "single earring", // priced per earring, not per pair
+    salePercentOff: 25, // 25% off during the limited-time sale instead of the sitewide 10%
     defaultMetal: "14k Yellow Gold",
     images: [
       { src: "/images/catalog/yellow-diamond-angel-wing-drop-earrings/01-main-yellow-gold.webp", kind: "sku" },
@@ -1341,9 +1381,9 @@ export const catalog: CatalogItem[] = [
       "Center stone: 2 ct or 3 ct pear-shaped yellow lab-grown diamond on each earring",
       "Angel wings pavé-set with white lab-grown diamonds",
       "Round diamond stud with a bezel-set diamond on a fine chain",
-      "Sold as a pair",
+      "Price is for a single earring (add 2 for a pair)",
     ],
-    materials: ["14K yellow gold or gold over sterling silver", "Lab-grown diamonds"],
+    materials: ["14K yellow gold", "Lab-grown diamonds"],
     rank: 32,
     addedRank: -29,
   },
@@ -1363,7 +1403,7 @@ export const catalog: CatalogItem[] = [
     ),
     metalImages: haloStudMetalImages("emerald-halo-diamond-stud-earrings", "-v2"),
     details: haloStudDetails("Emerald-cut"),
-    materials: ["Sterling silver, 14K or 18K gold", "Lab-grown diamonds"],
+    materials: ["14K or 18K gold", "Lab-grown diamonds"],
     rank: 33,
     addedRank: -30,
   },
@@ -1380,7 +1420,7 @@ export const catalog: CatalogItem[] = [
     images: earringImages("oval-halo-diamond-stud-earrings", "-v2"),
     metalImages: haloStudMetalImages("oval-halo-diamond-stud-earrings", "-v2"),
     details: haloStudDetails("Oval"),
-    materials: ["Sterling silver, 14K or 18K gold", "Lab-grown diamonds"],
+    materials: ["14K or 18K gold", "Lab-grown diamonds"],
     rank: 34,
     addedRank: -31,
   },
@@ -1398,7 +1438,7 @@ export const catalog: CatalogItem[] = [
     images: sharedOnBody(earringImages("round-halo-diamond-stud-earrings", "-v2"), "/images/catalog/round-halo-diamond-stud-earrings/05-on-ear-new.webp"),
     metalImages: sharedOnBodyMetals(haloStudMetalImages("round-halo-diamond-stud-earrings", "-v2"), "/images/catalog/round-halo-diamond-stud-earrings/05-on-ear-new.webp"),
     details: haloStudDetails("Round"),
-    materials: ["Sterling silver, 14K or 18K gold", "Lab-grown diamonds"],
+    materials: ["14K or 18K gold", "Lab-grown diamonds"],
     rank: 35,
     addedRank: -32,
   },
@@ -1416,7 +1456,7 @@ export const catalog: CatalogItem[] = [
     images: sharedOnBody(earringImages("pear-halo-diamond-stud-earrings", "-v2"), "/images/catalog/pear-halo-diamond-stud-earrings/05-on-ear-v2.webp"),
     metalImages: sharedOnBodyMetals(haloStudMetalImages("pear-halo-diamond-stud-earrings", "-v2"), "/images/catalog/pear-halo-diamond-stud-earrings/05-on-ear-v2.webp"),
     details: haloStudDetails("Pear-shaped"),
-    materials: ["Sterling silver, 14K or 18K gold", "Lab-grown diamonds"],
+    materials: ["14K or 18K gold", "Lab-grown diamonds"],
     rank: 36,
     addedRank: -33,
   },
@@ -1434,7 +1474,7 @@ export const catalog: CatalogItem[] = [
     images: sharedOnBody(earringImages("heart-halo-diamond-stud-earrings", "-v2"), "/images/catalog/heart-halo-diamond-stud-earrings/05-on-ear-v2.webp"),
     metalImages: sharedOnBodyMetals(haloStudMetalImages("heart-halo-diamond-stud-earrings", "-v2"), "/images/catalog/heart-halo-diamond-stud-earrings/05-on-ear-v2.webp"),
     details: haloStudDetails("Heart-shaped"),
-    materials: ["Sterling silver, 14K or 18K gold", "Lab-grown diamonds"],
+    materials: ["14K or 18K gold", "Lab-grown diamonds"],
     rank: 37,
     addedRank: -34,
   },
@@ -1455,7 +1495,7 @@ export const catalog: CatalogItem[] = [
       { src: "/images/catalog/marquise-halo-diamond-stud-earrings/05-on-ear-new.webp", kind: "on-body" },
     ],
     details: haloStudDetails("Marquise"),
-    materials: ["Sterling silver, 14K or 18K gold", "Lab-grown diamonds"],
+    materials: ["14K or 18K gold", "Lab-grown diamonds"],
     rank: 84,
     addedRank: -82,
   },
@@ -1476,7 +1516,7 @@ export const catalog: CatalogItem[] = [
       { src: "/images/catalog/radiant-halo-diamond-stud-earrings/05-on-ear-new.webp", kind: "on-body" },
     ],
     details: haloStudDetails("Radiant-cut"),
-    materials: ["Sterling silver, 14K or 18K gold", "Lab-grown diamonds"],
+    materials: ["14K or 18K gold", "Lab-grown diamonds"],
     rank: 85,
     addedRank: -83,
   },
@@ -1497,7 +1537,7 @@ export const catalog: CatalogItem[] = [
       { src: "/images/catalog/cushion-halo-diamond-stud-earrings/05-on-ear-new.webp", kind: "on-body" },
     ],
     details: haloStudDetails("Cushion-cut"),
-    materials: ["Sterling silver, 14K or 18K gold", "Lab-grown diamonds"],
+    materials: ["14K or 18K gold", "Lab-grown diamonds"],
     rank: 86,
     addedRank: -84,
   },
@@ -1518,7 +1558,7 @@ export const catalog: CatalogItem[] = [
       { src: "/images/catalog/asscher-halo-diamond-stud-earrings/05-on-ear-new.webp", kind: "on-body" },
     ],
     details: haloStudDetails("Asscher-cut"),
-    materials: ["Sterling silver, 14K or 18K gold", "Lab-grown diamonds"],
+    materials: ["14K or 18K gold", "Lab-grown diamonds"],
     rank: 87,
     addedRank: -85,
   },
@@ -1539,7 +1579,7 @@ export const catalog: CatalogItem[] = [
       { src: "/images/catalog/princess-halo-diamond-stud-earrings/05-on-ear-new.webp", kind: "on-body" },
     ],
     details: haloStudDetails("Princess-cut"),
-    materials: ["Sterling silver, 14K or 18K gold", "Lab-grown diamonds"],
+    materials: ["14K or 18K gold", "Lab-grown diamonds"],
     rank: 88,
     addedRank: -86,
   },
@@ -1556,7 +1596,7 @@ export const catalog: CatalogItem[] = [
     images: sharedOnBody(earringImages("yellow-pear-halo-diamond-stud-earrings"), "/images/catalog/yellow-pear-halo-diamond-stud-earrings/05-on-ear-v5.webp"),
     metalImages: sharedOnBodyMetals(haloStudMetalImages("yellow-pear-halo-diamond-stud-earrings"), "/images/catalog/yellow-pear-halo-diamond-stud-earrings/05-on-ear-v5.webp"),
     details: haloStudDetails("Yellow pear-shaped"),
-    materials: ["Sterling silver, 14K or 18K gold", "Lab-grown diamonds"],
+    materials: ["14K or 18K gold", "Lab-grown diamonds"],
     rank: 38,
     addedRank: -35,
   },
@@ -1572,7 +1612,7 @@ export const catalog: CatalogItem[] = [
     images: earringImages("yellow-heart-halo-diamond-stud-earrings"),
     metalImages: haloStudMetalImages("yellow-heart-halo-diamond-stud-earrings"),
     details: haloStudDetails("Yellow heart-shaped"),
-    materials: ["Sterling silver, 14K or 18K gold", "Lab-grown diamonds"],
+    materials: ["14K or 18K gold", "Lab-grown diamonds"],
     rank: 39,
     addedRank: -36,
   },
@@ -1585,7 +1625,7 @@ export const catalog: CatalogItem[] = [
     stone: "Vivid pink heart-shaped lab-grown diamonds in claw settings, each framed by a heart-shaped halo of white round diamonds. Sold as a pair. [Color, clarity — to be provided]",
     stoneGroup: "Diamond",
     ...HALO_STUD_OPTIONS,
-    metals: ["925 Sterling Silver", "14k White Gold", "18k White Gold"],
+    metals: ["14k White Gold", "18k White Gold"],
     defaultMetal: "14k White Gold",
     images: [
       { src: "/images/catalog/pink-heart-halo-diamond-stud-earrings/01-main-v2.webp", kind: "sku" },
@@ -1593,7 +1633,7 @@ export const catalog: CatalogItem[] = [
       { src: "/images/catalog/pink-heart-halo-diamond-stud-earrings/05-on-ear.webp", kind: "on-body" },
     ],
     details: haloStudDetails("Pink heart-shaped"),
-    materials: ["Sterling silver, 14K or 18K white gold", "Lab-grown diamonds"],
+    materials: ["14K or 18K white gold", "Lab-grown diamonds"],
     rank: 95,
     addedRank: -93,
   },
@@ -1854,6 +1894,7 @@ export const catalog: CatalogItem[] = [
     carats: ["1ct", "2ct"],
     caratLabel: "Pink Diamond",
     caratPrices: { "1ct": 899, "2ct": 1159 },
+    salePercentOff: 15, // 15% off during the limited-time sale instead of the sitewide 10%
     images: [
       { src: "/images/catalog/pink-heart-diamond-bracelet/01-main-v3.webp", kind: "sku" },
       { src: "/images/catalog/pink-heart-diamond-bracelet/01-main-page-v3.webp", kind: "detail" },
@@ -2067,13 +2108,14 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 53 — angel wing bracelet, pink pear drop (matches necklace 024 and earrings 029/030)
     slug: "pink-diamond-angel-wing-bracelet",
     name: "Pink Diamond Angel Wing Bracelet",
-    price: 999, // rose gold over sterling silver — shown as "From $999"
+    price: 1599, // 14K rose gold, 2 ct — shown as "From $1,599" (silver dropped 2026-11-13)
     type: "Bracelets",
     stone: "Pavé-set angel wings in white lab-grown diamonds, with a 2 ct or 3 ct pink pear-shaped lab-grown diamond drop under a round diamond, on a fine cable chain.",
     stoneGroup: "Diamond",
-    metals: ["14k Rose Gold", "Rose Gold over Sterling Silver"], // pink pieces: rose tones only
+    metals: ["14k Rose Gold"], // 14K rose gold only (silver dropped 2026-11-13)
     carats: WING_CARATS,
-    metalCaratPrices: wingCaratPrices({ "14k Rose Gold": 1199, "Rose Gold over Sterling Silver": 999 }),
+    metalCaratPrices: wingCaratPrices({ "14k Rose Gold": 1599 }),
+    salePercentOff: 25, // 25% off during the limited-time sale instead of the sitewide 10%
     defaultMetal: "14k Rose Gold",
     sizes: BRACELET_LENGTHS,
     images: [
@@ -2086,7 +2128,7 @@ export const catalog: CatalogItem[] = [
       "Angel wings pavé-set with white lab-grown diamonds",
       "Fine cable chain with a spring-ring clasp",
     ],
-    materials: ["14K rose gold or rose gold over sterling silver", "Lab-grown diamonds"],
+    materials: ["14K rose gold", "Lab-grown diamonds"],
     rank: 53,
     addedRank: -50,
   },
@@ -2274,14 +2316,14 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 60 — pink version of 058: same three-strand snowflake set, pink centre diamond; 14k yellow gold only
     slug: "pink-snowflake-layered-diamond-necklace",
     name: "Pink Snowflake Layered Diamond Necklace",
-    price: 899, // lowest metal (silver) — shown as "From $899"
+    price: 899, // lowest metal (yellow gold over silver) — shown as "From $899"
     type: "Necklaces",
     shape: "Round",
     stone: "Three layers in one: a paperclip chain with five lab-grown diamonds, a plain paperclip chain, and a fine chain with a snowflake pendant around a pink lab-grown diamond.",
     stoneGroup: "Diamond",
-    metals: ["14k Yellow Gold", "925 Sterling Silver"],
+    metals: ["14k Yellow Gold", "Yellow Gold over Sterling Silver"], // the silver version is yellow gold plated
     defaultMetal: "14k Yellow Gold",
-    metalPrices: SNOWFLAKE_METAL_PRICES,
+    metalPrices: { "14k Yellow Gold": SNOWFLAKE_METAL_PRICES["14k Yellow Gold"], "Yellow Gold over Sterling Silver": SNOWFLAKE_METAL_PRICES["925 Sterling Silver"] },
     // No length selector: the three layers are fixed at 16, 18 and 20 in (see details).
     images: [
       { src: "/images/catalog/pink-snowflake-layered-diamond-necklace/01-main-v3.webp", kind: "sku" },
@@ -2296,9 +2338,9 @@ export const catalog: CatalogItem[] = [
       "Center stone: 1 pink lab-grown diamond, 0.10 ct",
       "18 diamonds, approx. 1.13 ct total diamond weight",
       "Layer lengths: 16 in, 18 in and 20 in",
-      "Available in 14K yellow gold ($1,499) or 925 sterling silver ($899)",
+      "Available in 14K yellow gold ($1,499) or yellow gold plated 925 sterling silver ($899)",
     ],
-    materials: ["14K yellow gold or 925 sterling silver", "Lab-grown diamonds"],
+    materials: ["14K yellow gold or yellow gold plated 925 sterling silver", "Lab-grown diamonds"],
     rank: 60,
     addedRank: -57,
   },
@@ -2308,10 +2350,11 @@ export const catalog: CatalogItem[] = [
     name: "Custom Name Necklace",
     price: null,
     type: "Necklaces",
-    stone: "A polished 14K yellow gold nameplate in flowing cursive script with a swash underneath, on a fine cable chain. Shown with the name \"Elanora\" — made with the name of your choice. [Name length and size limits — to be provided]",
+    stone: "A polished nameplate in flowing cursive script with a swash underneath, on a fine cable chain. Shown with the name \"Elanora\" — made with the name of your choice. Send us your name first and we'll email your price.",
     stoneGroup: "Gold",
     customName: { maxLength: 12 }, // [name length limit — to be confirmed]
-    metals: ["14k Yellow Gold"], // [other metals — to be confirmed]
+    // Sterling silver, 14K or 18K gold, each in a yellow or white tone (user, 2026-11-13); priced by quote.
+    metals: ["14k Yellow Gold", "14k White Gold", "18k Yellow Gold", "18k White Gold", "Yellow Gold over Sterling Silver", "925 Sterling Silver"],
     defaultMetal: "14k Yellow Gold",
     sizes: NECKLACE_LENGTHS,
     images: [
@@ -2320,8 +2363,13 @@ export const catalog: CatalogItem[] = [
       { src: "/images/catalog/elanora-name-necklace/02-detail.webp", kind: "detail" },
       { src: "/images/catalog/elanora-name-necklace/05-on-body-v3.webp", kind: "on-body" },
     ],
-    details: ["[DETAILS — to be provided]"],
-    materials: ["[MATERIALS — to be provided]"],
+    details: [
+      "Your name in cursive script, made to order",
+      "Available in 925 sterling silver, 14K gold or 18K gold, each in yellow or white",
+      "Cable chain in 16, 18 or 20 inches",
+      "Price by quote: send your name and we'll email your price",
+    ],
+    materials: ["925 sterling silver (yellow gold plated or white), 14K gold or 18K gold, in yellow or white"],
     rank: 61,
     addedRank: -58,
   },
@@ -2329,13 +2377,13 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 62 — pavé diamond initial pendant (shown as "R"), 14k yellow gold
     slug: "diamond-initial-necklace",
     name: "Lab-Grown Diamond Initial Necklace",
-    price: null,
+    price: 999, // any letter A–Z, same price, chain included (2026-11-13)
     type: "Necklaces",
     shape: "Round",
     stone: "A capital initial pendant fully paved with round lab-grown diamonds, edged in polished 14K yellow gold, on a fine cable chain. Available in every letter from A to Z; shown with the letter R.",
     initials: INITIALS,
     stoneGroup: "Diamond",
-    metals: ["14k Yellow Gold"], // [other metals — to be confirmed]
+    metals: ["14k Yellow Gold"], // 14K yellow gold
     defaultMetal: "14k Yellow Gold",
     sizes: NECKLACE_LENGTHS,
     images: [
@@ -2347,7 +2395,8 @@ export const catalog: CatalogItem[] = [
     details: [
       "Round lab-grown diamonds, pavé set [stone count and total carat weight — to be provided]",
       "[Pendant size — to be provided]",
-      "Cable chain in 16, 18 or 20 inches",
+      "Choose any initial from A to Z",
+      "Chain included: cable chain in 16, 18 or 20 inches",
     ],
     materials: ["14K yellow gold", "Lab-grown diamonds"],
     rank: 62,
@@ -2356,11 +2405,12 @@ export const catalog: CatalogItem[] = [
   {
     // PRODUCT 63 — two-layer set: fine chain with five dangling bezel diamonds + chain with a bezel diamond and a pavé letter R; 14k yellow gold
     slug: "initial-r-layered-diamond-necklace",
-    name: "Initial R Layered Diamond Necklace",
-    price: 1299,
+    name: "Layered Initial Diamond Necklace",
+    price: 899, // any letter A–Z, same price (2026-11-13)
     type: "Necklaces",
     shape: "Round",
-    stone: "Two layers in one: a fine chain with five dangling lab-grown diamond drops, and a chain with a bezel-set lab-grown diamond beside a pavé letter R.",
+    stone: "Two layers in one: a fine chain with five dangling lab-grown diamond drops, and a chain with a bezel-set lab-grown diamond beside a pavé initial of your choice, A to Z. Shown with the letter R.",
+    initials: INITIALS, // customer picks the letter
     stoneGroup: "Diamond",
     metals: ["14k Yellow Gold"], // yellow gold only
     defaultMetal: "14k Yellow Gold",
@@ -2373,8 +2423,8 @@ export const catalog: CatalogItem[] = [
     ],
     details: [
       "Top layer: fine chain with 5 bezel-set white lab-grown diamonds, 0.03 ct each",
-      "Bottom layer: 1 bezel-set white lab-grown diamond, 0.05 ct, beside the pavé letter R pendant",
-      "Letter R: pavé-set with white lab-grown diamonds, 0.03 ct each",
+      "Bottom layer: 1 bezel-set white lab-grown diamond, 0.05 ct, beside the pavé initial pendant",
+      "Initial (any letter A–Z): pavé-set with white lab-grown diamonds, 0.03 ct each",
       "Approx. 0.50 ct total diamond weight",
       "Necklace length: 16, 18 or 20 in",
     ],
@@ -2385,21 +2435,26 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 64 — butterfly of four lab-grown diamonds (two marquise upper wings, two pear lower wings) set in the chain; 14k white / yellow / rose gold
     slug: "marquise-butterfly-diamond-necklace",
     name: "Lab-Grown Diamond Butterfly Necklace",
-    price: null,
+    price: 1099, // chain included (2026-11-13)
     type: "Necklaces",
     shape: "Marquise",
     stone: "A small butterfly of four lab-grown diamonds — two marquise-cut upper wings and two pear-shaped lower wings — set in fine claws on a delicate cable chain.",
     stoneGroup: "Diamond",
     metals: ["14k White Gold", "14k Yellow Gold", "14k Rose Gold"],
     defaultMetal: "14k White Gold",
+    carats: ["Approx. 3 ct total"],
+    caratPrices: { "Approx. 3 ct total": 1099 }, // one price, chain included
+    salePercentOff: 15, // 15% off during the limited-time sale instead of the sitewide 10%
     sizes: NECKLACE_LENGTHS,
     images: necklaceImages("marquise-butterfly-diamond-necklace"),
     metalImages: necklaceMetalImages("marquise-butterfly-diamond-necklace"),
     details: [
-      "2 marquise-cut and 2 pear-shaped lab-grown diamonds [carat weights — to be provided]",
+      "Upper wings: 2 marquise-cut lab-grown diamonds, approx. 1 ct each",
+      "Lower wings: 2 pear-shaped lab-grown diamonds, approx. 0.5 ct each",
+      "Total diamond weight: approx. 3 ct",
       "Claw setting",
       "[Pendant size — to be provided]",
-      "Cable chain in 16, 18 or 20 inches",
+      "Chain included: cable chain in 16, 18 or 20 inches",
     ],
     materials: ["14K white, yellow or rose gold", "Lab-grown diamonds"],
     rank: 64,
@@ -2407,22 +2462,25 @@ export const catalog: CatalogItem[] = [
   },  {
     // PRODUCT 65 — round pink lab-grown diamond in a white-diamond halo, on a bail as a pendant; 14k white / yellow / rose gold
     slug: "pink-round-halo-diamond-necklace",
-    name: "Pink Round Halo Diamond Pendant",
-    price: null,
+    name: "Pink Round Halo Diamond Necklace",
+    // Priced by carat like the 044 halo pendants, chain included
+    price: PINK_HALO_PENDANT_CARAT_PRICES["Approx. 0.5 ct"], // lowest carat option — shown as "From $1,099"
     type: "Necklaces",
     shape: "Round",
-    stone: "A round pink lab-grown diamond in four claws, framed by a halo of white lab-grown diamonds, hanging from a polished bail on a fine cable chain.",
+    stone: "A round pink lab-grown diamond in four claws, framed by a halo of white lab-grown diamonds and hung from a polished bail, on a fine cable chain in 14K gold.",
     stoneGroup: "Diamond",
-    metals: ["14k White Gold", "14k Yellow Gold", "14k Rose Gold"],
+    metals: HALO_PENDANT_METALS, // 14K gold only
     defaultMetal: "14k White Gold",
-    sizes: NECKLACE_LENGTHS,
+    carats: HALO_PENDANT_CARATS,
+    caratPrices: PINK_HALO_PENDANT_CARAT_PRICES,
+    salePercentOff: 15, // 15% off during the limited-time sale instead of the sitewide 10%
+    sizes: NECKLACE_LENGTHS, // chain included
     images: necklaceImages("pink-round-halo-diamond-necklace"),
     metalImages: necklaceMetalImages("pink-round-halo-diamond-necklace"),
     details: [
-      "Round pink lab-grown centre diamond [carat weight — to be provided]",
+      "Round pink lab-grown centre diamond, approx. 0.5 ct to 2.5 ct",
       "Halo of round white lab-grown diamonds [stone count and total weight — to be provided]",
-      "[Pendant size — to be provided]",
-      "Cable chain in 16, 18 or 20 inches",
+      "14K gold cable chain included: 16, 18 or 20 in",
     ],
     materials: ["14K white, yellow or rose gold", "Lab-grown diamonds"],
     rank: 65,
@@ -2431,7 +2489,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 66 — "Cosmopolitan" martini-glass pendant: triangular pink lab-grown diamond as the drink, pavé rim, lime-twist curl with a diamond drop; 14k white gold only
     slug: "pink-cosmopolitan-diamond-necklace",
     name: "Pink Diamond Cosmopolitan Necklace",
-    price: 1199, // lowest carat option
+    price: 1399, // lowest carat option
     type: "Necklaces",
     // no shape tag: trillion is not one of the Diamond Shape filter options
     stone: "A martini glass in polished 14K white gold, filled with a triangular pink lab-grown diamond, with a pavé diamond rim and a curled lime twist holding a small diamond drop. A toast to the city, on a fine cable chain.",
@@ -2440,6 +2498,7 @@ export const catalog: CatalogItem[] = [
     defaultMetal: "14k White Gold",
     carats: Object.keys(COSMOPOLITAN_CARAT_PRICES),
     caratPrices: COSMOPOLITAN_CARAT_PRICES,
+    salePercentOff: 20, // 20% off during the limited-time sale instead of the sitewide 10%
     sizes: NECKLACE_LENGTHS,
     images: [
       { src: "/images/catalog/pink-cosmopolitan-diamond-necklace/01-main.webp", kind: "sku" },
@@ -2448,7 +2507,7 @@ export const catalog: CatalogItem[] = [
       { src: "/images/catalog/pink-cosmopolitan-diamond-necklace/05-on-body-v4.webp", kind: "on-body" },
     ],
     details: [
-      "Triangular pink lab-grown diamond, approx. 1.5 ct — $1,199",
+      "Triangular pink lab-grown diamond, approx. 1.5 ct",
       "Pavé white lab-grown diamond rim and a round diamond drop [stone count and total weight — to be provided]",
       "[Pendant size — to be provided]",
       "Cable chain in 16, 18 or 20 inches",
@@ -2460,7 +2519,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 67 — cocktail series no. 2, champagne flute pendant: pear-shaped yellow lab-grown diamond as the champagne, pavé rim; 14k white gold only
     slug: "yellow-champagne-diamond-necklace",
     name: "Yellow Diamond Champagne Necklace",
-    price: 1099, // lowest carat option
+    price: 1299, // lowest carat option
     type: "Necklaces",
     shape: "Pear",
     stone: "A champagne flute in polished 14K white gold, filled with a pear-shaped yellow lab-grown diamond and finished with a pavé diamond rim. A companion to the Cosmopolitan, on a fine cable chain.",
@@ -2469,6 +2528,7 @@ export const catalog: CatalogItem[] = [
     defaultMetal: "14k White Gold",
     carats: Object.keys(COCKTAIL_CARAT_PRICES),
     caratPrices: COCKTAIL_CARAT_PRICES,
+    salePercentOff: 20, // 20% off during the limited-time sale instead of the sitewide 10%
     sizes: NECKLACE_LENGTHS,
     images: [
       { src: "/images/catalog/yellow-champagne-diamond-necklace/01-main.webp", kind: "sku" },
@@ -2477,7 +2537,7 @@ export const catalog: CatalogItem[] = [
       { src: "/images/catalog/yellow-champagne-diamond-necklace/05-on-body-v4.webp", kind: "on-body" },
     ],
     details: [
-      "Pear-shaped yellow lab-grown diamond: 2 ct ($1,099) or 3 ct ($1,199)",
+      "Pear-shaped yellow lab-grown diamond: 2 ct or 3 ct",
       "Pavé white lab-grown diamond rim [stone count and total weight — to be provided]",
       "[Pendant size — to be provided]",
       "Cable chain in 16, 18 or 20 inches",
@@ -2489,7 +2549,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 68 — cocktail series no. 3, "Blue Lagoon" highball pendant: emerald-cut blue lab-grown diamond as the drink, pavé rim, slim straw; 14k white gold only
     slug: "blue-lagoon-diamond-necklace",
     name: "Blue Diamond Blue Lagoon Necklace",
-    price: 1099, // lowest carat option
+    price: 1299, // lowest carat option
     type: "Necklaces",
     shape: "Emerald",
     stone: "A highball glass in polished 14K white gold, filled with an emerald-cut blue lab-grown diamond, with a pavé diamond rim and a slim straw. Joins the Cosmopolitan and the Champagne, on a fine cable chain.",
@@ -2498,6 +2558,7 @@ export const catalog: CatalogItem[] = [
     defaultMetal: "14k White Gold",
     carats: Object.keys(COCKTAIL_CARAT_PRICES),
     caratPrices: COCKTAIL_CARAT_PRICES,
+    salePercentOff: 20, // 20% off during the limited-time sale instead of the sitewide 10%
     sizes: NECKLACE_LENGTHS,
     images: [
       { src: "/images/catalog/blue-lagoon-diamond-necklace/01-main.webp", kind: "sku" },
@@ -2506,7 +2567,7 @@ export const catalog: CatalogItem[] = [
       { src: "/images/catalog/blue-lagoon-diamond-necklace/05-on-body-v2.webp", kind: "on-body" },
     ],
     details: [
-      "Emerald-cut blue lab-grown diamond: 2 ct ($1,099) or 3 ct ($1,199)",
+      "Emerald-cut blue lab-grown diamond: 2 ct or 3 ct",
       "Pavé white lab-grown diamond rim [stone count and total weight — to be provided]",
       "[Pendant size — to be provided]",
       "Cable chain in 16, 18 or 20 inches",
@@ -2518,15 +2579,16 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 69 — perfume-bottle series no. 1: oval pink lab-grown diamond as the bottle, pavé neck, round diamond stopper; 14k white gold only
     slug: "pink-perfume-bottle-diamond-necklace",
     name: "Pink Diamond Perfume Bottle Necklace",
-    price: 799, // lowest metal / carat option, pendant only — shown as "From $799"
+    price: 1099, // 14K gold, 2 ct, pendant only — shown as "From $1,099"
     type: "Necklaces",
     shape: "Oval",
     stone: "A vintage perfume bottle in polished 14K white gold: an oval pink lab-grown diamond for the bottle, a pavé diamond neck and a round diamond stopper, on a fine cable chain.",
     stoneGroup: "Diamond",
-    metals: PERFUME_METALS, // 14K gold or 925 sterling silver
+    metals: PERFUME_METALS, // 14K white or yellow gold
     defaultMetal: "14k White Gold",
     carats: PERFUME_CARATS,
     metalCaratPrices: PERFUME_PRICES, // pendant only
+    salePercentOff: 20, // 20% off during the limited-time sale instead of the sitewide 10%
     chainAddOn: PERFUME_CHAIN, // optional 14K gold chain, never sold on its own
     images: [
       { src: "/images/catalog/pink-perfume-bottle-diamond-necklace/01-main.webp", kind: "sku" },
@@ -2537,28 +2599,29 @@ export const catalog: CatalogItem[] = [
     metalImages: perfumeYellowGold("pink-perfume-bottle-diamond-necklace"),
     details: [
       "Bottle-shaped centre stone: lab-grown diamond, 2 ct or 3 ct",
-      "Pendant available in 14K white gold, 14K yellow gold or 925 sterling silver",
+      "Pendant available in 14K white gold or 14K yellow gold",
       "Round white lab-grown diamond stopper and pavé neck [stone count and total weight — to be provided]",
       "[Pendant size — to be provided]",
       "Pendant only — chain not included",
       "Optional 14K gold chain (16, 18 or 20 in) for $239, available only with the pendant",
     ],
-    materials: ["14K white or yellow gold, or 925 sterling silver", "Lab-grown diamonds"],
+    materials: ["14K white or yellow gold", "Lab-grown diamonds"],
     rank: 69,
     addedRank: -66,
   },  {
     // PRODUCT 70 — perfume-bottle series no. 2: cushion-cut blue lab-grown diamond as the bottle, pavé neck, round diamond stopper; 14k white gold only
     slug: "blue-perfume-bottle-diamond-necklace",
     name: "Blue Diamond Perfume Bottle Necklace",
-    price: 799, // lowest metal / carat option, pendant only — shown as "From $799"
+    price: 1099, // 14K gold, 2 ct, pendant only — shown as "From $1,099"
     type: "Necklaces",
     shape: "Cushion",
     stone: "A classic square-shouldered perfume bottle in polished 14K white gold: a cushion-cut blue lab-grown diamond for the bottle, a pavé diamond neck and a round diamond stopper, on a fine cable chain.",
     stoneGroup: "Diamond",
-    metals: PERFUME_METALS, // 14K gold or 925 sterling silver
+    metals: PERFUME_METALS, // 14K white or yellow gold
     defaultMetal: "14k White Gold",
     carats: PERFUME_CARATS,
     metalCaratPrices: PERFUME_PRICES, // pendant only
+    salePercentOff: 20, // 20% off during the limited-time sale instead of the sitewide 10%
     chainAddOn: PERFUME_CHAIN, // optional 14K gold chain, never sold on its own
     images: [
       { src: "/images/catalog/blue-perfume-bottle-diamond-necklace/01-main.webp", kind: "sku" },
@@ -2569,28 +2632,29 @@ export const catalog: CatalogItem[] = [
     metalImages: perfumeYellowGold("blue-perfume-bottle-diamond-necklace"),
     details: [
       "Bottle-shaped centre stone: lab-grown diamond, 2 ct or 3 ct",
-      "Pendant available in 14K white gold, 14K yellow gold or 925 sterling silver",
+      "Pendant available in 14K white gold or 14K yellow gold",
       "Round white lab-grown diamond stopper and pavé neck [stone count and total weight — to be provided]",
       "[Pendant size — to be provided]",
       "Pendant only — chain not included",
       "Optional 14K gold chain (16, 18 or 20 in) for $239, available only with the pendant",
     ],
-    materials: ["14K white or yellow gold, or 925 sterling silver", "Lab-grown diamonds"],
+    materials: ["14K white or yellow gold", "Lab-grown diamonds"],
     rank: 70,
     addedRank: -67,
   },  {
     // PRODUCT 71 — perfume-bottle series no. 3: pear-shaped yellow lab-grown diamond (point up) as a teardrop bottle, pavé neck, round diamond stopper; 14k white gold only
     slug: "yellow-perfume-bottle-diamond-necklace",
     name: "Yellow Diamond Perfume Bottle Necklace",
-    price: 799, // lowest metal / carat option, pendant only — shown as "From $799"
+    price: 1099, // 14K gold, 2 ct, pendant only — shown as "From $1,099"
     type: "Necklaces",
     shape: "Pear",
     stone: "A teardrop perfume bottle in polished 14K white gold: a pear-shaped yellow lab-grown diamond for the bottle, a pavé diamond neck and a round diamond stopper, on a fine cable chain.",
     stoneGroup: "Diamond",
-    metals: PERFUME_METALS, // 14K gold or 925 sterling silver
+    metals: PERFUME_METALS, // 14K white or yellow gold
     defaultMetal: "14k White Gold",
     carats: PERFUME_CARATS,
     metalCaratPrices: PERFUME_PRICES, // pendant only
+    salePercentOff: 20, // 20% off during the limited-time sale instead of the sitewide 10%
     chainAddOn: PERFUME_CHAIN, // optional 14K gold chain, never sold on its own
     images: [
       { src: "/images/catalog/yellow-perfume-bottle-diamond-necklace/01-main.webp", kind: "sku" },
@@ -2601,20 +2665,20 @@ export const catalog: CatalogItem[] = [
     metalImages: perfumeYellowGold("yellow-perfume-bottle-diamond-necklace"),
     details: [
       "Bottle-shaped centre stone: lab-grown diamond, 2 ct or 3 ct",
-      "Pendant available in 14K white gold, 14K yellow gold or 925 sterling silver",
+      "Pendant available in 14K white gold or 14K yellow gold",
       "Round white lab-grown diamond stopper and pavé neck [stone count and total weight — to be provided]",
       "[Pendant size — to be provided]",
       "Pendant only — chain not included",
       "Optional 14K gold chain (16, 18 or 20 in) for $239, available only with the pendant",
     ],
-    materials: ["14K white or yellow gold, or 925 sterling silver", "Lab-grown diamonds"],
+    materials: ["14K white or yellow gold", "Lab-grown diamonds"],
     rank: 71,
     addedRank: -68,
   },  {
     // PRODUCT 73 — cocktail series, rosé champagne: the 067 champagne flute with a pear-shaped pink lab-grown diamond; 14k yellow gold only
     slug: "pink-champagne-diamond-necklace",
     name: "Pink Diamond Champagne Necklace",
-    price: 1099, // lowest carat option
+    price: 1299, // lowest carat option
     type: "Necklaces",
     shape: "Pear",
     stone: "A champagne flute in polished 14K yellow gold, filled with a pear-shaped pink lab-grown diamond for a glass of rosé, finished with a pavé diamond rim, on a fine cable chain.",
@@ -2623,6 +2687,7 @@ export const catalog: CatalogItem[] = [
     defaultMetal: "14k Yellow Gold",
     carats: Object.keys(COCKTAIL_CARAT_PRICES),
     caratPrices: COCKTAIL_CARAT_PRICES,
+    salePercentOff: 20, // 20% off during the limited-time sale instead of the sitewide 10%
     sizes: NECKLACE_LENGTHS,
     images: [
       { src: "/images/catalog/pink-champagne-diamond-necklace/01-main-v2.webp", kind: "sku" },
@@ -2631,7 +2696,7 @@ export const catalog: CatalogItem[] = [
       { src: "/images/catalog/pink-champagne-diamond-necklace/05-on-body-v2.webp", kind: "on-body" },
     ],
     details: [
-      "Pear-shaped pink lab-grown diamond: 2 ct ($1,099) or 3 ct ($1,199)",
+      "Pear-shaped pink lab-grown diamond: 2 ct or 3 ct",
       "Pavé white lab-grown diamond rim [stone count and total weight — to be provided]",
       "[Pendant size — to be provided]",
       "Cable chain in 16, 18 or 20 inches",
@@ -2643,16 +2708,17 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 74 — open teardrop loop pendant holding a round pink lab-grown diamond (approx. 1 ct) at the bottom, fine cable chain; 14k yellow gold only
     slug: "pink-teardrop-diamond-necklace",
     name: "Pink Diamond Teardrop Necklace",
-    price: 699, // lowest option (silver, 1 ct) — shown as "From $699"
+    price: 899, // lowest option (silver, 1 ct) — shown as "From $899"
     type: "Necklaces",
     shape: "Round",
-    stone: "A slim open teardrop cradling a round pink lab-grown diamond at its base, in 925 sterling silver or 14K yellow gold. Sold as the pendant; add a 14K gold chain if you like.",
+    stone: "A slim open teardrop cradling a round pink lab-grown diamond at its base, on a fine cable chain, in 925 sterling silver or 14K yellow gold.",
     stoneGroup: "Diamond",
     metals: ["14k Yellow Gold", "925 Sterling Silver"],
     defaultMetal: "14k Yellow Gold",
     carats: TEARDROP_CARATS,
-    metalCaratPrices: TEARDROP_PRICES, // pendant only
-    chainAddOn: PERFUME_CHAIN, // 14K gold chain, $239; white gold with the silver pendant; never sold on its own
+    metalCaratPrices: TEARDROP_PRICES, // chain included
+    salePercentOff: 15, // 15% off during the limited-time sale instead of the sitewide 10%
+    sizes: NECKLACE_LENGTHS,
     images: [
       { src: "/images/catalog/pink-teardrop-diamond-necklace/01-main.webp", kind: "sku" },
       { src: "/images/catalog/pink-teardrop-diamond-necklace/01-main-page.webp", kind: "detail" },
@@ -2667,10 +2733,9 @@ export const catalog: CatalogItem[] = [
       ],
     },
     details: [
-      "Pendant only — chain not included",
       "One round pink lab-grown diamond: 1 ct, 1.5 ct, 2 ct or 3 ct",
       "925 sterling silver or 14K yellow gold",
-      "Optional 14K gold chain (16, 18 or 20 in) for $239, available only with the pendant",
+      "Cable chain included, in the same metal: 16, 18 or 20 in",
       "[Pendant size — to be provided]",
     ],
     materials: ["925 sterling silver or 14K yellow gold", "Lab-grown diamond"],
@@ -2691,6 +2756,7 @@ export const catalog: CatalogItem[] = [
     metals: SOLITAIRE_RING_METALS, // 14K or 18K, white / yellow / rose gold
     metalPrices: Object.fromEntries(SOLITAIRE_RING_METALS.map((m) => [m, m.startsWith("18k") ? 1499 : 1299])),
     defaultMetal: "14k White Gold",
+    salePercentOff: 15, // 15% off during the limited-time sale instead of the sitewide 10%
     sizes: RING_SIZES,
     images: [
       { src: "/images/catalog/snowflake-cluster-diamond-ring/01-sku-v3.webp", kind: "sku" },
@@ -2812,7 +2878,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 78 — halo family, white centre diamond, same halo and pavé band as 007; grid SKU + three-quarter only
     slug: "marquise-halo-diamond-ring",
     name: "Marquise Halo Diamond Ring",
-    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $899"
+    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $999"
     type: "Rings",
     ringStyle: "Halo",
     band: "Pavé Band",
@@ -2823,6 +2889,7 @@ export const catalog: CatalogItem[] = [
     stoneGroup: "Diamond",
     metals: SOLITAIRE_RING_METALS,
     metalCaratPrices: HALO_RING_PRICES,
+    salePercentOff: HALO_RING_SALE,
     defaultMetal: "14k White Gold",
     sizes: RING_SIZES,
     carats: CARATS,
@@ -2841,7 +2908,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 79 — halo family, white centre diamond, same halo and pavé band as 007; grid SKU + three-quarter only
     slug: "radiant-halo-diamond-ring",
     name: "Radiant-Cut Halo Diamond Ring",
-    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $899"
+    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $999"
     type: "Rings",
     ringStyle: "Halo",
     band: "Pavé Band",
@@ -2852,6 +2919,7 @@ export const catalog: CatalogItem[] = [
     stoneGroup: "Diamond",
     metals: SOLITAIRE_RING_METALS,
     metalCaratPrices: HALO_RING_PRICES,
+    salePercentOff: HALO_RING_SALE,
     defaultMetal: "14k White Gold",
     sizes: RING_SIZES,
     carats: CARATS,
@@ -2870,7 +2938,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 80 — halo family, white centre diamond, same halo and pavé band as 007; grid SKU + three-quarter only
     slug: "cushion-halo-diamond-ring",
     name: "Cushion-Cut Halo Diamond Ring",
-    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $899"
+    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $999"
     type: "Rings",
     ringStyle: "Halo",
     band: "Pavé Band",
@@ -2881,6 +2949,7 @@ export const catalog: CatalogItem[] = [
     stoneGroup: "Diamond",
     metals: SOLITAIRE_RING_METALS,
     metalCaratPrices: HALO_RING_PRICES,
+    salePercentOff: HALO_RING_SALE,
     defaultMetal: "14k White Gold",
     sizes: RING_SIZES,
     carats: CARATS,
@@ -2899,7 +2968,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 81 — halo family, white centre diamond, same halo and pavé band as 007; grid SKU + three-quarter only
     slug: "asscher-halo-diamond-ring",
     name: "Asscher-Cut Halo Diamond Ring",
-    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $899"
+    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $999"
     type: "Rings",
     ringStyle: "Halo",
     band: "Pavé Band",
@@ -2910,6 +2979,7 @@ export const catalog: CatalogItem[] = [
     stoneGroup: "Diamond",
     metals: SOLITAIRE_RING_METALS,
     metalCaratPrices: HALO_RING_PRICES,
+    salePercentOff: HALO_RING_SALE,
     defaultMetal: "14k White Gold",
     sizes: RING_SIZES,
     carats: CARATS,
@@ -2928,7 +2998,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 82 — halo family, white centre diamond, same halo and pavé band as 007; grid SKU + three-quarter only
     slug: "princess-halo-diamond-ring",
     name: "Princess-Cut Halo Diamond Ring",
-    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $899"
+    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $999"
     type: "Rings",
     ringStyle: "Halo",
     band: "Pavé Band",
@@ -2939,6 +3009,7 @@ export const catalog: CatalogItem[] = [
     stoneGroup: "Diamond",
     metals: SOLITAIRE_RING_METALS,
     metalCaratPrices: HALO_RING_PRICES,
+    salePercentOff: HALO_RING_SALE,
     defaultMetal: "14k White Gold",
     sizes: RING_SIZES,
     carats: CARATS,
@@ -2956,7 +3027,7 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 83 — halo family, white centre diamond, same halo and pavé band as 007; grid SKU + three-quarter only
     slug: "heart-halo-diamond-ring",
     name: "Heart Halo Diamond Ring",
-    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $899"
+    price: HALO_RING_PRICES["14k White Gold"]["1ct"], // lowest option — shown as "From $999"
     type: "Rings",
     ringStyle: "Halo",
     band: "Pavé Band",
@@ -2967,6 +3038,7 @@ export const catalog: CatalogItem[] = [
     stoneGroup: "Diamond",
     metals: SOLITAIRE_RING_METALS,
     metalCaratPrices: HALO_RING_PRICES,
+    salePercentOff: HALO_RING_SALE,
     defaultMetal: "14k White Gold",
     sizes: RING_SIZES,
     carats: CARATS,
@@ -2985,16 +3057,16 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 90 — angel wing bracelet, yellow pear drop (the pink bracelet's photos with the stone recoloured)
     slug: "yellow-diamond-angel-wing-bracelet",
     name: "Yellow Diamond Angel Wing Bracelet",
-    price: 999, // gold over sterling silver — shown as "From $999"
+    price: 1599, // 14K yellow gold, 2 ct — shown as "From $1,599" (silver dropped 2026-11-13)
     type: "Bracelets",
     stone: "Pavé-set angel wings in white lab-grown diamonds, with a 2 ct or 3 ct yellow pear-shaped lab-grown diamond drop under a round diamond, on a fine cable chain.",
     stoneGroup: "Diamond",
-    metals: ["14k Yellow Gold", GOLD_OVER_SILVER], // yellow pieces: yellow tones only
+    metals: ["14k Yellow Gold"], // 14K yellow gold only (silver dropped 2026-11-13)
     carats: WING_CARATS,
-    metalCaratPrices: wingCaratPrices({ [GOLD_OVER_SILVER]: 999, "14k Yellow Gold": 1199 }),
+    metalCaratPrices: wingCaratPrices({ "14k Yellow Gold": 1599 }),
+    salePercentOff: 25, // 25% off during the limited-time sale instead of the sitewide 10%
     defaultMetal: "14k Yellow Gold",
     sizes: BRACELET_LENGTHS,
-    // Yellow gold throughout; gold over silver uses the same images.
     images: [
       { src: "/images/catalog/yellow-diamond-angel-wing-bracelet/01-main-yellow-gold.webp", kind: "sku" },
       { src: "/images/catalog/yellow-diamond-angel-wing-bracelet/01-main-page-yellow-gold.webp", kind: "detail" },
@@ -3005,7 +3077,7 @@ export const catalog: CatalogItem[] = [
       "Angel wings pavé-set with white lab-grown diamonds",
       "Fine cable chain with a spring-ring clasp",
     ],
-    materials: ["14K yellow gold or gold over sterling silver", "Lab-grown diamonds"],
+    materials: ["14K yellow gold", "Lab-grown diamonds"],
     rank: 90,
     addedRank: -88,
   },
@@ -3014,16 +3086,17 @@ export const catalog: CatalogItem[] = [
     // white-metal photos with the stone recoloured)
     slug: "blue-diamond-angel-wing-necklace",
     name: "Blue Diamond Angel Wing Necklace",
-    price: 1099, // 925 sterling silver, 2 ct — shown as "From $1,099"
+    price: 1699, // 14K white gold, 2 ct — shown as "From $1,699" (silver dropped, +$200 on 2026-11-13)
     type: "Necklaces",
     shape: "Pear",
     stone: "Pavé-set angel wings in white lab-grown diamonds, with a 2 ct or 3 ct light blue pear-shaped lab-grown diamond drop.",
     stoneGroup: "Diamond",
-    metals: ["14k White Gold", "925 Sterling Silver"], // blue pieces: white metals only
+    metals: ["14k White Gold"], // blue pieces: white metal only (silver dropped 2026-11-13)
     defaultMetal: "14k White Gold",
     sizes: NECKLACE_LENGTHS,
     carats: WING_CARATS,
-    metalCaratPrices: wingCaratPrices({ "14k White Gold": 1399, "925 Sterling Silver": 1099 }),
+    metalCaratPrices: wingCaratPrices({ "14k White Gold": 1699 }),
+    salePercentOff: 25, // 25% off during the limited-time sale instead of the sitewide 10%
     images: [
       { src: "/images/catalog/blue-diamond-angel-wing-necklace/01-main.webp", kind: "sku" },
       { src: "/images/catalog/blue-diamond-angel-wing-necklace/01-main-page.webp", kind: "detail" },
@@ -3031,7 +3104,7 @@ export const catalog: CatalogItem[] = [
       { src: "/images/catalog/blue-diamond-angel-wing-necklace/05-on-body.webp", kind: "on-body" },
     ],
     details: wingDetails("light blue"),
-    materials: ["14K white gold or 925 sterling silver", "Lab-grown diamonds"],
+    materials: ["14K white gold", "Lab-grown diamonds"],
     rank: 91,
     addedRank: -89,
   },
@@ -3039,15 +3112,16 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 92 — angel wing bracelet, light blue pear drop, white metals only
     slug: "blue-diamond-angel-wing-bracelet",
     name: "Blue Diamond Angel Wing Bracelet",
-    price: 999, // 925 sterling silver, 2 ct — shown as "From $999"
+    price: 1599, // 14K white gold, 2 ct — shown as "From $1,599" (silver dropped 2026-11-13)
     type: "Bracelets",
     stone: "Pavé-set angel wings in white lab-grown diamonds, with a 2 ct or 3 ct light blue pear-shaped lab-grown diamond drop under a round diamond, on a fine cable chain.",
     stoneGroup: "Diamond",
-    metals: ["14k White Gold", "925 Sterling Silver"], // blue pieces: white metals only
+    metals: ["14k White Gold"], // 14K white gold only (silver dropped 2026-11-13)
     defaultMetal: "14k White Gold",
     sizes: BRACELET_LENGTHS,
     carats: WING_CARATS,
-    metalCaratPrices: wingCaratPrices({ "14k White Gold": 1199, "925 Sterling Silver": 999 }),
+    metalCaratPrices: wingCaratPrices({ "14k White Gold": 1599 }),
+    salePercentOff: 25, // 25% off during the limited-time sale instead of the sitewide 10%
     images: [
       { src: "/images/catalog/blue-diamond-angel-wing-bracelet/01-main.webp", kind: "sku" },
       { src: "/images/catalog/blue-diamond-angel-wing-bracelet/01-main-page.webp", kind: "detail" },
@@ -3058,7 +3132,7 @@ export const catalog: CatalogItem[] = [
       "Angel wings pavé-set with white lab-grown diamonds",
       "Fine cable chain with a spring-ring clasp",
     ],
-    materials: ["14K white gold or 925 sterling silver", "Lab-grown diamonds"],
+    materials: ["14K white gold", "Lab-grown diamonds"],
     rank: 92,
     addedRank: -90,
   },
@@ -3066,15 +3140,17 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 93 — angel wing stud earrings, light blue pear drop, white metals only
     slug: "blue-diamond-angel-wing-stud-earrings",
     name: "Blue Diamond Angel Wing Stud Earrings",
-    price: 899, // 925 sterling silver, 2 ct — shown as "From $899"
+    price: 1499, // 14K gold, 2 ct — shown as "From $1,499" (silver dropped, +$100 on 2026-11-13)
     type: "Earrings",
     shape: "Pear",
-    stone: "Pavé-set angel wings in white lab-grown diamonds with a round diamond at the centre and a 2 ct or 3 ct light blue pear-shaped lab-grown diamond drop on each earring. Sold as a pair.",
+    stone: "Pavé-set angel wings in white lab-grown diamonds with a round diamond at the centre and a 2 ct or 3 ct light blue pear-shaped lab-grown diamond drop on each earring. The price is for a single earring; add two for a pair.",
     stoneGroup: "Diamond",
-    metals: ["14k White Gold", "925 Sterling Silver"], // blue pieces: white metals only
+    metals: ["14k White Gold"], // 14K gold only (silver dropped 2026-11-13)
     defaultMetal: "14k White Gold",
     carats: WING_CARATS,
-    metalCaratPrices: wingCaratPrices({ "14k White Gold": 1099, "925 Sterling Silver": 899 }),
+    metalCaratPrices: wingCaratPrices({ "14k White Gold": 1499 }),
+    priceUnit: "single earring", // priced per earring, not per pair
+    salePercentOff: 25, // 25% off during the limited-time sale instead of the sitewide 10%
     images: [
       { src: "/images/catalog/blue-diamond-angel-wing-stud-earrings/01-main.webp", kind: "sku" },
       { src: "/images/catalog/blue-diamond-angel-wing-stud-earrings/01-main-page.webp", kind: "detail" },
@@ -3083,9 +3159,9 @@ export const catalog: CatalogItem[] = [
     details: [
       "Center stone: 2 ct or 3 ct pear-shaped light blue lab-grown diamond on each earring",
       "Angel wings pavé-set with white lab-grown diamonds",
-      "Sold as a pair",
+      "Price is for a single earring (add 2 for a pair)",
     ],
-    materials: ["14K white gold or 925 sterling silver", "Lab-grown diamonds"],
+    materials: ["14K white gold", "Lab-grown diamonds"],
     rank: 93,
     addedRank: -91,
   },
@@ -3093,15 +3169,17 @@ export const catalog: CatalogItem[] = [
     // PRODUCT 94 — angel wing drop earrings, light blue pear drop, white metals only
     slug: "blue-diamond-angel-wing-drop-earrings",
     name: "Blue Diamond Angel Wing Drop Earrings",
-    price: 1099, // 925 sterling silver, 2 ct — shown as "From $1,099"
+    price: 1599, // 14K gold, 2 ct — shown as "From $1,599" (silver dropped 2026-11-13)
     type: "Earrings",
     shape: "Pear",
-    stone: "A round lab-grown diamond stud and a bezel-set diamond on a fine chain, leading to pavé-set angel wings in white lab-grown diamonds with a 2 ct or 3 ct light blue pear-shaped lab-grown diamond drop on each earring. Sold as a pair.",
+    stone: "A round lab-grown diamond stud and a bezel-set diamond on a fine chain, leading to pavé-set angel wings in white lab-grown diamonds with a 2 ct or 3 ct light blue pear-shaped lab-grown diamond drop on each earring. The price is for a single earring; add two for a pair.",
     stoneGroup: "Diamond",
-    metals: ["14k White Gold", "925 Sterling Silver"], // blue pieces: white metals only
+    metals: ["14k White Gold"], // 14K gold only (silver dropped 2026-11-13)
     defaultMetal: "14k White Gold",
     carats: WING_CARATS,
-    metalCaratPrices: wingCaratPrices({ "14k White Gold": 1299, "925 Sterling Silver": 1099 }),
+    metalCaratPrices: wingCaratPrices({ "14k White Gold": 1599 }),
+    priceUnit: "single earring", // priced per earring, not per pair
+    salePercentOff: 25, // 25% off during the limited-time sale instead of the sitewide 10%
     images: [
       { src: "/images/catalog/blue-diamond-angel-wing-drop-earrings/01-main.webp", kind: "sku" },
       { src: "/images/catalog/blue-diamond-angel-wing-drop-earrings/01-main-page.webp", kind: "detail" },
@@ -3111,9 +3189,9 @@ export const catalog: CatalogItem[] = [
       "Center stone: 2 ct or 3 ct pear-shaped light blue lab-grown diamond on each earring",
       "Angel wings pavé-set with white lab-grown diamonds",
       "Round diamond stud with a bezel-set diamond on a fine chain",
-      "Sold as a pair",
+      "Price is for a single earring (add 2 for a pair)",
     ],
-    materials: ["14K white gold or 925 sterling silver", "Lab-grown diamonds"],
+    materials: ["14K white gold", "Lab-grown diamonds"],
     rank: 94,
     addedRank: -92,
   },
@@ -3162,11 +3240,15 @@ export const optionPrice = (item: CatalogItem, metal: string, carat: string, siz
 export const fromPrice = (item: CatalogItem) => {
   if (item.customName) return "Price on request";
   if (item.price === null) return "From $[PRICE]";
-  // A piece with a single carat price and no other priced options has one price: no "From".
-  const single =
-    item.caratPrices && Object.keys(item.caratPrices).length === 1 && !item.sizePrices && !item.metalCaratPrices && !item.metalPrices;
-  return single ? formatUSD(item.price) : `From ${formatUSD(item.price)}`;
+  return hasSinglePrice(item) ? formatUSD(item.price) : `From ${formatUSD(item.price)}`;
 };
+
+// A piece whose options never change the price (at most one carat price, no metal, size or
+// chain prices) has one price, so it is shown without "From".
+export const hasSinglePrice = (item: CatalogItem) =>
+  (!item.caratPrices || Object.keys(item.caratPrices).length === 1) &&
+  !item.sizePrices && !item.metalCaratPrices && !item.metalPrices &&
+  !item.sizeSurcharges && !item.caratSizeSurcharges && !item.chainAddOn;
 
 // Gallery images for the chosen metal: that metal's own set when there is one,
 // otherwise the default images. The collection SKU shot is never part of the gallery.

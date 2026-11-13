@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { CARAT_LEAD_TIME, formatUSD, optionPrice, type CatalogItem } from "@/data/catalog";
+import { percentOffFor, salePrice } from "@/data/promo";
 import { useMetal } from "./MetalContext";
 import ShapeSelector, { type ShapeOption } from "./ShapeSelector";
 import Link from "next/link";
@@ -10,6 +11,9 @@ import { designHref, settingForSlug, SHAPES, type Shape } from "@/data/ringDesig
 import NecklaceLengthGuide from "./NecklaceLengthGuide";
 import NameQuote from "./NameQuote";
 import { trackEvent } from "@/components/Analytics";
+
+// Option, summary and button prices show the sale price (the catalogue keeps the original).
+const formatSale = (item: CatalogItem, usd: number, carat?: string) => formatUSD(salePrice(usd, percentOffFor(item, carat)));
 
 // Piece configurator: Shape (for pieces made in several stone shapes), Metal swatches, Carat Weight (lab-grown, every size made to
 // order), Ring Size, Bracelet Length or Chain Length, then ADD TO BAG. The bag line is one color / carat / size
@@ -71,7 +75,7 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
       setTimeout(() => setAdded(false), 2000);
       return;
     }
-    const variant = [initial && `Initial ${initial}`, metal, carat, size].filter(Boolean).join(" / ");
+    const variant = [initial && `Initial ${initial}`, metal, carat, size, item.priceUnit].filter(Boolean).join(" / ");
     addItem({
       id: `${item.slug}|${initial}|${metal}|${carat}|${size}`,
       slug: item.slug,
@@ -211,7 +215,7 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
                 label={item.caratLabel ?? (caratPriced ? "Center diamond carat weight" : "Carat weight")}
                 value={carat}
                 options={item.carats!}
-                note={caratPriced ? (o) => formatUSD(optionPrice(item, metal, o, size) ?? 0) : CARAT_LEAD_TIME}
+                note={caratPriced ? (o) => formatSale(item, optionPrice(item, metal, o, size) ?? 0, o) : CARAT_LEAD_TIME}
                 full={!needsSize || stacked}
                 onChange={setCarat}
               />
@@ -221,7 +225,7 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
             <div className={hasCarats && !stacked ? "" : "col-span-2"}>
               <p className="mb-1.5 text-[15px] leading-tight">{sizeLabel}</p>
               {hasLengthGuide ? (
-                <LengthListbox label={sizeLabel} value={size} options={item.sizes!} prices={item.sizePrices} onChange={setSize} />
+                <LengthListbox label={sizeLabel} value={size} options={item.sizes!} prices={item.sizePrices && Object.fromEntries(Object.entries(item.sizePrices).map(([k, v]) => [k, salePrice(v, percentOffFor(item))]))} onChange={setSize} />
               ) : (
                 <div className="relative">
                   <select
@@ -235,9 +239,9 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
                     {item.sizes!.map((s) => (
                       <option key={s} value={s}>
                         {item.sizeSurcharges || item.caratSizeSurcharges
-                          ? `${s} — ${formatUSD(optionPrice(item, metal, carat, s) ?? 0)}`
+                          ? `${s} — ${formatSale(item, optionPrice(item, metal, carat, s) ?? 0, carat)}`
                           : item.sizePrices?.[s] !== undefined
-                            ? `${s} — ${formatUSD(item.sizePrices[s])}`
+                            ? `${s} — ${formatSale(item, item.sizePrices[s])}`
                             : s}
                       </option>
                     ))}
@@ -280,7 +284,7 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
           )}
           <div className="mt-1 flex justify-between gap-4 font-medium">
             <dt>Price</dt>
-            <dd>{unitPrice !== null ? formatUSD(unitPrice) : "—"}</dd>
+            <dd>{unitPrice !== null ? formatSale(item, unitPrice, carat) : "—"}</dd>
           </div>
           {!item.hideCaratTotal && !(size && item.caratWeights?.[carat]?.[size]) && (
             <p className="mt-1.5 text-[13px] text-[#1d1d1f]/60">Total carat weight varies with bracelet length.</p>
@@ -299,7 +303,7 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
               />
               Add a {metalLabel(chainMetal)} chain
             </span>
-            <span className="text-[#1d1d1f]/70">+{formatUSD(chain.price)}</span>
+            <span className="text-[#1d1d1f]/70">+{formatSale(item, chain.price)}</span>
           </label>
           {withChain && (
             <div className="mt-2.5">
@@ -320,11 +324,11 @@ export default function ProductPurchase({ item, shapes = [] }: { item: CatalogIt
         {added
           ? "Added to Bag"
           : chain && withChain && unitPrice !== null
-            ? `Add to Bag — ${formatUSD(unitPrice + chain.price)}`
+            ? `Add to Bag — ${formatUSD(salePrice(unitPrice, percentOffFor(item, carat)) + salePrice(chain.price, percentOffFor(item)))}`
             : "Add to Bag"}
       </button>
       <p className="mt-2 text-[14px] text-[#1d1d1f]/70">
-        Made to order.
+        Made to order. Production time: 2–6 weeks.
         {item.price === null && <span className="ml-2 text-[#86868b]">[Add to bag turns on once the price is set.]</span>}
       </p>
         </>

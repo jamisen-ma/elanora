@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Elanora E monogram</title>
+  <desc id="desc">A minimal, elegant letter E monogram for Elanora.</desc>
+  <g stroke="#171717" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M178 112V400" stroke-width="13"/>
+    <path d="M185 119H344" stroke-width="9"/>
+    <path d="M185 255H307" stroke-width="8"/>
+    <path d="M185 393H344" stroke-width="9"/>
+  </g>
+  <path d="M344 105V133" stroke="#171717" stroke-width="1.5"/>
+  <path d="M344 379V407" stroke="#171717" stroke-width="1.5"/>
+</svg>

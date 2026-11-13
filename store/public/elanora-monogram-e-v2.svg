@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">Elanora E monogram, version two</title>
+  <desc id="desc">A sculptural E monogram with an open orbit and a diamond-cut accent.</desc>
+  <!-- Open orbit: a sense of movement and individuality, intentionally left unclosed. -->
+  <path d="M348 83C407 124 438 187 438 253C438 343 378 413 292 433" stroke="#171717" stroke-width="2" stroke-linecap="round"/>
+  <path d="M165 109V401" stroke="#171717" stroke-width="13" stroke-linecap="square"/>
+  <path d="M171 116H344" stroke="#171717" stroke-width="9" stroke-linecap="square"/>
+  <path d="M171 255H307" stroke="#171717" stroke-width="8" stroke-linecap="square"/>
+  <path d="M171 394H349" stroke="#171717" stroke-width="9" stroke-linecap="square"/>
+  <!-- Faceted diamond detail replaces the middle-arm terminal. -->
+  <path d="M324 241L338 255L324 269L310 255L324 241Z" fill="#F8F6F2" stroke="#171717" stroke-width="2"/>
+  <path d="M310 255H338M324 241L320 255L324 269L328 255L324 241Z" stroke="#171717" stroke-width="1.1"/>
+  <path d="M348 108V126M339 117H357" stroke="#171717" stroke-width="1.4" stroke-linecap="round"/>
+</svg>

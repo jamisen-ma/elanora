@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useCallback, useEffect } from "react";
 import type { ReactNode } from "react";
 import type { Product } from "@/data/products";
+import { percentOffForLine, salePriceCents } from "@/data/promo";
 
 export interface CartItem {
   product: Product;
@@ -16,7 +17,10 @@ interface CartContextType {
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   totalItems: number;
+  /** in cents: original-price subtotal, the launch-sale discount, and the total after it */
   subtotal: number;
+  discount: number;
+  total: number;
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
 }
@@ -76,6 +80,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (mounted) saveCart(items);
   }, [items, mounted]);
 
+
   const addItem = useCallback((product: Product, quantity = 1) => {
     setItems((prev) => {
       const existing = prev.find((item) => item.product.id === product.id);
@@ -115,6 +120,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     (sum, item) => sum + item.product.price * item.quantity,
     0
   );
+  // Launch sale: every line at its sale price, with its series' discount (bag items keep their original price).
+  const total = items.reduce((sum, item) => sum + salePriceCents(item.product.price, percentOffForLine(item.product.id)) * item.quantity, 0);
+  const discount = subtotal - total;
 
   return (
     <CartContext.Provider
@@ -126,6 +134,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         clearCart,
         totalItems,
         subtotal,
+        discount,
+        total,
         isOpen,
         setIsOpen,
       }}
