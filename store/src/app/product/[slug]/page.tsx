@@ -24,7 +24,7 @@ export async function generateMetadata({
     title: product.name,
     description: product.description,
     openGraph: {
-      title: `${product.name} | Elanora`,
+      title: `${product.name} | Wells Diamonds`,
       description: product.description,
       images: [
         {
@@ -37,7 +37,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: `${product.name} | Elanora`,
+      title: `${product.name} | Wells Diamonds`,
       description: product.description,
       images: [product.images[0]],
     },
@@ -66,7 +66,7 @@ export default async function ProductPage({
     image: product.images.map(
       (img) => `https://elanora-beta.vercel.app${img}`
     ),
-    brand: { "@type": "Brand", name: "Elanora" },
+    brand: { "@type": "Brand", name: "Wells Diamonds" },
     offers: {
       "@type": "Offer",
       price: (product.price / 100).toFixed(2),
@@ -77,7 +77,7 @@ export default async function ProductPage({
   };
 
   const shareUrl = `https://elanora-beta.vercel.app/product/${product.slug}`;
-  const shareText = `Check out ${product.name} by Elanora — ${formatPrice(product.price)}`;
+  const shareText = `Check out ${product.name} by Wells Diamonds — ${formatPrice(product.price)}`;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">

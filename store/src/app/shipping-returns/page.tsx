@@ -5,7 +5,7 @@ import { CUSTOM_POLICY, CUSTOM_TERMS, SALE_POLICY } from "@/data/customOrderPoli
 export const metadata: Metadata = {
   title: "Shipping & Returns",
   description:
-    "Elanora production time, shipping and order policy: every piece is made to order.",
+    "Wells Diamonds production time, shipping and order policy: every piece is made to order.",
 };
 
 export default function ShippingReturnsPage() {
@@ -58,11 +58,11 @@ export default function ShippingReturnsPage() {
           <div className="mt-5 space-y-3 text-sm text-warm-gray leading-relaxed">
             <p>
               <span className="text-gold font-medium">Free shipping for members</span> —
-              join Elanora with your email at checkout and your order ships free within the US.
+              join Wells Diamonds with your email at checkout and your order ships free within the US.
               Shipping to Canada, the UK and Australia is priced by destination.
             </p>
             <p>
-              Every Elanora piece is made to order. We start making your piece once you order;
+              Every Wells Diamonds piece is made to order. We start making your piece once you order;
               production takes
               <span className="text-foreground font-medium"> 2 &ndash; 8 weeks </span>
               before it ships. This is an estimate: more detailed pieces can take longer, and

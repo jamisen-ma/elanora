@@ -1,6 +1,6 @@
 import { Cormorant_Garamond } from "next/font/google";
 
-// THE ELANORA STANDARD — a quiet brand promise between Our Story and the shopping
+// THE Wells Diamonds STANDARD — a quiet brand promise between Our Story and the shopping
 // content. Pure white (Our Story above is warm ivory), ~55–65vh, three short points
 // separated only by space. Copy avoids claims that can't yet be verified.
 
@@ -34,7 +34,7 @@ export default function BrandStandard() {
       <div className="mx-auto flex max-w-[1200px] flex-col justify-center px-8 py-24 sm:px-12 sm:py-28 md:min-h-[55vh] lg:min-h-[60vh] lg:px-16 lg:py-24">
         <header className="text-center">
           <p className="text-[13px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/70">
-            The Elanora Standard
+            The Wells Diamonds Standard
           </p>
           <h2
             id="standard-heading"

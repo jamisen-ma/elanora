@@ -5,7 +5,7 @@ import { CUSTOM_POLICY, SALE_POLICY } from "@/data/customOrderPolicy";
 export const metadata: Metadata = {
   title: "FAQ",
   description:
-    "Frequently asked questions about Elanora jewelry, orders, and shipping.",
+    "Frequently asked questions about Wells Diamonds jewelry, orders, and shipping.",
 };
 
 const faqs = [
@@ -22,7 +22,7 @@ const faqs = [
   {
     question: "How long does shipping take?",
     answer:
-      "Every piece is made to order. Production takes 2–8 weeks before it ships; this is an estimate, and more detailed pieces can take longer. Shipping within the US is free when you join Elanora with your email at checkout; shipping to other countries is priced by destination.",
+      "Every piece is made to order. Production takes 2–8 weeks before it ships; this is an estimate, and more detailed pieces can take longer. Shipping within the US is free when you join Wells Diamonds with your email at checkout; shipping to other countries is priced by destination.",
   },
   {
     question: "Do you ship internationally?",
@@ -71,7 +71,7 @@ const faqs = [
   {
     question: "Is the jewelry gift-ready?",
     answer:
-      "Every order arrives in our signature Elanora gift box, beautifully presented and ready to give. No additional gift wrapping needed.",
+      "Every order arrives in our signature Wells Diamonds gift box, beautifully presented and ready to give. No additional gift wrapping needed.",
   },
   {
     question: "How do I care for my jewelry?",

@@ -5,7 +5,7 @@ import Link from "next/link";
 import TrendChart, { money } from "@/components/admin/TrendChart";
 import type { Dashboard, RangeKey } from "@/lib/analyticsQueries";
 
-// Elanora analytics dashboard. Reads /api/analytics (signed-in only) for the chosen date range,
+// Wells Diamonds analytics dashboard. Reads /api/analytics (signed-in only) for the chosen date range,
 // in the viewer's own timezone, and refreshes every minute.
 
 type Tab = "overview" | "sales" | "products" | "traffic" | "locations" | "leads";
@@ -155,7 +155,7 @@ export default function AdminDashboard() {
         <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h1 className="text-xl font-semibold">Elanora Analytics</h1>
+              <h1 className="text-xl font-semibold">Wells Diamonds Analytics</h1>
               <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-sm text-gray-500">
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />

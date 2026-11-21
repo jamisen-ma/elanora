@@ -50,7 +50,7 @@ export default function RingSummary({ config, update, goStep }: { config: RingCo
     const url = window.location.href;
     try {
       if (navigator.share && window.matchMedia("(max-width: 1023px)").matches) {
-        await navigator.share({ title: "My Elanora ring", url });
+        await navigator.share({ title: "My Wells Diamonds ring", url });
         return;
       }
       await navigator.clipboard.writeText(url);

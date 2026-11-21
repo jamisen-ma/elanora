@@ -77,7 +77,7 @@ export default function Footer() {
 
           <div className="col-span-2 md:col-span-4 lg:col-span-1">
             <p className="text-[13px] font-medium uppercase tracking-[0.24em]">Stay in touch</p>
-            <p className="mt-5 text-[15px] text-[#6e6e73]">New pieces, gemstone stories, and notes from Elanora.</p>
+            <p className="mt-5 text-[15px] text-[#6e6e73]">New pieces, gemstone stories, and notes from Wells Diamonds.</p>
             <div className="mt-4">
               <FooterSignup />
             </div>
@@ -85,8 +85,8 @@ export default function Footer() {
         </div>
 
         <div className="mt-16 flex flex-col items-start justify-between gap-3 border-t border-[#1d1d1f]/10 pt-6 text-[13px] tracking-[0.04em] text-[#86868b] sm:flex-row sm:items-center">
-          <span className="pl-[0.42em] text-[15px] font-light tracking-[0.42em] text-[#1d1d1f]">ELANORA</span>
-          <span>&copy; {new Date().getFullYear()} Elanora. All rights reserved.</span>
+          <span className="pl-[0.42em] text-[15px] font-light tracking-[0.42em] text-[#1d1d1f]">WELLS DIAMONDS</span>
+          <span>&copy; {new Date().getFullYear()} Wells Diamonds. All rights reserved.</span>
         </div>
       </div>
     </footer>

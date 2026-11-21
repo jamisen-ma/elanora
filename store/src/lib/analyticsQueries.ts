@@ -26,7 +26,7 @@ const iso = (v: unknown) => (v instanceof Date ? v.toISOString() : String(v));
 // category, else "direct". Visits referred by the shop itself count as direct.
 const SOURCE = `CASE
   WHEN coalesce(utm_source, '') <> '' THEN lower(utm_source)
-  WHEN referrer IS NULL OR referrer = 'direct' OR referrer ILIKE '%elanora%' THEN 'direct'
+  WHEN referrer IS NULL OR referrer = 'direct' OR referrer ILIKE '%elanora%' OR referrer ILIKE '%wellsdiamonds%' OR referrer ILIKE '%wells-diamonds%' THEN 'direct'
   WHEN coalesce(referrer_source, 'other') <> 'other' THEN referrer_source
   ELSE regexp_replace(referrer, '^www\\.', '')
 END`;

@@ -106,13 +106,13 @@ export default function Header() {
           <Link
             href="/"
             scroll={false}
-            className={`${didone.className} absolute left-1/2 -translate-x-1/2 pl-[0.38em] text-[18px] font-normal tracking-[0.38em] lg:text-[21px] ${onPhoto ? "text-white lg:text-[#1d1d1f]" : "text-[#1d1d1f]"}`}
+            className={`${didone.className} absolute left-1/2 -translate-x-1/2 whitespace-nowrap pl-[0.24em] text-[15px] font-normal tracking-[0.24em] lg:pl-[0.16em] lg:text-[15px] lg:tracking-[0.16em] xl:pl-[0.26em] xl:text-[18px] xl:tracking-[0.26em] 2xl:pl-[0.34em] 2xl:text-[20px] 2xl:tracking-[0.34em] ${onPhoto ? "text-white lg:text-[#1d1d1f]" : "text-[#1d1d1f]"}`}
             onClick={() => {
               setMobileMenuOpen(false);
               toTop();
             }}
           >
-            ELANORA
+            WELLS DIAMONDS
           </Link>
 
           {/* Right: Search (desktop) + Bag */}

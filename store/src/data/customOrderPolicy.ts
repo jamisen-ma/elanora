@@ -5,7 +5,7 @@
 // Rules: an inquiry is free and is not an order. After the customer confirms the final
 // design, specifications, production time and total quote, the full price is paid and work
 // starts once it is received (changed from a 50% deposit on 2026-10-29). Payment is
-// non-refundable except where the law requires a refund or Elanora cannot fulfill the order.
+// non-refundable except where the law requires a refund or Wells Diamonds cannot fulfill the order.
 // Nothing more is due before shipment. Custom pieces are final sale, without affecting rights
 // regarding a confirmed quality issue or under applicable law.
 // Every piece in the shop is also made to order, so no piece can be returned or exchanged
@@ -16,7 +16,7 @@ export const CUSTOM_POLICY = {
   payment:
     "Once you confirm the final design, specifications, production time and total quote, full payment is due. We begin making your piece after we receive it.",
   nonRefundable:
-    "Payment is non-refundable once made, except where a refund is required by law or Elanora cannot fulfill your order.",
+    "Payment is non-refundable once made, except where a refund is required by law or Wells Diamonds cannot fulfill your order.",
   shipping: "Nothing more is due — we ship your piece as soon as it’s ready.",
   finalSale:
     "Custom pieces are final sale and cannot be returned or exchanged.",
@@ -40,12 +40,12 @@ export const CUSTOM_TERMS_TEXT = [CUSTOM_POLICY.inquiry, ...CUSTOM_TERMS].join("
 // and the Terms. Change the wording here, not on the pages.
 export const SALE_POLICY = {
   noReturns:
-    "Every Elanora piece is made to order just for you, so we can't accept returns or exchanges. Please check your size, metal and options before ordering.",
+    "Every Wells Diamonds piece is made to order just for you, so we can't accept returns or exchanges. Please check your size, metal and options before ordering.",
   noCancel:
     "Orders can't be cancelled once placed: we start preparing materials and production for your piece as soon as you order.",
   production:
     "Production takes 2–8 weeks. This is an estimate: more detailed pieces can take longer, and we'll email you if your piece needs more time.",
-  certificate: "Every Elanora diamond comes with an IGI certificate.",
+  certificate: "Every Wells Diamonds diamond comes with an IGI certificate.",
   preview: "Before your piece ships, we inspect it and send you photos or a short video of the finished piece.",
   // Quality concerns are reviewed, with no promised outcome (user, 2026-11-14).
   quality:

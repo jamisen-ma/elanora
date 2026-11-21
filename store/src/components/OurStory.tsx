@@ -23,7 +23,7 @@ export default function OurStory() {
           Jewelry for a life <em className="italic">well lived.</em>
         </h2>
         <p className="mt-10 max-w-[26rem] text-[16px] leading-[1.75] tracking-[0.005em] text-[#6e6e73] sm:text-[16px] lg:mt-14 lg:ml-[calc(50%-4rem)]">
-          From custom diamonds to colorful gemstones and everyday pieces, ELANORA creates
+          From custom diamonds to colorful gemstones and everyday pieces, Wells Diamonds creates
           jewelry to be worn, loved, and lived in.
         </p>
       </div>

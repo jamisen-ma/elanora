@@ -14,7 +14,7 @@ const KNOWN = ["google", "instagram", "tiktok", "facebook", "pinterest", "youtub
 // one, else the referring site's category (google, instagram…), else "direct".
 export function sourceOf(utmSource?: string, referrer?: string): string {
   if (utmSource) return utmSource.toLowerCase().slice(0, 100);
-  if (!referrer || referrer === "direct" || /elanora/i.test(referrer)) return "direct";
+  if (!referrer || referrer === "direct" || /elanora|wells-?diamonds/i.test(referrer)) return "direct";
   const host = referrer.toLowerCase();
   if (host.includes("fb.com")) return "facebook";
   if (host.includes("twitter") || host === "x.com" || host.endsWith(".x.com")) return "twitter";

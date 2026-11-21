@@ -29,7 +29,7 @@ export const SERIES: Series[] = [
     line: "Pavé diamond wings, finished with a pear-shaped color drop in pink, blue, or yellow.",
     href: "/wings-of-light",
     cover: "/images/series/wings.webp",
-    coverAlt: "The ELANORA angel wing necklace with a blue pear drop on a white plaster plinth",
+    coverAlt: "The Wells Diamonds angel wing necklace with a blue pear drop on a white plaster plinth",
     items: () => catalog.filter((i) => i.slug.includes("angel-wing")),
   },
   {
@@ -38,7 +38,7 @@ export const SERIES: Series[] = [
     line: "A perfume bottle in pink, blue or yellow, with a diamond stopper.",
     href: "/series/le-parfum",
     cover: "/images/series/parfum.webp",
-    coverAlt: "The ELANORA pink perfume bottle diamond necklace on a white plaster pedestal",
+    coverAlt: "The Wells Diamonds pink perfume bottle diamond necklace on a white plaster pedestal",
     items: bySlugs([
       "pink-perfume-bottle-diamond-necklace",
       "blue-perfume-bottle-diamond-necklace",
@@ -51,7 +51,7 @@ export const SERIES: Series[] = [
     line: "A cocktail glass in colored diamonds, for the evening that starts at six.",
     href: "/series/cocktail-hour",
     cover: "/images/series/cocktail.webp",
-    coverAlt: "The ELANORA pink cosmopolitan diamond necklace beside a crystal coupe",
+    coverAlt: "The Wells Diamonds pink cosmopolitan diamond necklace beside a crystal coupe",
     items: bySlugs([
       "pink-cosmopolitan-diamond-necklace",
       "yellow-champagne-diamond-necklace",
@@ -65,7 +65,7 @@ export const SERIES: Series[] = [
     line: "Diamond snowflakes, layered and clustered, no two alike.",
     href: "/series/snowfall",
     cover: "/images/series/snowfall.webp",
-    coverAlt: "The ELANORA layered snowflake diamond necklace on a white plaster surface",
+    coverAlt: "The Wells Diamonds layered snowflake diamond necklace on a white plaster surface",
     items: bySlugs([
       "snowflake-layered-diamond-necklace",
       "pink-snowflake-layered-diamond-necklace",

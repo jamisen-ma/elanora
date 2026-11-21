@@ -5,7 +5,7 @@ import ProductCard from "@/components/ProductCard";
 export const metadata: Metadata = {
   title: "New Arrivals",
   description:
-    "Discover the latest additions to the Elanora jewelry collection.",
+    "Discover the latest additions to the Wells Diamonds jewelry collection.",
 };
 
 export default function NewArrivalsPage() {

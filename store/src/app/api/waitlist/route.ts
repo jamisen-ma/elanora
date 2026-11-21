@@ -21,7 +21,7 @@ function buildWelcomeEmail(): string {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to Elanora</title>
+  <title>Welcome to Wells Diamonds</title>
 </head>
 <body style="margin:0;padding:0;background-color:#faf9f7;font-family:Georgia,'Times New Roman',serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#faf9f7;padding:40px 20px;">
@@ -45,7 +45,7 @@ function buildWelcomeEmail(): string {
           <tr>
             <td style="padding:40px 40px 20px;text-align:center;">
               <p style="margin:0 0 6px;font-size:11px;letter-spacing:0.3em;color:#b8976b;text-transform:uppercase;">
-                A note from Elanora
+                A note from Wells Diamonds
               </p>
               <h2 style="margin:0;font-size:24px;font-weight:300;color:#1a1a1a;line-height:1.4;">
                 You&rsquo;re on the list.
@@ -57,7 +57,7 @@ function buildWelcomeEmail(): string {
           <tr>
             <td style="padding:0 40px 30px;text-align:center;">
               <p style="margin:0;font-size:15px;line-height:1.7;color:#6b6360;">
-                Thank you for staying in touch with Elanora. We’ll share new pieces,
+                Thank you for staying in touch with Wells Diamonds. We’ll share new pieces,
                 gemstone stories, and occasional notes from our studio.
               </p>
             </td>
@@ -138,7 +138,7 @@ function buildWelcomeEmail(): string {
                 Thoughtful jewelry for a life well lived.
               </p>
               <p style="margin:0;font-size:10px;color:#a09890;">
-                &copy; 2026 Elanora. All rights reserved.
+                &copy; 2026 Wells Diamonds. All rights reserved.
               </p>
             </td>
           </tr>
@@ -207,9 +207,9 @@ export async function POST(req: Request) {
     if (transporter) {
       try {
         await transporter.sendMail({
-          from: `"Elanora" <${process.env.GMAIL_USER}>`,
+          from: `"Wells Diamonds" <${process.env.GMAIL_USER}>`,
           to: normalizedEmail,
-          subject: "A note from Elanora",
+          subject: "A note from Wells Diamonds",
           html: buildWelcomeEmail(),
         });
         console.log(`[WAITLIST EMAIL SENT] ${normalizedEmail}`);

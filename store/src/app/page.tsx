@@ -2,7 +2,7 @@ import HeroSlides from "@/components/home/HeroSlides";
 import SeriesEntry from "@/components/home/SeriesEntry";
 import LaunchCodeBox from "@/components/home/LaunchCodeBox";
 import {
-  AboutElanora,
+  AboutWellsDiamonds,
   CustomIdea,
   PopularStyles,
   TheEdit,
@@ -30,7 +30,7 @@ export default function HomePage() {
             slides={[
               {
                 src: "/images/hero/hero-blue-wing-lariat.webp",
-                alt: "A woman in profile wearing the ELANORA blue diamond angel wing drop earrings and a diamond knot lariat necklace",
+                alt: "A woman in profile wearing the Wells Diamonds blue diamond angel wing drop earrings and a diamond knot lariat necklace",
                 mobilePosition: "69% 50%",
                 desktopPosition: "72% 50%",
                 title: "Modern Jewelry, Made for You",
@@ -39,7 +39,7 @@ export default function HomePage() {
               },
               {
                 src: "/images/hero/hero-pink-heart-satin.webp",
-                alt: "A woman in profile in an ivory satin halter wearing the ELANORA pink heart halo diamond stud, a diamond ear cuff and the snowflake cluster diamond ring",
+                alt: "A woman in profile in an ivory satin halter wearing the Wells Diamonds pink heart halo diamond stud, a diamond ear cuff and the snowflake cluster diamond ring",
                 mobilePosition: "83% 50%",
                 desktopPosition: "90% 50%",
                 title: "Choose Your Stone. Make It Yours.",
@@ -81,7 +81,7 @@ export default function HomePage() {
       {/* ============================================ */}
       <CustomIdea />
 
-      {/* "Our favorite pieces" (ElanoraEdit) removed from the homepage on 2026-11-12; the
+      {/* "Our favorite pieces" (WellsDiamondsEdit) removed from the homepage on 2026-11-12; the
           component is kept in HomeSections in case it comes back. */}
 
       {/* ============================================ */}
@@ -99,9 +99,9 @@ export default function HomePage() {
       <TheEdit />
 
       {/* ============================================ */}
-      {/* 07 — ABOUT ELANORA                           */}
+      {/* 07 — ABOUT Wells Diamonds                           */}
       {/* ============================================ */}
-      <AboutElanora />
+      <AboutWellsDiamonds />
     </>
   );
 }

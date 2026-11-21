@@ -1,4 +1,4 @@
-# Elanora — Jewelry E-Commerce Store
+# Wells Diamonds — Jewelry E-Commerce Store
 
 A premium, responsive jewelry storefront built with Next.js 16, React, Tailwind CSS, and Stripe Checkout.
 

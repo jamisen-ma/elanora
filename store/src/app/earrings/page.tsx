@@ -3,7 +3,7 @@ import { catalog } from "@/data/catalog";
 
 export const metadata = {
   title: "Earrings",
-  description: "Shop ELANORA earrings. Lab-grown diamonds and gemstones, made to order.",
+  description: "Shop Wells Diamonds earrings. Lab-grown diamonds and gemstones, made to order.",
 };
 
 // The halo studs added with a single image so far go last (user, 2026-11-08); the rest are newest first.

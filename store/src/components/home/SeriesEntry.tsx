@@ -13,7 +13,7 @@ export default function SeriesEntry() {
         <div className="relative mx-auto aspect-[3/2] w-full overflow-hidden bg-white lg:aspect-[16/9] lg:max-w-[1200px]">
           <Image
             src={SERIES_COVER}
-            alt="ELANORA blue angel wing necklace between pink heart halo stud earrings and a pink perfume bottle necklace laid on white"
+            alt="Wells Diamonds blue angel wing necklace between pink heart halo stud earrings and a pink perfume bottle necklace laid on white"
             fill
             unoptimized
             sizes="(min-width: 1024px) 1200px, 100vw"

@@ -4,7 +4,7 @@ import { CUSTOM_POLICY, CUSTOM_TERMS, SALE_POLICY } from "@/data/customOrderPoli
 
 export const metadata: Metadata = {
   title: "Terms of Sale",
-  description: "The terms that apply when you order from Elanora: made-to-order pieces, payment, shipping and order policy.",
+  description: "The terms that apply when you order from Wells Diamonds: made-to-order pieces, payment, shipping and order policy.",
 };
 
 const sections: PolicySection[] = [
@@ -12,7 +12,7 @@ const sections: PolicySection[] = [
     title: "Made to Order",
     id: "made-to-order",
     blocks: [
-      "Every Elanora piece is made to order for you after you place your order.",
+      "Every Wells Diamonds piece is made to order for you after you place your order.",
       SALE_POLICY.production,
     ],
   },
@@ -62,7 +62,7 @@ const sections: PolicySection[] = [
   {
     title: "Shipping & Delivery",
     blocks: [
-      "We ship to the US, Canada, the UK and Australia. Shipping within the US is free when you join Elanora with your email at checkout; shipping to other countries is priced by destination.",
+      "We ship to the US, Canada, the UK and Australia. Shipping within the US is free when you join Wells Diamonds with your email at checkout; shipping to other countries is priced by destination.",
       "Every order ships with tracking. Please make sure your shipping address is correct: if a parcel is returned to us or lost because of an incorrect address, the cost of sending it again is yours.",
       "Delivery can be delayed by customs, carriers, weather or holidays, which are outside our control. If your tracking shows no progress or your parcel is marked delivered but hasn't arrived, contact us and we'll help you with the carrier.",
       "International orders may be subject to customs duties and import taxes, which are paid by the customer.",
@@ -113,7 +113,7 @@ export default function TermsPage() {
       title="Terms of Sale"
       updated="November 14, 2026"
       intro={[
-        "These terms apply when you order from Elanora. Please read them before placing your order. By placing an order, you agree to them.",
+        "These terms apply when you order from Wells Diamonds. Please read them before placing your order. By placing an order, you agree to them.",
       ]}
       sections={sections}
     />

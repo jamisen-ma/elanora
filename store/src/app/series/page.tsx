@@ -8,7 +8,7 @@ import { SERIES } from "@/data/series";
 
 export const metadata = {
   title: "The Collections",
-  description: "ELANORA themed collections: Wings of Light, Le Parfum, Cocktail Hour and Snowfall.",
+  description: "Wells Diamonds themed collections: Wings of Light, Le Parfum, Cocktail Hour and Snowfall.",
 };
 
 export default function SeriesPage() {

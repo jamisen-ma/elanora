@@ -20,11 +20,11 @@ const bodySans = Alegreya_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "Elanora — Jewelry Made for You",
-    template: "%s | Elanora",
+    default: "Wells Diamonds — Jewelry Made for You",
+    template: "%s | Wells Diamonds",
   },
   description:
-    "Explore thoughtfully selected jewelry, colorful gemstones, and custom pieces made to order by Elanora.",
+    "Explore thoughtfully selected jewelry, colorful gemstones, and custom pieces made to order by Wells Diamonds.",
   keywords: [
     "jewelry",
     "custom jewelry",
@@ -33,9 +33,9 @@ export const metadata: Metadata = {
     "made to order jewelry",
   ],
   openGraph: {
-    title: "Elanora — Jewelry Made for You",
+    title: "Wells Diamonds — Jewelry Made for You",
     description:
-      "Explore thoughtfully selected jewelry, colorful gemstones, and custom pieces made to order by Elanora.",
+      "Explore thoughtfully selected jewelry, colorful gemstones, and custom pieces made to order by Wells Diamonds.",
     type: "website",
     url: "https://elanora.com",
   },

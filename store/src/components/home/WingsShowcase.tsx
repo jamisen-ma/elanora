@@ -43,7 +43,7 @@ export default function WingsShowcase() {
         <div className="relative aspect-[4/5] w-full overflow-hidden bg-white sm:aspect-[4/3] lg:aspect-[21/9]">
           <Image
             src={KEY_VISUAL}
-            alt="A woman in a pink ribbed cami and blue jeans wearing the ELANORA pink diamond angel wing necklace, drop earrings and bracelet in rose gold"
+            alt="A woman in a pink ribbed cami and blue jeans wearing the Wells Diamonds pink diamond angel wing necklace, drop earrings and bracelet in rose gold"
             fill
             unoptimized
             sizes="100vw"

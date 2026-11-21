@@ -52,7 +52,7 @@ export default function RingBuilder() {
   const requestLink = `mailto:elanorajewelry2024@gmail.com?subject=${encodeURIComponent(
     `Ring Studio request — ${settingChoice?.name ?? "Custom ring"}`,
   )}&body=${encodeURIComponent(
-    `Hello ELANORA,\n\nI’d like to discuss this engagement ring: \n\n${ringDetails
+    `Hello Wells Diamonds,\n\nI’d like to discuss this engagement ring: \n\n${ringDetails
       .map(([label, value]) => `${label}: ${value}`)
       .join("\n")}\n\nPlease share available diamond options, final pricing, and production timing.\n\nThank you.`,
   )}`;

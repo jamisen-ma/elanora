@@ -48,14 +48,14 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     {
       title: "Made to Order",
       // Shared by every product page (current and future).
-      body: <p>Every Elanora piece is made to order: we start making it after you order. {SALE_POLICY.production} {SALE_POLICY.certificate} {SALE_POLICY.preview}</p>,
+      body: <p>Every Wells Diamonds piece is made to order: we start making it after you order. {SALE_POLICY.production} {SALE_POLICY.certificate} {SALE_POLICY.preview}</p>,
     },
     {
       title: "Shipping",
       body: (
         <p>
           Ships with tracking once your piece is made (production time: 2–8 weeks), to the US, Canada, the UK and Australia.
-          Free in the US when you join Elanora with your email at checkout; other countries are priced by destination.{" "}
+          Free in the US when you join Wells Diamonds with your email at checkout; other countries are priced by destination.{" "}
           <Link href="/shipping-returns" className="underline underline-offset-4 hover:text-[#1d1d1f]">
             Shipping
           </Link>

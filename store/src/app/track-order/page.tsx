@@ -5,7 +5,7 @@ import { POLICY_EMAIL } from "@/components/PolicyPage";
 
 export const metadata: Metadata = {
   title: "Track Your Order",
-  description: "Where your Elanora order is: production, final inspection and shipping.",
+  description: "Where your Wells Diamonds order is: production, final inspection and shipping.",
 };
 
 // No order lookup yet: explains each stage and how to ask for an update by email.

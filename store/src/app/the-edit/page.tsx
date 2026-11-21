@@ -5,7 +5,7 @@ import { editVideosNewestFirst } from "@/data/theEdit";
 
 export const metadata: Metadata = {
   title: "The Edit",
-  description: "Short films of ELANORA jewelry: details up close, how to wear it, diamond know-how and the stories behind the designs.",
+  description: "Short films of Wells Diamonds jewelry: details up close, how to wear it, diamond know-how and the stories behind the designs.",
 };
 
 const serif = Cormorant_Garamond({ subsets: ["latin"], weight: ["400"] });

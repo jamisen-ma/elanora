@@ -11,14 +11,14 @@ export const metadata: Metadata = {
 
 const serif = Cormorant_Garamond({ subsets: ["latin"], weight: ["400"], style: ["normal", "italic"] });
 
-// Our Story: why ELANORA exists — jewelry worth keeping, balancing design, quality and
+// Our Story: why Wells Diamonds exists — jewelry worth keeping, balancing design, quality and
 // price, with lab-grown diamonds opening up the design. Short, plain copy; the photo
-// shows real ELANORA pieces. The portrait's white backdrop is tinted
+// shows real Wells Diamonds pieces. The portrait's white backdrop is tinted
 // to the page colour (#faf7f3) so it sits on the page without a box.
 
 const STORY = [
   "We believe jewelry should be thoughtfully designed, made to last, and accessible to more people.",
-  "At ELANORA, we bring together considered design, lasting quality, and accessible pricing to create pieces that feel special today and remain part of your life for years to come.",
+  "At Wells Diamonds, we bring together considered design, lasting quality, and accessible pricing to create pieces that feel special today and remain part of your life for years to come.",
   "With lab-grown diamonds, we see more possibilities for design — making room for creativity, individuality, and jewelry worth keeping.",
 ];
 
@@ -36,7 +36,7 @@ export default function AboutPage() {
         <div className="relative mx-auto aspect-[4/5] w-full max-w-[400px] overflow-hidden">
           <Image
             src="/images/story/pear-necklace-portrait.webp"
-            alt="A woman with blonde waves in a cream satin dress wearing an ELANORA graduated pear diamond necklace"
+            alt="A woman with blonde waves in a cream satin dress wearing a Wells Diamonds graduated pear diamond necklace"
             fill
             unoptimized
             sizes="400px"

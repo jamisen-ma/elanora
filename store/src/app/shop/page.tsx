@@ -4,7 +4,7 @@ import { catalog } from "@/data/catalog";
 
 export const metadata: Metadata = {
   title: "All Jewelry",
-  description: "Shop all ELANORA jewelry. Lab-grown diamonds and gemstones, made to order.",
+  description: "Shop all Wells Diamonds jewelry. Lab-grown diamonds and gemstones, made to order.",
 };
 
 // Newest products first (Featured sort follows the order products were added).

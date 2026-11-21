@@ -465,7 +465,7 @@ function DiamondStep({ config, update }: { config: RingConfig; update: Update })
               <div role="radiogroup" aria-label="Diamond quality" className="space-y-2.5 text-[15px]">
                 {(
                   [
-                    ["recommend", "Let Elanora recommend"],
+                    ["recommend", "Let Wells Diamonds recommend"],
                     ["custom", "I have preferences"],
                   ] as const
                 ).map(([mode, text]) => (

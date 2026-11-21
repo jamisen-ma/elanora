@@ -219,7 +219,7 @@ export default function CheckoutClient({ status }: { status: "success" | "cancel
               </div>
               <div className="pt-2">
                 <label htmlFor="member-email" className="text-[13px] text-warm-gray">
-                  Join Elanora with your email for <span className="text-foreground">free US shipping</span>
+                  Join Wells Diamonds with your email for <span className="text-foreground">free US shipping</span>
                 </label>
                 <input
                   id="member-email"

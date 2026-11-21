@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Cormorant_Garamond } from "next/font/google";
 
-// About Elanora as a sealed envelope. When it is clicked (the wax seal or anywhere on the
+// About Wells Diamonds as a sealed envelope. When it is clicked (the wax seal or anywhere on the
 // envelope) the flap folds back and a letter rises out with the brand line and a link to
 // the full story. Pure CSS shapes; with reduced motion it simply shows the open letter.
 
@@ -34,7 +34,7 @@ export default function AboutLetter() {
         aria-hidden
         className={`absolute inset-x-6 top-[clamp(1.75rem,6vw,3.75rem)] text-center transition-opacity duration-500 ${open ? "opacity-0" : "opacity-100"}`}
       >
-        <p className="text-[12px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/65">About Elanora</p>
+        <p className="text-[12px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/65">About Wells Diamonds</p>
         <p className={`${serif.className} mt-2 text-[1.35rem] italic leading-tight text-[#1d1d1f]/80 sm:text-[1.6rem]`}>
           A little letter from us
         </p>
@@ -59,7 +59,7 @@ export default function AboutLetter() {
           }}
         >
           <h2 id="about-heading" className="text-[12px] font-medium uppercase tracking-[0.32em] text-[#1d1d1f]/65">
-            About Elanora
+            About Wells Diamonds
           </h2>
           <p className={`${serif.className} mt-2 text-balance text-[1.45rem] leading-[1.15] tracking-[-0.01em] sm:mt-4 sm:text-[2.1rem]`}>
             Jewelry made to order, just for you.
@@ -71,7 +71,7 @@ export default function AboutLetter() {
           >
             Read our story &rarr;
           </Link>
-          <p className={`${serif.className} mt-auto hidden pb-[8%] text-[1.1rem] italic text-[#1d1d1f]/55 sm:block`}>With love, Elanora</p>
+          <p className={`${serif.className} mt-auto hidden pb-[8%] text-[1.1rem] italic text-[#1d1d1f]/55 sm:block`}>With love, Wells Diamonds</p>
         </div>
 
         {/* front pocket: covers the lower part of the letter */}

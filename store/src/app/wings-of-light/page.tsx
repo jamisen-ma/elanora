@@ -7,7 +7,7 @@ import { catalog } from "@/data/catalog";
 export const metadata = {
   title: "Wings of Light",
   description:
-    "The ELANORA Angel Wing collection: pavé diamond wings finished with a pear-shaped color drop in pink, blue or yellow.",
+    "The Wells Diamonds Angel Wing collection: pavé diamond wings finished with a pear-shaped color drop in pink, blue or yellow.",
 };
 
 const COLORS = ["Pink", "Blue", "Yellow"];
@@ -26,7 +26,7 @@ export default function WingsOfLightPage() {
       colorBySlug={colorBySlug}
       hero={{
         src: "/images/home/wings/wings-of-light-key-visual-v2.webp",
-        alt: "A woman in a pink ribbed cami and blue jeans wearing the ELANORA pink diamond angel wing necklace, drop earrings and bracelet in rose gold",
+        alt: "A woman in a pink ribbed cami and blue jeans wearing the Wells Diamonds pink diamond angel wing necklace, drop earrings and bracelet in rose gold",
         eyebrow: "The Angel Wing Collection",
         headline: "Wings of Light",
         subline: "Pavé diamond wings, finished with a pear-shaped color drop in pink, blue, or yellow.",

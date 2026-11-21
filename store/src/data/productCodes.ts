@@ -1,4 +1,4 @@
-// Internal ELANORA product numbers. Used only for product tables / internal records —
+// Internal Wells Diamonds product numbers. Used only for product tables / internal records —
 // no page or component imports this file, so the numbers never reach the website.
 //
 //   EL-<type>-<shape>-<nnn>   e.g. EL-RG-OV-001

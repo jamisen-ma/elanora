@@ -54,7 +54,7 @@ export default function WaitlistForm({ variant = "hero" }: WaitlistFormProps) {
     return (
       <div className="mx-auto max-w-md text-center">
         <p className="text-sm font-medium text-foreground">You&apos;re on the list.</p>
-        <p className="mt-2 text-sm text-warm-gray">Look out for new pieces and notes from Elanora.</p>
+        <p className="mt-2 text-sm text-warm-gray">Look out for new pieces and notes from Wells Diamonds.</p>
       </div>
     );
   }

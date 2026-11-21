@@ -11,7 +11,7 @@ import { editVideosNewestFirst } from "@/data/theEdit";
 import { cormorant as serif, productSerif } from "@/lib/fonts";
 
 // Homepage sections after the hero:
-// Popular styles → custom idea → The Elanora Edit → About. (Gemstones is kept
+// Popular styles → custom idea → The Wells Diamonds Edit → About. (Gemstones is kept
 // below but not shown on the homepage for now.)
 // Copy is deliberately short and literal. Palette: white / warm ivory / charcoal;
 // the only color comes from the gemstone photography.
@@ -198,7 +198,7 @@ export function Gemstones() {
   );
 }
 
-/* ---------- 04 — The Elanora Edit ---------- */
+/* ---------- 04 — The Wells Diamonds Edit ---------- */
 
 // Hand-picked, in this order.
 const EDIT_SLUGS = [
@@ -213,13 +213,13 @@ const EDIT_SLUGS = [
 // and the hover photo follows the product's current on-body image.)
 const EDIT_METAL: Record<string, { metal: string; src: string; hoverSrc: string }> = {};
 
-export function ElanoraEdit() {
+export function WellsDiamondsEdit() {
   const items = EDIT_SLUGS.map((slug) => catalog.find((p) => p.slug === slug)).filter((p) => p !== undefined);
   return (
     <section aria-labelledby="edit-heading" className="bg-white px-6 py-14 text-[#1d1d1f] sm:py-16 md:px-10 lg:py-20">
       <div className="text-center">
         <Label as="h2">
-          <span id="edit-heading">The Elanora Edit</span>
+          <span id="edit-heading">The Wells Diamonds Edit</span>
         </Label>
         <Headline>Our favorite pieces.</Headline>
       </div>
@@ -284,7 +284,7 @@ export function TheEdit() {
 
 /* ---------- 06 — About ---------- */
 
-export function AboutElanora() {
+export function AboutWellsDiamonds() {
   // Brand story as a sealed letter that opens on scroll (see AboutLetter).
   return <AboutLetter />;
 }

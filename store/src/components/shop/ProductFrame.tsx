@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-// One display frame for every ELANORA product image: a canvas (pure white in the grids;
+// One display frame for every Wells Diamonds product image: a canvas (pure white in the grids;
 // the product page passes its own page colour so the two read as one), the supplied
 // image shown whole (object-contain, never cropped) inside a small inset, so the
 // piece sits at roughly 45–50% of the frame width (catalogue scale, like Graff).

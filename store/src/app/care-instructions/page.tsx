@@ -5,7 +5,7 @@ import { SALE_POLICY } from "@/data/customOrderPolicy";
 export const metadata: Metadata = {
   title: "Materials & Care",
   description:
-    "What Elanora jewelry is made of — IGI-certified lab-grown diamonds, solid 14K and 18K gold, platinum and sterling silver — and how to care for it.",
+    "What Wells Diamonds jewelry is made of — IGI-certified lab-grown diamonds, solid 14K and 18K gold, platinum and sterling silver — and how to care for it.",
 };
 
 // Materials as sold in the catalogue (2026-11-14): lab-grown diamonds (all IGI certified), solid
@@ -50,7 +50,7 @@ export default function CareInstructionsPage() {
       <div className="space-y-14">
         <Section
           title="Our Materials"
-          intro="Every Elanora piece is made to order in fine materials. The exact metal and stones of each piece are listed on its product page."
+          intro="Every Wells Diamonds piece is made to order in fine materials. The exact metal and stones of each piece are listed on its product page."
           items={[
             ["Lab-grown diamonds", `Real diamonds, with the same hardness, sparkle and chemistry as mined diamonds, grown in a lab. ${SALE_POLICY.certificate}`],
             ["Solid 14K and 18K gold", "In yellow, white and rose gold. 14K is 58.5% pure gold and especially durable for everyday wear; 18K is 75% pure gold, with a richer color."],

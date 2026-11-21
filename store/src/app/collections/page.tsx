@@ -19,7 +19,7 @@ export default function CollectionsPage() {
         </p>
         <h1 className="text-3xl sm:text-4xl font-light mb-4">Collections</h1>
         <p className="text-sm text-warm-gray max-w-lg mx-auto">
-          Each collection is a chapter in the Elanora story — curated around a
+          Each collection is a chapter in the Wells Diamonds story — curated around a
           mood, a season, and a feeling.
         </p>
       </div>

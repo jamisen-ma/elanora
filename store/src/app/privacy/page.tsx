@@ -3,7 +3,7 @@ import PolicyPage, { POLICY_EMAIL, type PolicySection } from "@/components/Polic
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "How Elanora collects, uses, shares and protects your personal information.",
+  description: "How Wells Diamonds collects, uses, shares and protects your personal information.",
 };
 
 // Written for what the site actually does (2026-11-14): Stripe checkout, Vercel hosting and
@@ -20,7 +20,7 @@ const sections: PolicySection[] = [
           "Shipping and billing addresses",
           "Order details: the pieces you buy and the options you choose (metal, carat, size, initials or names)",
           "Custom requests: your design ideas, notes, and any photos you upload",
-          "Your email address when you join Elanora for free shipping or sign up for our emails",
+          "Your email address when you join Wells Diamonds for free shipping or sign up for our emails",
           "Messages you send us by email or social media",
         ],
       },
@@ -30,7 +30,7 @@ const sections: PolicySection[] = [
   {
     title: "Payment Information",
     blocks: [
-      "Payments are processed by Stripe. Your card details go directly to Stripe and are never stored by Elanora.",
+      "Payments are processed by Stripe. Your card details go directly to Stripe and are never stored by Wells Diamonds.",
       "We keep limited payment records, such as the payment status, amount and transaction reference, for order management, accounting and fraud prevention.",
     ],
   },
@@ -53,7 +53,7 @@ const sections: PolicySection[] = [
   {
     title: "How We Share Your Information",
     blocks: [
-      "We don't sell your personal information. We share only what is needed with the services that help us run Elanora:",
+      "We don't sell your personal information. We share only what is needed with the services that help us run Wells Diamonds:",
       {
         list: [
           "Stripe, to process payments",
@@ -78,7 +78,7 @@ const sections: PolicySection[] = [
   {
     title: "Marketing Emails",
     blocks: [
-      "If you join Elanora with your email, we may send you news about new pieces, collections and offers. You can unsubscribe at any time by replying to any email or writing to us.",
+      "If you join Wells Diamonds with your email, we may send you news about new pieces, collections and offers. You can unsubscribe at any time by replying to any email or writing to us.",
       "Emails about an order you've placed are not marketing and are still sent when needed.",
     ],
   },
@@ -144,7 +144,7 @@ export default function PrivacyPage() {
       title="Privacy Policy"
       updated="November 14, 2026"
       intro={[
-        "At Elanora, we respect your privacy. This policy explains what personal information we collect when you visit our website, place an order, request a custom piece or contact us, and how we use, share and protect it.",
+        "At Wells Diamonds, we respect your privacy. This policy explains what personal information we collect when you visit our website, place an order, request a custom piece or contact us, and how we use, share and protect it.",
       ]}
       sections={sections}
     />

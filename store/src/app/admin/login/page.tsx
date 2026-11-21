@@ -20,7 +20,7 @@ export default async function AdminLogin({
         className="w-full max-w-sm bg-white border border-gray-200 rounded-lg p-6 space-y-4"
       >
         <div>
-          <h1 className="text-lg font-semibold text-gray-900">Elanora Admin</h1>
+          <h1 className="text-lg font-semibold text-gray-900">Wells Diamonds Admin</h1>
           <p className="text-sm text-gray-500 mt-1">Sign in to see the dashboard.</p>
         </div>
 

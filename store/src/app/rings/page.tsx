@@ -3,7 +3,7 @@ import { byType } from "@/data/catalog";
 
 export const metadata = {
   title: "Rings",
-  description: "Shop ELANORA rings. Lab-grown diamonds and gemstones, made to order.",
+  description: "Shop Wells Diamonds rings. Lab-grown diamonds and gemstones, made to order.",
 };
 
 // First screen (user, 2026-11-11): a classic staple, a piece with a distinctive design, an easier price

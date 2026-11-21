@@ -139,7 +139,7 @@ export async function POST(req: Request) {
         )
         .join("");
       await transporter.sendMail({
-        from: `"Elanora" <${process.env.GMAIL_USER}>`,
+        from: `"Wells Diamonds" <${process.env.GMAIL_USER}>`,
         to: process.env.GMAIL_USER,
         replyTo: data.email,
         subject: ring

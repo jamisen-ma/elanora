@@ -1,5 +1,5 @@
-// The ELANORA catalogue: every piece shown in the collection grids (Rings, Bracelets,
-// Necklaces, Earrings, Shop All, The Elanora Edit) and on its product page.
+// The Wells Diamonds catalogue: every piece shown in the collection grids (Rings, Bracelets,
+// Necklaces, Earrings, Shop All, The Wells Diamonds Edit) and on its product page.
 //
 // Products are added here by hand once their images and information are approved.
 // Anything in [BRACKETS] is a placeholder that still needs real information.
@@ -1215,7 +1215,7 @@ export const catalog: CatalogItem[] = [
     addedRank: -22,
   },
   {
-    // PRODUCT 27 — designed by ELANORA (no reference supplied)
+    // PRODUCT 27 — designed by Wells Diamonds (no reference supplied)
     slug: "heart-diamond-tennis-bracelet",
     name: "Heart Diamond Tennis Bracelet",
     type: "Bracelets",

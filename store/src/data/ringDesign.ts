@@ -278,7 +278,7 @@ export const designHref = (c: Partial<RingConfig>) =>
 export const hasDiamond = (c: RingConfig) => c.diamondAdded && !!c.shape;
 
 export const qualityLabel = (c: RingConfig) => {
-  if (c.qualityMode === "recommend") return "Elanora recommends the grade";
+  if (c.qualityMode === "recommend") return "Wells Diamonds recommends the grade";
   const parts = [
     c.qColour && c.qColour !== "Any" && `Colour ${c.qColour}`,
     c.qClarity && c.qClarity !== "Any" && `Clarity ${c.qClarity}`,
