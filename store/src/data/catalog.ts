@@ -417,12 +417,27 @@ const HALO_STUD_METALS = [
   "14k White Gold", "14k Yellow Gold", "14k Rose Gold",
   "18k White Gold", "18k Yellow Gold", "18k Rose Gold",
 ];
-const HALO_STUD_PRICES: Record<string, Record<string, number>> = Object.fromEntries(
-  HALO_STUD_METALS.map((m) => {
-    const base = m.startsWith("18k") ? 1199 : 999;
-    // 0.5 ct each (i = 0) is $100 above the base; from 1.0 ct each the $200 steps are unchanged.
-    return [m, Object.fromEntries(HALO_STUD_CARATS.map((c, i) => [c, base + 200 * i + (i === 0 ? 100 : 0)]))];
-  }),
+// Stud price table from a 14K and an 18K base: 0.5 ct each (i = 0) is $100 above the base,
+// then $200 steps from 1.0 ct each.
+const studPrices = (base14: number, base18: number): Record<string, Record<string, number>> =>
+  Object.fromEntries(
+    HALO_STUD_METALS.map((m) => {
+      const base = m.startsWith("18k") ? base18 : base14;
+      return [m, Object.fromEntries(HALO_STUD_CARATS.map((c, i) => [c, base + 200 * i + (i === 0 ? 100 : 0)]))];
+    }),
+  );
+// 0.5 ct each is $1,099 in 14K and $1,299 in 18K; 1.0 ct each $1,199 / $1,399 (bases 999 / 1199).
+const HALO_STUD_PRICES = studPrices(999, 1199);
+// Solitaire studs (096 pear, 097 oval, 098 round) come in white and yellow gold only, from 1.0 ct
+// each (no 0.5 ct option). 1.0 ct each is $999 in 14K and $1,199 in 18K (raised $100 on 2026-11-26,
+// was 899 / 1,099), then $200 per further 0.5 ct each.
+const SOLITAIRE_STUD_METALS = HALO_STUD_METALS.filter((m) => !m.includes("Rose"));
+const SOLITAIRE_STUD_CARATS = HALO_STUD_CARATS.slice(1);
+const SOLITAIRE_STUD_PRICES = Object.fromEntries(
+  SOLITAIRE_STUD_METALS.map((m) => [
+    m,
+    Object.fromEntries(SOLITAIRE_STUD_CARATS.map((c) => [c, studPrices(799, 999)[m][c]])),
+  ]),
 );
 const HALO_STUD_OPTIONS = {
   price: HALO_STUD_PRICES["14k White Gold"][HALO_STUD_CARATS[0]], // lowest option (14K, 0.5 ct each)
@@ -431,7 +446,7 @@ const HALO_STUD_OPTIONS = {
   carats: HALO_STUD_CARATS,
   caratLabel: "Carat Weight",
   metalCaratPrices: HALO_STUD_PRICES,
-  salePercentOff: 15,
+  salePercentOff: 25, // 25% off during the limited-time sale (user, 2026-11-26)
 };
 // 18K white gold uses the white images; 18K yellow / rose use the 14K sets.
 const haloStudMetalImages = (slug: string, v = ""): Record<string, GalleryImage[]> => {
@@ -967,6 +982,7 @@ export const catalog: CatalogItem[] = [
     stone: tennisStone("round lab-grown diamonds, each in a four-prong setting"),
     stoneGroup: "Diamond",
     ...TENNIS_OPTIONS,
+    salePercentOff: 15, // every carat weight 15% off, not just from 5 ctw (user, 2026-11-26)
     images: [
       { src: "/images/catalog/round-diamond-tennis-bracelet/01-sku.webp", kind: "sku" },
       // the main image also opens the product page gallery (no separate studio views)
@@ -1638,6 +1654,126 @@ export const catalog: CatalogItem[] = [
     addedRank: -93,
   },
   {
+    // PRODUCT 96 — pear solitaire stud earrings (user reference, 2026-11-22): single pear in a
+    // V-claw + two claws, no halo. White and yellow gold only (no rose gold). One shared on-ear photo.
+    slug: "pear-solitaire-diamond-stud-earrings",
+    name: "Pear Solitaire Diamond Stud Earrings",
+    type: "Earrings",
+    shape: "Pear",
+    shapeGroup: "solitaire-diamond-studs",
+    stone: "A single pear-shaped lab-grown diamond in each ear, held by a V-claw at the tip and two claws at the base. Sold as a pair. [Color, clarity — to be provided]",
+    stoneGroup: "Diamond",
+    ...HALO_STUD_OPTIONS,
+    price: SOLITAIRE_STUD_PRICES["14k White Gold"][SOLITAIRE_STUD_CARATS[0]],
+    metals: SOLITAIRE_STUD_METALS,
+    carats: SOLITAIRE_STUD_CARATS,
+    metalCaratPrices: SOLITAIRE_STUD_PRICES,
+    salePercentOff: 25, // 25% off (user, 2026-11-26); the halo studs are at 20%
+    images: [
+      { src: "/images/catalog/pear-solitaire-diamond-stud-earrings/01-main.webp", kind: "sku" },
+      { src: "/images/catalog/pear-solitaire-diamond-stud-earrings/01-main-page.webp", kind: "detail" },
+      { src: "/images/catalog/pear-solitaire-diamond-stud-earrings/05-on-ear-v2.webp", kind: "on-body" },
+    ],
+    metalImages: Object.fromEntries(
+      ["14k Yellow Gold", "18k Yellow Gold"].map((m) => [
+        m,
+        [
+          { src: "/images/catalog/pear-solitaire-diamond-stud-earrings/01-main-page-yellow-gold.webp", kind: "detail" },
+          { src: "/images/catalog/pear-solitaire-diamond-stud-earrings/05-on-ear-v2.webp", kind: "on-body" },
+        ] as GalleryImage[],
+      ]),
+    ),
+    details: [
+      "Pear-shaped lab-grown diamond solitaires in a three-claw setting",
+      "Sold as a pair",
+      "Stones from approx. 1.0 ct to 2.5 ct each",
+      "Made in 14K or 18K white or yellow gold",
+    ],
+    materials: ["14K or 18K white or yellow gold", "Lab-grown diamonds"],
+    rank: 96,
+    addedRank: -94,
+  },
+  {
+    // PRODUCT 97 — oval version of the pear solitaire studs (user, 2026-11-26): a single
+    // oval diamond in four claws, no halo. Same metals, carats, prices and 25% off as the pear.
+    slug: "oval-solitaire-diamond-stud-earrings",
+    name: "Oval Solitaire Diamond Stud Earrings",
+    type: "Earrings",
+    shape: "Oval",
+    shapeGroup: "solitaire-diamond-studs",
+    stone: "A single oval-cut lab-grown diamond in each ear, held by four claws. Sold as a pair. [Color, clarity — to be provided]",
+    stoneGroup: "Diamond",
+    ...HALO_STUD_OPTIONS,
+    price: SOLITAIRE_STUD_PRICES["14k White Gold"][SOLITAIRE_STUD_CARATS[0]],
+    metals: SOLITAIRE_STUD_METALS,
+    carats: SOLITAIRE_STUD_CARATS,
+    metalCaratPrices: SOLITAIRE_STUD_PRICES,
+    salePercentOff: 25,
+    images: [
+      { src: "/images/catalog/oval-solitaire-diamond-stud-earrings/01-main.webp", kind: "sku" },
+      { src: "/images/catalog/oval-solitaire-diamond-stud-earrings/01-main-page.webp", kind: "detail" },
+      { src: "/images/catalog/oval-solitaire-diamond-stud-earrings/05-on-ear.webp", kind: "on-body" },
+    ],
+    metalImages: Object.fromEntries(
+      ["14k Yellow Gold", "18k Yellow Gold"].map((m) => [
+        m,
+        [
+          { src: "/images/catalog/oval-solitaire-diamond-stud-earrings/01-main-page-yellow-gold.webp", kind: "detail" },
+          { src: "/images/catalog/oval-solitaire-diamond-stud-earrings/05-on-ear.webp", kind: "on-body" },
+        ] as GalleryImage[],
+      ]),
+    ),
+    details: [
+      "Oval-cut lab-grown diamond solitaires in a four-claw setting",
+      "Sold as a pair",
+      "Stones from approx. 1.0 ct to 2.5 ct each",
+      "Made in 14K or 18K white or yellow gold",
+    ],
+    materials: ["14K or 18K white or yellow gold", "Lab-grown diamonds"],
+    rank: 97,
+    addedRank: -95,
+  },
+  {
+    // PRODUCT 98 — round version of the pear solitaire studs (user, 2026-11-26): a single
+    // round diamond in four claws, no halo. Same metals, carats, prices and 25% off as the pear.
+    slug: "round-solitaire-diamond-stud-earrings",
+    name: "Round Solitaire Diamond Stud Earrings",
+    type: "Earrings",
+    shape: "Round",
+    shapeGroup: "solitaire-diamond-studs",
+    stone: "A single round brilliant lab-grown diamond in each ear, held by four claws. Sold as a pair. [Color, clarity — to be provided]",
+    stoneGroup: "Diamond",
+    ...HALO_STUD_OPTIONS,
+    price: SOLITAIRE_STUD_PRICES["14k White Gold"][SOLITAIRE_STUD_CARATS[0]],
+    metals: SOLITAIRE_STUD_METALS,
+    carats: SOLITAIRE_STUD_CARATS,
+    metalCaratPrices: SOLITAIRE_STUD_PRICES,
+    salePercentOff: 25,
+    images: [
+      { src: "/images/catalog/round-solitaire-diamond-stud-earrings/01-main.webp", kind: "sku" },
+      { src: "/images/catalog/round-solitaire-diamond-stud-earrings/01-main-page.webp", kind: "detail" },
+      { src: "/images/catalog/round-solitaire-diamond-stud-earrings/05-on-ear.webp", kind: "on-body" },
+    ],
+    metalImages: Object.fromEntries(
+      ["14k Yellow Gold", "18k Yellow Gold"].map((m) => [
+        m,
+        [
+          { src: "/images/catalog/round-solitaire-diamond-stud-earrings/01-main-page-yellow-gold.webp", kind: "detail" },
+          { src: "/images/catalog/round-solitaire-diamond-stud-earrings/05-on-ear.webp", kind: "on-body" },
+        ] as GalleryImage[],
+      ]),
+    ),
+    details: [
+      "Round brilliant lab-grown diamond solitaires in a four-claw setting",
+      "Sold as a pair",
+      "Stones from approx. 1.0 ct to 2.5 ct each",
+      "Made in 14K or 18K white or yellow gold",
+    ],
+    materials: ["14K or 18K white or yellow gold", "Lab-grown diamonds"],
+    rank: 98,
+    addedRank: -96,
+  },
+  {
     // PRODUCT 40 — halo pendant necklace (user reference)
     slug: "emerald-halo-diamond-necklace",
     name: "Emerald-Cut Halo Diamond Necklace",
@@ -1837,6 +1973,7 @@ export const catalog: CatalogItem[] = [
     stone: "A continuous line of emerald-cut lab-grown diamonds set north-south, each in a four-prong setting, with a hidden clasp. [Color, clarity — to be provided]",
     stoneGroup: "Diamond",
     ...TENNIS_OPTIONS,
+    salePercentOff: 15, // every carat weight 15% off, not just from 5 ctw (user, 2026-11-26)
     metals: ["14k Yellow Gold", "18k Yellow Gold"],
     defaultMetal: "14k Yellow Gold",
     images: [

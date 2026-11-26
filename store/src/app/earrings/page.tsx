@@ -15,9 +15,11 @@ const LAST = [
   "marquise-halo-diamond-stud-earrings",
 ];
 
-// First screen (user, 2026-11-11): a classic staple, a piece with a distinctive design, an easier price
-// point and a visually striking piece, in that order; the rest follow newest first.
+// First screen: the pear solitaire studs lead (user, 2026-11-26), then (user, 2026-11-11) a classic
+// staple, a piece with a distinctive design, an easier price point and a visually striking piece, in
+// that order; the rest follow newest first.
 const LEAD = [
+  "pear-solitaire-diamond-stud-earrings",
   "round-halo-diamond-stud-earrings",
   "marquise-diamond-ear-climber",
   "pink-heart-halo-diamond-stud-earrings",

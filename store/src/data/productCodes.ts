@@ -104,4 +104,7 @@ export const productCodes: Record<string, string> = {
   "blue-diamond-angel-wing-stud-earrings": "EL-ER-PE-093",
   "blue-diamond-angel-wing-drop-earrings": "EL-ER-PE-094",
   "pink-heart-halo-diamond-stud-earrings": "EL-ER-HT-095",
+  "pear-solitaire-diamond-stud-earrings": "EL-ER-PE-096",
+  "oval-solitaire-diamond-stud-earrings": "EL-ER-OV-097",
+  "round-solitaire-diamond-stud-earrings": "EL-ER-RD-098",
 };
